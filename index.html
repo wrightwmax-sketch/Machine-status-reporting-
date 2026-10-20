@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPL Machine Status — OSU Center for Automotive Research</title>
+  <meta name="description" content="Digital Machine Fault & Status Reporting System for The Ohio State University Center for Automotive Research (CAR) Student Projects Laboratory." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <!-- QRCode.js via CDN for generating 24 machine QR placards -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <!-- TOP INDUSTRIAL HEADER BAR -->
+  <header class="app-header no-print">
+    <div class="header-scarlet-stripe"></div>
+    <div class="header-inner">
+      <a href="./" class="brand-link" id="brand-home-link" aria-label="Return to Live Shop Status Board">
+        <div class="brand-badge">
+          <span class="brand-osu">OSU</span>
+          <span class="brand-car">CAR</span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-eyebrow">THE OHIO STATE UNIVERSITY • CENTER FOR AUTOMOTIVE RESEARCH</span>
+          <h1 class="brand-title">SPL Machine Fault &amp; Status System</h1>
+        </div>
+      </a>
+
+      <nav class="main-nav" aria-label="Application Views">
+        <button type="button" class="nav-btn active" id="nav-board" data-view="board">
+          <span class="nav-dot status-dot-operational"></span>
+          <span>Live Shop Board</span>
+        </button>
+        <button type="button" class="nav-btn" id="nav-updater" data-view="updater">
+          <svg class="nav-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+          </svg>
+          <span>Report / Update</span>
+        </button>
+        <button type="button" class="nav-btn" id="nav-qr" data-view="qr">
+          <svg class="nav-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+          <span>QR Placards (24)</span>
+        </button>
+        <button type="button" class="icon-btn" id="btn-supervisor-config" title="Supervisor Configuration &amp; Controls" aria-label="Open Supervisor Settings Modal">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- =====================================================================
+         VIEW 1: LIVE SHOP STATUS BOARD (DEFAULT ROUTE /)
+         ===================================================================== -->
+    <section id="view-board" class="app-view active" aria-labelledby="board-heading">
+      <div class="sr-only" id="board-heading">Live Shop Status Board</div>
+
+      <!-- KPI SUMMARY RIBBON -->
+      <div class="kpi-ribbon" role="region" aria-label="Shop Equipment Status Summary">
+        <div class="kpi-card kpi-total" data-status-filter="ALL">
+          <div class="kpi-header">
+            <span class="kpi-label">TOTAL TRACKED MACHINES</span>
+            <span class="kpi-badge-neutral">SPL SHOP</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-number" id="kpi-total">24</span>
+            <span class="kpi-sub">Active Workstations</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-operational" data-status-filter="OPERATIONAL">
+          <div class="kpi-header">
+            <span class="kpi-label">OPERATIONAL</span>
+            <span class="kpi-emoji" aria-hidden="true">🟢</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-number" id="kpi-operational">24</span>
+            <span class="kpi-sub">Cleared for Student Use</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-degraded" data-status-filter="DEGRADED">
+          <div class="kpi-header">
+            <span class="kpi-label">DEGRADED / NEEDS TOOLING</span>
+            <span class="kpi-emoji" aria-hidden="true">🟡</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-number" id="kpi-degraded">0</span>
+            <span class="kpi-sub">Yellow-Tagged Caution</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-down" data-status-filter="DOWN">
+          <div class="kpi-header">
+            <span class="kpi-label">DOWN / RED-TAGGED</span>
+            <span class="kpi-emoji" aria-hidden="true">🔴</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-number" id="kpi-down">0</span>
+            <span class="kpi-sub">Lockout / Inoperable</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEARCH & ZONE FILTER BAR -->
+      <div class="controls-panel">
+        <div class="search-row">
+          <div class="search-input-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              type="search"
+              id="search-input"
+              class="search-input"
+              placeholder="Search by Asset ID (e.g., MAC-02, CNC-02), machine name, zone, or fault note..."
+              aria-label="Search machines by Asset ID or name"
+            />
+            <button type="button" id="btn-clear-search" class="btn-clear-search hidden" aria-label="Clear search">✕</button>
+          </div>
+
+          <div class="status-filter-group" role="group" aria-label="Filter by Status">
+            <button type="button" class="status-pill-filter active" data-status="ALL">All</button>
+            <button type="button" class="status-pill-filter status-filter-down" data-status="DOWN">🔴 Down Only</button>
+            <button type="button" class="status-pill-filter status-filter-degraded" data-status="DEGRADED">🟡 Degraded Only</button>
+          </div>
+        </div>
+
+        <div class="zone-filter-row" id="zone-filter-bar" role="group" aria-label="Filter by Shop Zone">
+          <button type="button" class="zone-pill active" data-zone="ALL">All</button>
+          <button type="button" class="zone-pill" data-zone="CNC Machining">CNC Machining</button>
+          <button type="button" class="zone-pill" data-zone="Manual Machining">Manual Machining</button>
+          <button type="button" class="zone-pill" data-zone="Welding & Thermal">Welding &amp; Thermal</button>
+          <button type="button" class="zone-pill" data-zone="Cutting & Saws">Cutting &amp; Saws</button>
+          <button type="button" class="zone-pill" data-zone="Abrasive & Finishing">Abrasive &amp; Finishing</button>
+          <button type="button" class="zone-pill" data-zone="Fabrication & Prep">Fabrication &amp; Prep</button>
+          <button type="button" class="zone-pill" data-zone="Waterjet Cutting">Waterjet Cutting</button>
+          <button type="button" class="zone-pill" data-zone="Facility & Infrastructure">Facility &amp; Infrastructure</button>
+          <button type="button" class="zone-pill" data-zone="Mobile Power / Support">Mobile Power / Support</button>
+        </div>
+      </div>
+
+      <!-- BENTO EQUIPMENT GRID -->
+      <div id="equipment-grid" class="bento-grid" role="list" aria-label="Shop Workstations"></div>
+
+      <!-- EMPTY FILTER STATE -->
+      <div id="empty-grid-state" class="empty-state hidden">
+        <p class="empty-state-title">No workstations match your current filters.</p>
+        <button type="button" id="btn-reset-filters" class="btn-secondary">Reset Search &amp; Filters</button>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         VIEW 2: MOBILE QR STATUS UPDATER (ROUTE /?id=<ASSET_ID>)
+         ===================================================================== -->
+    <section id="view-updater" class="app-view hidden" aria-labelledby="updater-heading">
+      <div class="updater-container">
+        <div class="updater-top-nav">
+          <button type="button" class="btn-back" id="btn-back-to-board">
+            <span>← Back to Live Shop Board</span>
+          </button>
+          <span class="qr-deep-link-badge" id="deep-link-indicator">QR MOBILE DISPATCH</span>
+        </div>
+
+        <!-- CURRENT MACHINE STATUS BANNER (SHOWN IMMEDIATELY ON DEEP LINK OR SELECTION) -->
+        <div id="current-status-banner" class="current-status-banner status-banner-operational">
+          <div class="banner-top-row">
+            <div class="banner-id-group">
+              <span class="asset-badge" id="banner-asset-id">MAC-01</span>
+              <span class="banner-zone" id="banner-machine-zone">Manual Machining</span>
+            </div>
+            <span class="status-pill status-pill-operational" id="banner-status-pill">🟢 OPERATIONAL</span>
+          </div>
+          <h2 class="banner-machine-name" id="banner-machine-name">Manual Mill #1 (Bridgeport)</h2>
+          <div class="banner-fault-summary">
+            <div class="banner-note" id="banner-notes">Machine operational and cleared for student use.</div>
+            <div class="banner-meta">
+              <span id="banner-category">Category: Cleared / Ready</span>
+              <span>•</span>
+              <span id="banner-team">Team: Shop Staff</span>
+              <span>•</span>
+              <span id="banner-updated">Updated: Just now</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STATUS UPDATE FORM CARD -->
+        <div class="updater-card">
+          <div class="updater-card-header">
+            <h2 id="updater-heading" class="updater-title">Log Machine Fault or Status Change</h2>
+            <p class="updater-subtitle">Submissions immediately update the SPL Shop Status Board and dispatch an Adaptive Card alert to Microsoft Teams.</p>
+          </div>
+
+          <form id="status-update-form" novalidate>
+            <!-- 1. MACHINE SELECTOR -->
+            <div class="form-group">
+              <div class="label-row">
+                <label for="machine-select" class="form-label">Target Workstation / Asset <span class="req">*</span></label>
+                <span id="machine-lock-badge" class="lock-badge hidden">🔒 Pre-locked via QR Code</span>
+              </div>
+              <select id="machine-select" name="machineId" class="form-select" required></select>
+            </div>
+
+            <!-- 2. NEW MACHINE STATUS (RADIO CARDS) -->
+            <fieldset class="form-group fieldset-reset">
+              <legend class="form-label">New Machine Status <span class="req">*</span></legend>
+              <div class="status-radio-grid">
+                <label class="status-radio-card radio-card-down" for="status-down">
+                  <input type="radio" id="status-down" name="status" value="DOWN" required />
+                  <div class="radio-card-content">
+                    <div class="radio-card-title">🔴 DOWN / RED TAG</div>
+                    <div class="radio-card-desc">Machine inoperable or unsafe (Lockout required)</div>
+                  </div>
+                </label>
+
+                <label class="status-radio-card radio-card-degraded" for="status-degraded">
+                  <input type="radio" id="status-degraded" name="status" value="DEGRADED" />
+                  <div class="radio-card-content">
+                    <div class="radio-card-title">🟡 DEGRADED / YELLOW TAG</div>
+                    <div class="radio-card-desc">Broken tool, dull blade, low fluid/gas, or minor issue</div>
+                  </div>
+                </label>
+
+                <label class="status-radio-card radio-card-operational" for="status-operational">
+                  <input type="radio" id="status-operational" name="status" value="OPERATIONAL" />
+                  <div class="radio-card-content">
+                    <div class="radio-card-title">🟢 OPERATIONAL</div>
+                    <div class="radio-card-desc">Fault resolved / returned to service</div>
+                  </div>
+                </label>
+              </div>
+            </fieldset>
+
+            <!-- 3. FAULT CATEGORY -->
+            <div class="form-group">
+              <label for="fault-category" class="form-label">Fault Category <span class="req">*</span></label>
+              <select id="fault-category" name="category" class="form-select" required>
+                <option value="Broken Tooling / Blade / Insert">Broken Tooling / Blade / Insert</option>
+                <option value="Mechanical / Spindle / Axis Fault">Mechanical / Spindle / Axis Fault</option>
+                <option value="Electrical / CNC Alarm Code / E-Stop">Electrical / CNC Alarm Code / E-Stop</option>
+                <option value="Coolant / Way Oil / Shielding Gas / Garnet">Coolant / Way Oil / Shielding Gas / Garnet</option>
+                <option value="Safety Guarding / Interlock Issue">Safety Guarding / Interlock Issue</option>
+                <option value="Cleared Fault / Returned to Service">Cleared Fault / Returned to Service</option>
+              </select>
+            </div>
+
+            <!-- 4. STUDENT TEAM AFFILIATION -->
+            <div class="form-group">
+              <label for="student-team" class="form-label">Student Team Affiliation <span class="req">*</span></label>
+              <select id="student-team" name="team" class="form-select" required>
+                <option value="" disabled selected>Select your CAR student team...</option>
+                <option value="Baja SAE">Baja SAE</option>
+                <option value="Formula Buckeyes">Formula Buckeyes</option>
+                <option value="Buckeye Current">Buckeye Current</option>
+                <option value="Buckeye Solar Racing">Buckeye Solar Racing</option>
+                <option value="Buckeye Experimental Aeronautics (BExA)">Buckeye Experimental Aeronautics (BExA)</option>
+                <option value="EcoCAR">EcoCAR</option>
+                <option value="Shop Staff / Lab Supervisor">Shop Staff / Lab Supervisor</option>
+              </select>
+            </div>
+
+            <!-- 5. REPORTER NAME & OSU EMAIL -->
+            <div class="form-group">
+              <label for="reporter-input" class="form-label">Reporter Name &amp; OSU Email <span class="req">*</span></label>
+              <input
+                type="text"
+                id="reporter-input"
+                name="reporter"
+                class="form-input"
+                placeholder="e.g., Brutus Buckeye (buckeye.1@osu.edu)"
+                required
+              />
+            </div>
+
+            <!-- 6. FAULT DETAILS / ALARM CODE / TOOL SIZE -->
+            <div class="form-group">
+              <label for="fault-notes" class="form-label">Fault Details / Alarm Code / Tool Size <span class="req">*</span></label>
+              <textarea
+                id="fault-notes"
+                name="notes"
+                class="form-textarea"
+                rows="4"
+                placeholder="e.g., Haas Alarm 102, broken 1/4-20 tap in Bridgeport #2 vise, or vertical bandsaw blade snapped"
+                required
+              ></textarea>
+            </div>
+
+            <div id="form-error-msg" class="form-error hidden" role="alert"></div>
+
+            <div class="form-actions">
+              <button type="submit" id="btn-submit-status" class="btn-submit-scarlet">
+                <span>Submit Status &amp; Notify Shop Teams</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         VIEW 3: PRINTABLE QR CODE PLACARDS (ROUTE /?view=qr)
+         ===================================================================== -->
+    <section id="view-qr" class="app-view hidden" aria-labelledby="qr-heading">
+      <div class="qr-controls-bar no-print">
+        <div class="qr-controls-text">
+          <h2 id="qr-heading" class="qr-view-title">Printable Equipment QR Code Placards (24 Workstations)</h2>
+          <p class="qr-view-subtitle">Formatted for 3-column industrial lamination sheets (8 rows × 3 columns). Scan any QR code to deep-link directly to that workstation's Mobile Status Updater.</p>
+        </div>
+
+        <div class="qr-url-config">
+          <div class="qr-url-field">
+            <label for="qr-base-url" class="form-label">Base Production URL Override (for printed QR codes):</label>
+            <div class="qr-url-input-group">
+              <input
+                type="url"
+                id="qr-base-url"
+                class="form-input monospace-input"
+                placeholder="https://wrightwmax-sketch.github.io/Machine-status-reporting-/"
+              />
+              <button type="button" id="btn-regenerate-qr" class="btn-secondary">Update QR Links</button>
+              <button type="button" id="btn-print-qr" class="btn-submit-scarlet btn-print">
+                🖨️ Print All 24 Placards
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 24 QR PLACARDS GRID -->
+      <div id="qr-placards-grid" class="qr-placards-grid" aria-label="Printable QR Placards"></div>
+    </section>
+  </main>
+
+  <!-- =======================================================================
+       VIEW 4: SUPERVISOR CONFIG MODAL
+       ======================================================================= -->
+  <div id="supervisor-modal-backdrop" class="modal-backdrop hidden no-print" role="dialog" aria-modal="true" aria-labelledby="modal-supervisor-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span class="modal-eyebrow">LAB SUPERVISOR ADMINISTRATION</span>
+          <h2 id="modal-supervisor-title" class="modal-title">Shop Integration &amp; State Controls</h2>
+        </div>
+        <button type="button" id="btn-close-modal" class="icon-btn" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="config-teams-webhook" class="form-label">Microsoft Teams Workflows / Incoming Webhook URL</label>
+          <input
+            type="url"
+            id="config-teams-webhook"
+            class="form-input monospace-input"
+            placeholder="https://prod-xx.westus.logic.azure.com:443/workflows/..."
+          />
+          <p class="form-help">Dispatches an Adaptive Card v1.4 payload with a deep-link button whenever a machine status changes.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="config-sync-endpoint" class="form-label">Shared State API Endpoint / GitHub Dispatch Proxy URL (Optional)</label>
+          <input
+            type="url"
+            id="config-sync-endpoint"
+            class="form-input monospace-input"
+            placeholder="https://api.github.com/repos/<org>/spl-machine-status/dispatches"
+          />
+          <p class="form-help">Optional endpoint to persist <code>data/status.json</code> commits across devices via GitHub Actions <code>repository_dispatch</code> or Power Automate.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="config-github-token" class="form-label">Authorization Bearer Token / GitHub PAT (Optional)</label>
+          <input
+            type="password"
+            id="config-github-token"
+            class="form-input monospace-input"
+            placeholder="github_pat_..."
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="modal-save-row">
+          <button type="button" id="btn-save-config" class="btn-submit-scarlet">Save Integration Config</button>
+          <button type="button" id="btn-test-webhook" class="btn-secondary">Send Test Adaptive Card</button>
+        </div>
+
+        <hr class="modal-divider" />
+
+        <div class="supervisor-actions-section">
+          <h3 class="supervisor-subtitle">Shop Ledger &amp; Fault Log Management</h3>
+          <div class="supervisor-btn-row">
+            <button type="button" id="btn-export-csv" class="btn-secondary">
+              📥 Export Fault Log to CSV
+            </button>
+            <button type="button" id="btn-reset-all" class="btn-danger">
+              🔄 Reset All 24 to Operational
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="toast-container no-print" aria-live="polite" aria-atomic="true"></div>
+
+  <footer class="app-footer no-print">
+    <div class="footer-inner">
+      <span><strong>The Ohio State University</strong> • Center for Automotive Research (CAR) • Student Projects Laboratory (SPL)</span>
+      <span class="footer-meta">24 Tracked Workstations • QR Mobile Fault Dispatch</span>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

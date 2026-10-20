@@ -1,0 +1,194 @@
+{
+  "FAC-01": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "FAC-02": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "MAC-01": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "MAC-02": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "MAC-03": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "MAC-04": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "CNC-01": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "CNC-02": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "CNC-03": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "SAW-01": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "SAW-02": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "SAW-03": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "SAW-04": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "FAB-01": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "FAB-02": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "FAB-03": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "FAB-04": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "WLD-01": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "WLD-02": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "WLD-03": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "WLD-04": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "WJT-01": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "GEN-01": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
+  "GEN-02": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  }
+}
