@@ -1,8 +1,6 @@
-# SPL Machine Fault & Status Reporting System (`spl-machine-status`)
+# Student Projects Building — Machine Fault & Status Reporting System
 
-**The Ohio State University — Center for Automotive Research (CAR) • Student Projects Laboratory (SPL)**
-
-A zero-dependency, industrial dark-mode Single-Page Application (SPA) designed for the OSU CAR Student Projects Laboratory. Physical QR code placards mounted on all **24 shop machines and workstations** deep-link directly to `https://wrightwmax-sketch.github.io/Machine-status-reporting-/?id=<ASSET_ID>`, enabling students to immediately report broken tooling, machine alarms, or safety lockouts from their smartphones, update the live shop status board, and dispatch real-time **Microsoft Teams Adaptive Card (v1.4)** notifications.
+A zero-dependency, industrial dark-mode Single-Page Application (SPA) designed for the **Student Projects Building**. Physical QR code placards mounted on all **24 shop machines and workstations** deep-link directly to `https://wrightwmax-sketch.github.io/Machine-status-reporting-/?id=<ASSET_ID>`, enabling students to immediately report broken tooling, machine alarms, or safety lockouts from their smartphones, update the live shop status board, and dispatch real-time **Microsoft Teams Adaptive Card (v1.4)** notifications.
 
 ---
 
@@ -73,10 +71,10 @@ spl-machine-status/
 
 ## 4. Microsoft Teams Workflows Webhook Setup Guide
 
-1. In **Microsoft Teams**, navigate to the target **OSU CAR Student Projects Lab** channel, click **More options (`•••`)** → **Workflows**.
+1. In **Microsoft Teams**, navigate to the target **Student Projects Building** channel, click **More options (`•••`)** → **Workflows**.
 2. Select **"Post to a channel when a webhook request is received"**.
 3. Copy the generated **HTTP POST URL**.
-4. Open the SPL Machine Status web app, click the **⚙️ (Supervisor Settings)** icon in the top-right header, paste the URL into **Microsoft Teams Workflows / Incoming Webhook URL**, and click **Save Integration Config**.
+4. Open the Student Projects Building Machine Status web app, click the **⚙️ (Supervisor Settings)** icon in the top-right header, paste the URL into **Microsoft Teams Workflows / Incoming Webhook URL**, and click **Save Integration Config**.
 5. Click **Send Test Adaptive Card** to verify that the v1.4 Adaptive Card posts to your Teams channel with a direct deep-link action button (`/?id=<ASSET_ID>`).
 
 ### Optional Cross-Device State Sync (`status.json` via Power Automate or GitHub API)
@@ -84,7 +82,7 @@ spl-machine-status/
 To automatically commit status changes back to `data/status.json` in GitHub:
 1. Add an **HTTP** action in your Power Automate flow (or configure the **Shared State API Endpoint** in the Supervisor Modal) that sends a `POST` request to:
    ```text
-   https://api.github.com/repos/<org>/spl-machine-status/dispatches
+   https://api.github.com/repos/wrightwmax-sketch/Machine-status-reporting-/dispatches
    ```
 2. Include headers `Accept: application/vnd.github+json` and `Authorization: Bearer <GITHUB_PAT>` with body:
    ```json
@@ -96,7 +94,7 @@ To automatically commit status changes back to `data/status.json` in GitHub:
          "status": "DOWN",
          "category": "Broken Tooling / Blade / Insert",
          "team": "Buckeye Experimental Aeronautics (BExA)",
-         "reporter": "Brutus Buckeye (buckeye.1@osu.edu)",
+         "reporter": "Alex Smith (alex.smith@email.edu)",
          "notes": "Broken 1/4-20 tap in Bridgeport #2 vise",
          "updatedAt": "2026-10-20T19:30:00.000Z"
        }
@@ -110,11 +108,11 @@ To automatically commit status changes back to `data/status.json` in GitHub:
 ## 5. Printing & Laminating QR Code Placards
 
 1. Navigate to `/?view=qr` (or click **QR Placards (24)** in the top navigation bar).
-2. Verify or override the **Base Production URL** (e.g., `https://osu-car.github.io/spl-machine-status/`) and click **Update QR Links**.
+2. Verify or override the **Base Production URL** (e.g., `https://wrightwmax-sketch.github.io/Machine-status-reporting-/`) and click **Update QR Links**.
 3. Click **🖨️ Print All 24 Placards**.
 4. In the browser print dialog:
    - Set **Layout** to **Portrait**.
-   - Enable **Background graphics** so the OSU Scarlet header and high-contrast industrial footer bars print cleanly.
+   - Enable **Background graphics** so the header and high-contrast industrial footer bars print cleanly.
 5. Laminate the printed sheets using 5-mil thermal pouches and mount each placard directly on its corresponding workstation.
 
 ---

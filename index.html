@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SPL Machine Status — OSU Center for Automotive Research</title>
-  <meta name="description" content="Digital Machine Fault & Status Reporting System for The Ohio State University Center for Automotive Research (CAR) Student Projects Laboratory." />
+  <title>Student Projects Building — Machine Status</title>
+  <meta name="description" content="Digital Machine Fault & Status Reporting System for the Student Projects Building." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
@@ -19,12 +19,12 @@
     <div class="header-inner">
       <a href="./" class="brand-link" id="brand-home-link" aria-label="Return to Live Shop Status Board">
         <div class="brand-badge">
-          <span class="brand-osu">OSU</span>
-          <span class="brand-car">CAR</span>
+          <span class="brand-osu">SPB</span>
+          <span class="brand-car">SHOP</span>
         </div>
         <div class="brand-text">
-          <span class="brand-eyebrow">THE OHIO STATE UNIVERSITY • CENTER FOR AUTOMOTIVE RESEARCH</span>
-          <h1 class="brand-title">SPL Machine Fault &amp; Status System</h1>
+          <span class="brand-eyebrow">STUDENT PROJECTS BUILDING</span>
+          <h1 class="brand-title">Student Projects Building</h1>
         </div>
       </a>
 
@@ -71,7 +71,7 @@
         <div class="kpi-card kpi-total" data-status-filter="ALL">
           <div class="kpi-header">
             <span class="kpi-label">TOTAL TRACKED MACHINES</span>
-            <span class="kpi-badge-neutral">SPL SHOP</span>
+            <span class="kpi-badge-neutral">SPB SHOP</span>
           </div>
           <div class="kpi-value-row">
             <span class="kpi-number" id="kpi-total">24</span>
@@ -200,7 +200,7 @@
         <div class="updater-card">
           <div class="updater-card-header">
             <h2 id="updater-heading" class="updater-title">Log Machine Fault or Status Change</h2>
-            <p class="updater-subtitle">Submissions immediately update the SPL Shop Status Board and dispatch an Adaptive Card alert to Microsoft Teams.</p>
+            <p class="updater-subtitle">Submissions immediately update the Student Projects Building Status Board and dispatch an Adaptive Card alert to Microsoft Teams.</p>
           </div>
 
           <form id="status-update-form" novalidate>
@@ -260,7 +260,7 @@
             <div class="form-group">
               <label for="student-team" class="form-label">Student Team Affiliation <span class="req">*</span></label>
               <select id="student-team" name="team" class="form-select" required>
-                <option value="" disabled selected>Select your CAR student team...</option>
+                <option value="" disabled selected>Select your student team...</option>
                 <option value="Baja SAE">Baja SAE</option>
                 <option value="Formula Buckeyes">Formula Buckeyes</option>
                 <option value="Buckeye Current">Buckeye Current</option>
@@ -271,15 +271,15 @@
               </select>
             </div>
 
-            <!-- 5. REPORTER NAME & OSU EMAIL -->
+            <!-- 5. REPORTER NAME & EMAIL -->
             <div class="form-group">
-              <label for="reporter-input" class="form-label">Reporter Name &amp; OSU Email <span class="req">*</span></label>
+              <label for="reporter-input" class="form-label">Reporter Name &amp; Email <span class="req">*</span></label>
               <input
                 type="text"
                 id="reporter-input"
                 name="reporter"
                 class="form-input"
-                placeholder="e.g., Brutus Buckeye (buckeye.1@osu.edu)"
+                placeholder="e.g., Alex Smith (alex.smith@email.edu)"
                 required
               />
             </div>
@@ -417,7 +417,7 @@
 
   <footer class="app-footer no-print">
     <div class="footer-inner">
-      <span><strong>The Ohio State University</strong> • Center for Automotive Research (CAR) • Student Projects Laboratory (SPL)</span>
+      <span><strong>Student Projects Building</strong> • Machine Fault &amp; Status Reporting System</span>
       <span class="footer-meta">24 Tracked Workstations • QR Mobile Fault Dispatch</span>
     </div>
   </footer>

@@ -1,7 +1,5 @@
 /**
- * SPL Machine Fault & Status Reporting System
- * The Ohio State University — Center for Automotive Research (CAR)
- * Student Projects Laboratory (SPL)
+ * Student Projects Building — Machine Fault & Status Reporting System
  */
 
 (function () {
@@ -514,7 +512,7 @@
         return `
           <div class="qr-placard" data-placard-id="${escapeHtml(machine.id)}">
             <div class="placard-header">
-              OSU CENTER FOR AUTOMOTIVE RESEARCH — STUDENT PROJECTS LAB
+              STUDENT PROJECTS BUILDING — MACHINE STATUS
             </div>
             <div class="placard-body">
               <div class="placard-asset-id">${escapeHtml(machine.id)}</div>
@@ -587,7 +585,7 @@
                 items: [
                   {
                     type: 'TextBlock',
-                    text: 'OSU CAR — STUDENT PROJECTS LAB MACHINE ALERT',
+                    text: 'STUDENT PROJECTS BUILDING — MACHINE ALERT',
                     weight: 'Bolder',
                     size: 'Small',
                     isSubtle: true
@@ -1100,7 +1098,7 @@
         const machine = getMachineById(machineId) || {
           id: machineId,
           name: machineId,
-          zone: 'SPL Shop'
+          zone: 'Student Projects Building'
         };
 
         // Fire async Teams Adaptive Card + optional state sync webhook
@@ -1212,7 +1210,7 @@
           category: 'Broken Tooling / Blade / Insert',
           team: 'Shop Staff / Lab Supervisor',
           reporter: 'Supervisor Webhook Test',
-          notes: 'Diagnostic Adaptive Card v1.4 webhook test from OSU CAR SPL Machine Status System.',
+          notes: 'Diagnostic Adaptive Card v1.4 webhook test from Student Projects Building Machine Status System.',
           updatedAt: new Date().toISOString()
         };
         await dispatchExternalWebhooks(sampleMachine, sampleStatus);
