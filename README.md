@@ -45,10 +45,11 @@ spl-machine-status/
 | `FAB-02` | Tube & Pipe Notcher | Fabrication & Prep |
 | `FAB-03` | Bench Grinders | Abrasive & Finishing |
 | `FAB-04` | Media Blast Cabinet (Sand Blaster) | Abrasive & Finishing |
-| `WLD-01` | TIG Welder Station | Welding & Thermal |
-| `WLD-02` | MIG Welder Station | Welding & Thermal |
-| `WLD-03` | CNC Plasma Table | Welding & Thermal |
-| `WLD-04` | Hand Plasma Cutter | Welding & Thermal |
+| `WLD-01` | TIG Welder #1 | Welding & Thermal |
+| `WLD-02` | TIG Welder #2 | Welding & Thermal |
+| `WLD-03` | MIG Welder Station | Welding & Thermal |
+| `WLD-04` | CNC Plasma Table | Welding & Thermal |
+| `WLD-05` | Hand Plasma Cutter | Welding & Thermal |
 | `WJT-01` | WAZER Desktop Waterjet | Waterjet Cutting |
 | `GEN-01` | Briggs & Stratton 6500W Generator | Mobile Power / Support |
 | `GEN-02` | Briggs & Stratton 5500W Generator | Mobile Power / Support |

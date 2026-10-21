@@ -34,10 +34,11 @@
     { id: 'FAB-02', name: 'Tube & Pipe Notcher', zone: 'Fabrication & Prep', sourceSheet: 'Tube Notcher ' },
     { id: 'FAB-03', name: 'Bench Grinders', zone: 'Abrasive & Finishing', sourceSheet: 'Bench Grinders' },
     { id: 'FAB-04', name: 'Media Blast Cabinet (Sand Blaster)', zone: 'Abrasive & Finishing', sourceSheet: 'Sand Blaster ' },
-    { id: 'WLD-01', name: 'TIG Welder Station', zone: 'Welding & Thermal', sourceSheet: 'TIG Welder' },
-    { id: 'WLD-02', name: 'MIG Welder Station', zone: 'Welding & Thermal', sourceSheet: 'MIG Welder' },
-    { id: 'WLD-03', name: 'CNC Plasma Table', zone: 'Welding & Thermal', sourceSheet: 'Plazma Table ' },
-    { id: 'WLD-04', name: 'Hand Plasma Cutter', zone: 'Welding & Thermal', sourceSheet: 'Hand Plasma ' },
+    { id: 'WLD-01', name: 'TIG Welder #1', zone: 'Welding & Thermal', sourceSheet: 'TIG Welder' },
+    { id: 'WLD-02', name: 'TIG Welder #2', zone: 'Welding & Thermal', sourceSheet: 'TIG Welder' },
+    { id: 'WLD-03', name: 'MIG Welder Station', zone: 'Welding & Thermal', sourceSheet: 'MIG Welder' },
+    { id: 'WLD-04', name: 'CNC Plasma Table', zone: 'Welding & Thermal', sourceSheet: 'Plazma Table ' },
+    { id: 'WLD-05', name: 'Hand Plasma Cutter', zone: 'Welding & Thermal', sourceSheet: 'Hand Plasma ' },
     { id: 'WJT-01', name: 'WAZER Desktop Waterjet', zone: 'Waterjet Cutting', sourceSheet: 'Wazer Water Jet ' },
     { id: 'GEN-01', name: 'Briggs & Stratton 6500W Generator', zone: 'Mobile Power / Support', sourceSheet: 'Brigs Gen 6500 watt' },
     { id: 'GEN-02', name: 'Briggs & Stratton 5500W Generator', zone: 'Mobile Power / Support', sourceSheet: 'Biggs 5500 gen ' }
@@ -519,7 +520,6 @@
               <div class="placard-machine-name">${escapeHtml(machine.name)}</div>
               <div class="placard-zone">${escapeHtml(machine.zone)}</div>
               <div class="placard-qr-box" id="qr-box-${escapeHtml(machine.id)}" data-qr-url="${escapeHtml(targetUrl)}"></div>
-              <div class="placard-url-caption">${escapeHtml(targetUrl)}</div>
             </div>
             <div class="placard-footer">
               SCAN TO LOG BROKEN TOOLING, FAULT, OR UPDATE MACHINE STATUS
@@ -851,11 +851,11 @@
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    showToast('Exported 24 Workstation Status Ledger to CSV');
+    showToast(`Exported ${state.machines.length} Workstation Status Ledger to CSV`);
   }
 
   /**
-   * Reset all 24 machines to OPERATIONAL
+   * Reset all machines to OPERATIONAL
    */
   function resetAllToOperational() {
     localStorage.removeItem(STORAGE_KEYS.STATUS_OVERRIDES);
@@ -867,7 +867,7 @@
     renderKpiRibbon();
     renderEquipmentGrid();
     renderUpdaterStatusBanner(state.selectedMachineId);
-    showToast('All 24 Machines Reset to OPERATIONAL');
+    showToast(`All ${state.machines.length} Machines Reset to OPERATIONAL`);
   }
 
   /**
@@ -1123,7 +1123,7 @@
           localStorage.setItem(STORAGE_KEYS.QR_BASE_URL, qrBaseInput.value.trim());
         }
         renderQrPlacards();
-        showToast('Updated All 24 QR Code Links');
+        showToast(`Updated All ${state.machines.length} QR Code Links`);
       });
     }
     if (qrBaseInput) {

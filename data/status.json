@@ -167,6 +167,14 @@
     "notes": "Machine operational and cleared for student use.",
     "updatedAt": "2026-10-20T12:00:00.000Z"
   },
+  "WLD-05": {
+    "status": "OPERATIONAL",
+    "category": "Cleared / Ready",
+    "team": "Shop Staff",
+    "reporter": "System Init",
+    "notes": "Machine operational and cleared for student use.",
+    "updatedAt": "2026-10-20T12:00:00.000Z"
+  },
   "WJT-01": {
     "status": "OPERATIONAL",
     "category": "Cleared / Ready",
