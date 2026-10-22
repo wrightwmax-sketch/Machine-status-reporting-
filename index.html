@@ -497,7 +497,7 @@
           </div>
 
           <!-- ===============================================================
-               TAB 2: STANDARD OPERATING PROCEDURE (SOP)
+               TAB 2: STANDARD OPERATING PROCEDURE (SOP) — GOOGLE DRIVE PDF + QUICK REF
                =============================================================== -->
           <div id="modal-tab-sop" class="modal-tab-panel hidden space-y-5">
             <!-- Rotating Spindle / No Gloves Callout -->
@@ -508,6 +508,80 @@
                 <div class="text-xs text-red-100">
                   Strictly <strong>NO GLOVES</strong> while operating rotating spindles, chucks, blades, or abrasive belts/discs on this machine. Secure long hair, lanyards, and loose sleeves.
                 </div>
+              </div>
+            </div>
+
+            <!-- Google Drive PDF Document Viewer Container (SOP) -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <div class="text-[11px] font-mono uppercase tracking-wider text-emerald-400 font-bold">
+                    📄 OFFICIAL GOOGLE DRIVE SOP DOCUMENT VIEWER
+                  </div>
+                  <h3 id="sop-doc-title" class="text-sm sm:text-base font-extrabold text-white">
+                    Standard Operating Procedure (SOP)
+                  </h3>
+                  <div id="sop-doc-rev" class="text-[11px] font-mono text-slate-400">
+                    Rev. 2026-10 (March 2027 Standard)
+                  </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <a
+                    id="sop-open-drive-btn"
+                    href="https://drive.google.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="px-3.5 py-2 rounded-lg bg-crimson hover:bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 shadow transition"
+                  >
+                    <span>↗️</span>
+                    <span>Open Full Document in Google Drive</span>
+                  </a>
+                  <a
+                    id="sop-download-pdf-btn"
+                    href="https://drive.google.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs font-bold flex items-center gap-1.5 transition"
+                  >
+                    <span>🖨️</span>
+                    <span>Print / Download PDF</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Configurable Google Drive Sharing URL Bar -->
+              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
+                <input
+                  id="sop-drive-url-input"
+                  type="url"
+                  aria-label="Google Drive SOP Sharing Link"
+                  placeholder="Paste Google Drive link (https://drive.google.com/file/d/DOC_ID/view)..."
+                  class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-mono text-white"
+                />
+                <button
+                  id="btn-save-sop-drive-url"
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 border border-slate-700"
+                >
+                  Bind Drive SOP Link
+                </button>
+              </div>
+
+              <!-- Fluid Responsive 100% Width Google Drive Embed Container -->
+              <div class="drive-pdf-frame-shell min-h-[580px] sm:min-h-[640px] rounded-xl">
+                <div id="sop-iframe-spinner" class="drive-pdf-spinner-overlay">
+                  <div class="drive-spinner-ring" aria-hidden="true"></div>
+                  <div class="text-xs font-mono font-bold">Loading Official Google Drive SOP PDF Preview...</div>
+                  <div id="sop-embed-url-caption" class="text-[11px] font-mono text-slate-400 break-all"></div>
+                </div>
+                <iframe
+                  id="sop-drive-iframe"
+                  class="drive-pdf-iframe min-h-[580px] sm:min-h-[640px]"
+                  title="Official Standard Operating Procedure Google Drive PDF Preview"
+                  src="about:blank"
+                  allow="autoplay"
+                  loading="lazy"
+                ></iframe>
               </div>
             </div>
 
@@ -547,9 +621,83 @@
           </div>
 
           <!-- ===============================================================
-               TAB 3: LOCKOUT / TAGOUT (LOTO) ENERGY ISOLATION SPEC
+               TAB 3: LOCKOUT / TAGOUT (LOTO) — GOOGLE DRIVE PDF + ISOLATION SPEC
                =============================================================== -->
           <div id="modal-tab-loto" class="modal-tab-panel hidden space-y-5">
+            <!-- Google Drive PDF Document Viewer Container (LOTO) -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <div class="text-[11px] font-mono uppercase tracking-wider text-amber-400 font-bold">
+                    🔒 OFFICIAL GOOGLE DRIVE LOTO DOCUMENT VIEWER
+                  </div>
+                  <h3 id="loto-doc-title" class="text-sm sm:text-base font-extrabold text-white">
+                    Lockout / Tagout (LOTO) Energy Isolation Procedure
+                  </h3>
+                  <div id="loto-doc-rev" class="text-[11px] font-mono text-slate-400">
+                    Rev. 2026-10 (March 2027 Standard)
+                  </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <a
+                    id="loto-open-drive-btn"
+                    href="https://drive.google.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="px-3.5 py-2 rounded-lg bg-crimson hover:bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 shadow transition"
+                  >
+                    <span>↗️</span>
+                    <span>Open Full Document in Google Drive</span>
+                  </a>
+                  <a
+                    id="loto-download-pdf-btn"
+                    href="https://drive.google.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs font-bold flex items-center gap-1.5 transition"
+                  >
+                    <span>🖨️</span>
+                    <span>Print / Download PDF</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Configurable Google Drive Sharing URL Bar -->
+              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
+                <input
+                  id="loto-drive-url-input"
+                  type="url"
+                  aria-label="Google Drive LOTO Sharing Link"
+                  placeholder="Paste Google Drive link (https://drive.google.com/file/d/DOC_ID/view)..."
+                  class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-mono text-white"
+                />
+                <button
+                  id="btn-save-loto-drive-url"
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 border border-slate-700"
+                >
+                  Bind Drive LOTO Link
+                </button>
+              </div>
+
+              <!-- Fluid Responsive 100% Width Google Drive Embed Container -->
+              <div class="drive-pdf-frame-shell min-h-[580px] sm:min-h-[640px] rounded-xl">
+                <div id="loto-iframe-spinner" class="drive-pdf-spinner-overlay">
+                  <div class="drive-spinner-ring" aria-hidden="true"></div>
+                  <div class="text-xs font-mono font-bold">Loading Official Google Drive LOTO PDF Preview...</div>
+                  <div id="loto-embed-url-caption" class="text-[11px] font-mono text-slate-400 break-all"></div>
+                </div>
+                <iframe
+                  id="loto-drive-iframe"
+                  class="drive-pdf-iframe min-h-[580px] sm:min-h-[640px]"
+                  title="Official Lockout Tagout Google Drive PDF Preview"
+                  src="about:blank"
+                  allow="autoplay"
+                  loading="lazy"
+                ></iframe>
+              </div>
+            </div>
+
             <!-- Authorized Personnel & Notification Banner -->
             <div class="bg-amber-950/40 border border-amber-500/40 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
               <div>

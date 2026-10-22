@@ -1,34 +1,34 @@
 /* ==========================================================================
    STUDENT PROJECTS LABORATORY (930 KINNEAR RD) — OPERATIONS, SOP/LOTO & PM PORTAL
-   Dual-Theme (High-Contrast Day Mode + Low-Glare Night Mode) & 2"x3" QR Decals
+   Dual-Theme (High-Contrast Day Mode + Industrial Obsidian Night Mode) & 2"x3" Decals
    ========================================================================== */
 
 :root,
 html[data-theme="dark"] {
-  --crimson: #BB0000;
-  --crimson-hover: #D90429;
-  --shop-bg: #0b0e14;
-  --shop-surface: #131822;
-  --shop-elevated: #1a2130;
-  --shop-input: #0f141d;
-  --shop-border: #1e293b;
-  --shop-border-strong: #334155;
-  --text-main: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --shadow-tile: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+  --crimson: #DC2626;
+  --crimson-hover: #EF4444;
+  --shop-bg: #0B0F19;
+  --shop-surface: #111827;
+  --shop-elevated: #1E293B;
+  --shop-input: #0F172A;
+  --shop-border: #334155;
+  --shop-border-strong: #475569;
+  --text-main: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --shadow-tile: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
 }
 
 html[data-theme="light"] {
-  --crimson: #BB0000;
+  --crimson: #BA0C2F;
   --crimson-hover: #990000;
-  --shop-bg: #f1f5f9;
-  --shop-surface: #ffffff;
-  --shop-elevated: #f8fafc;
-  --shop-input: #ffffff;
-  --shop-border: #cbd5e1;
-  --shop-border-strong: #94a3b8;
-  --text-main: #0f172a;
+  --shop-bg: #F8FAFC;
+  --shop-surface: #FFFFFF;
+  --shop-elevated: #F1F5F9;
+  --shop-input: #FFFFFF;
+  --shop-border: #CBD5E1;
+  --shop-border-strong: #94A3B8;
+  --text-main: #0F172A;
   --text-secondary: #334155;
   --text-muted: #475569;
   --shadow-tile: 0 6px 18px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.05);
@@ -44,11 +44,12 @@ body {
 /* Light-mode overrides for utility classes used across index.html and qr-sheets.html */
 html[data-theme="light"] header,
 html[data-theme="light"] footer {
-  background-color: rgba(255, 255, 255, 0.95) !important;
+  background-color: rgba(255, 255, 255, 0.96) !important;
   border-color: var(--shop-border) !important;
 }
 
 html[data-theme="light"] .bg-shopSurface,
+html[data-theme="light"] .bg-slate-900\/90,
 html[data-theme="light"] .bg-slate-900\/80,
 html[data-theme="light"] .bg-slate-900\/70,
 html[data-theme="light"] .bg-slate-900\/60,
@@ -61,12 +62,15 @@ html[data-theme="light"] .bg-slate-950\/60 {
 }
 
 html[data-theme="light"] .bg-shopElevated,
+html[data-theme="light"] .bg-slate-900,
+html[data-theme="light"] .bg-slate-800,
 html[data-theme="light"] .bg-slate-900\/50,
 html[data-theme="light"] .bg-slate-900\/40 {
   background-color: var(--shop-elevated) !important;
 }
 
 html[data-theme="light"] .border-slate-800,
+html[data-theme="light"] .border-slate-800\/90,
 html[data-theme="light"] .border-slate-800\/80,
 html[data-theme="light"] .border-slate-700 {
   border-color: var(--shop-border) !important;
@@ -75,7 +79,7 @@ html[data-theme="light"] .border-slate-700 {
 html[data-theme="light"] .text-white,
 html[data-theme="light"] .text-slate-100,
 html[data-theme="light"] .text-slate-200 {
-  color: #0f172a !important;
+  color: #0F172A !important;
 }
 
 html[data-theme="light"] .text-slate-300,
@@ -95,26 +99,28 @@ html[data-theme="light"] .text-emerald-300 {
 html[data-theme="light"] .text-amber-400,
 html[data-theme="light"] .text-amber-300,
 html[data-theme="light"] .text-amber-200 {
-  color: #b45309 !important;
+  color: #B45309 !important;
 }
 
 html[data-theme="light"] .text-red-400,
 html[data-theme="light"] .text-red-300,
 html[data-theme="light"] .text-red-200,
 html[data-theme="light"] .text-red-100 {
-  color: #b91c1c !important;
+  color: #BA0C2F !important;
 }
 
-/* Keep solid crimson buttons white-text in both themes */
+/* Keep solid crimson & emerald buttons white-text in both themes */
 html[data-theme="light"] .bg-crimson,
 html[data-theme="light"] .bg-crimson *,
+html[data-theme="light"] .bg-emerald-600,
+html[data-theme="light"] .bg-emerald-600 *,
 html[data-theme="light"] .portal-nav-btn.active,
 html[data-theme="light"] .portal-nav-btn.active *,
 html[data-theme="light"] .qr-decal-banner,
 html[data-theme="light"] .qr-decal-banner *,
 html[data-theme="light"] .qr-decal-footer,
 html[data-theme="light"] .qr-decal-footer * {
-  color: #ffffff !important;
+  color: #FFFFFF !important;
 }
 
 /* Theme Toggle Button (#theme-toggle-btn) */
@@ -128,7 +134,7 @@ html[data-theme="light"] .qr-decal-footer * {
   font-weight: 800;
   background-color: var(--shop-surface);
   color: var(--text-main);
-  border: 1.5px solid var(--shop-border-strong);
+  border: 1.5px solid var(--shop-border);
   cursor: pointer;
   transition: all 0.16s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
@@ -145,15 +151,15 @@ html[data-theme="light"] .qr-decal-footer * {
   font-weight: 800;
   padding: 0.12rem 0.42rem;
   border-radius: 9999px;
-  background-color: rgba(187, 0, 0, 0.18);
-  color: #f87171;
+  background-color: rgba(220, 38, 38, 0.18);
+  color: #F87171;
   border: 1px solid rgba(239, 68, 68, 0.4);
 }
 
 html[data-theme="light"] .theme-status-pill {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border-color: #f87171;
+  background-color: #FEE2E2;
+  color: #BA0C2F;
+  border-color: #F87171;
 }
 
 /* Navigation Buttons */
@@ -167,7 +173,7 @@ html[data-theme="light"] .theme-status-pill {
   font-weight: 700;
   background-color: var(--shop-surface);
   color: var(--text-secondary);
-  border: 1px solid var(--shop-border-strong);
+  border: 1px solid var(--shop-border);
   transition: all 0.16s ease;
   cursor: pointer;
   text-decoration: none;
@@ -181,9 +187,9 @@ html[data-theme="light"] .theme-status-pill {
 
 .portal-nav-btn.active {
   background-color: var(--crimson);
-  color: #ffffff;
-  border-color: #ef4444;
-  box-shadow: 0 4px 14px rgba(187, 0, 0, 0.35);
+  color: #FFFFFF;
+  border-color: var(--crimson);
+  box-shadow: 0 4px 14px rgba(186, 12, 47, 0.35);
 }
 
 /* Filter Pills */
@@ -209,7 +215,7 @@ html[data-theme="light"] .theme-status-pill {
 
 .status-filter-pill.active,
 .zone-filter-pill.active {
-  background-color: rgba(187, 0, 0, 0.22);
+  background-color: rgba(220, 38, 38, 0.22);
   color: var(--text-main);
   border-color: var(--crimson);
   font-weight: 800;
@@ -217,9 +223,9 @@ html[data-theme="light"] .theme-status-pill {
 
 html[data-theme="light"] .status-filter-pill.active,
 html[data-theme="light"] .zone-filter-pill.active {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border-color: #BB0000;
+  background-color: #FEE2E2;
+  color: #BA0C2F;
+  border-color: #BA0C2F;
 }
 
 /* Status Badges */
@@ -238,38 +244,38 @@ html[data-theme="light"] .zone-filter-pill.active {
 
 .status-badge-operational {
   background-color: rgba(16, 185, 129, 0.14);
-  color: #34d399;
+  color: #34D399;
   border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
 html[data-theme="light"] .status-badge-operational {
-  background-color: #d1fae5;
-  color: #065f46;
+  background-color: #D1FAE5;
+  color: #065F46;
   border-color: #059669;
 }
 
 .status-badge-due {
   background-color: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
+  color: #FBBF24;
   border: 1px solid rgba(245, 158, 11, 0.45);
 }
 
 html[data-theme="light"] .status-badge-due {
-  background-color: #fef3c7;
-  color: #92400e;
-  border-color: #d97706;
+  background-color: #FEF3C7;
+  color: #92400E;
+  border-color: #D97706;
 }
 
 .status-badge-down {
   background-color: rgba(239, 68, 68, 0.18);
-  color: #f87171;
+  color: #F87171;
   border: 1px solid rgba(239, 68, 68, 0.5);
 }
 
 html[data-theme="light"] .status-badge-down {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border-color: #dc2626;
+  background-color: #FEE2E2;
+  color: #BA0C2F;
+  border-color: #DC2626;
 }
 
 /* Equipment Matrix Asset Tiles */
@@ -294,20 +300,20 @@ html[data-theme="light"] .status-badge-down {
   left: 0;
   right: 0;
   height: 4px;
-  background-color: #10b981;
+  background-color: #10B981;
 }
 
 .asset-tile.tile-due::before {
-  background-color: #f59e0b;
+  background-color: #F59E0B;
 }
 
 .asset-tile.tile-down::before {
-  background-color: #ef4444;
+  background-color: #EF4444;
 }
 
 .asset-tile:hover {
   transform: translateY(-2px);
-  border-color: var(--shop-border-strong);
+  border-color: var(--crimson);
 }
 
 /* Quick Tab Action Buttons on Asset Tiles */
@@ -353,13 +359,70 @@ html[data-theme="light"] .status-badge-down {
 .modal-tab-btn.active {
   color: var(--text-main);
   border-bottom-color: var(--crimson);
-  background-color: rgba(187, 0, 0, 0.14);
+  background-color: rgba(186, 12, 47, 0.14);
 }
 
 /* 3-State Fault Severity Selector */
 .fault-severity-option input:checked + .severity-tile {
   outline: 2px solid var(--text-main);
-  box-shadow: 0 0 0 3px rgba(187, 0, 0, 0.35);
+  box-shadow: 0 0 0 3px rgba(186, 12, 47, 0.35);
+}
+
+/* Google Drive Embedded PDF Viewer Container & Spinner */
+.drive-pdf-frame-shell {
+  position: relative;
+  width: 100%;
+  min-height: 580px;
+  border-radius: 0.85rem;
+  border: 1.5px solid var(--shop-border);
+  background-color: var(--shop-bg);
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .drive-pdf-frame-shell {
+    min-height: 640px;
+  }
+}
+
+.drive-pdf-iframe {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 640px;
+  border: 0;
+  display: block;
+  background: transparent;
+}
+
+.drive-pdf-spinner-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+  background-color: var(--shop-bg);
+  color: var(--text-secondary);
+}
+
+.drive-spinner-ring {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  border: 3px solid var(--shop-border);
+  border-top-color: var(--crimson);
+  animation: splSpin 0.85s linear infinite;
+}
+
+@keyframes splSpin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ==========================================================================
@@ -373,9 +436,9 @@ html[data-theme="light"] .status-badge-down {
 }
 
 .qr-decal-tile {
-  background-color: #ffffff;
-  color: #0f172a;
-  border: 2px solid #0f172a;
+  background-color: #FFFFFF;
+  color: #0F172A;
+  border: 2px solid #0F172A;
   border-radius: 0.5rem;
   overflow: hidden;
   display: flex;
@@ -385,8 +448,8 @@ html[data-theme="light"] .status-badge-down {
 }
 
 .qr-decal-banner {
-  background-color: #BB0000;
-  color: #ffffff;
+  background-color: #BA0C2F;
+  color: #FFFFFF;
   padding: 0.35rem 0.6rem;
   display: flex;
   align-items: center;
@@ -409,10 +472,10 @@ html[data-theme="light"] .status-badge-down {
   width: 108px;
   height: 108px;
   flex-shrink: 0;
-  border: 1.5px solid #0f172a;
+  border: 1.5px solid #0F172A;
   border-radius: 0.35rem;
   padding: 4px;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -435,7 +498,7 @@ html[data-theme="light"] .status-badge-down {
   font-family: 'JetBrains Mono', monospace;
   font-size: 1.15rem;
   font-weight: 900;
-  color: #0f172a;
+  color: #0F172A;
   line-height: 1.1;
 }
 
@@ -450,7 +513,7 @@ html[data-theme="light"] .status-badge-down {
 .qr-decal-name {
   font-size: 0.78rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #0F172A;
   line-height: 1.25;
   margin-bottom: 0.25rem;
 }
@@ -463,8 +526,8 @@ html[data-theme="light"] .status-badge-down {
 }
 
 .qr-decal-footer {
-  background-color: #0f172a;
-  color: #ffffff;
+  background-color: #0F172A;
+  color: #FFFFFF;
   padding: 0.35rem 0.55rem;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.62rem;
@@ -481,7 +544,7 @@ html[data-theme="light"] .status-badge-down {
 
   html,
   body {
-    background: #ffffff !important;
+    background: #FFFFFF !important;
     color: #000000 !important;
   }
 
@@ -517,15 +580,15 @@ html[data-theme="light"] .status-badge-down {
   }
 
   .qr-decal-banner {
-    background-color: #BB0000 !important;
-    color: #ffffff !important;
+    background-color: #BA0C2F !important;
+    color: #FFFFFF !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
   .qr-decal-footer {
-    background-color: #0f172a !important;
-    color: #ffffff !important;
+    background-color: #0F172A !important;
+    color: #FFFFFF !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }

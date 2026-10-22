@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "facility": "Student Projects Laboratory — 930 Kinnear Rd",
+    "facility": "Student Projects Laboratory \u2014 930 Kinnear Rd",
     "supervisor": "Max Wright (Sr. Instructional Lab Supervisor)",
     "notificationChannel": "Max Wright - Teams / Text Message",
     "milestoneTargetDate": "2027-03-31",
@@ -69,7 +69,7 @@
           "Never reach around a rotating cutter or adjust workpiece while spindle is turning."
         ],
         "afterUse": [
-          "Return machine to showroom condition (brush chips with shop brush—NEVER use compressed air).",
+          "Return machine to showroom condition (brush chips with shop brush\u2014NEVER use compressed air).",
           "Home and wipe down table, ways, and vise.",
           "Remove collets/tooling from spindle and return to designated tool rack."
         ],
@@ -85,11 +85,32 @@
           "Stone table T-slots to remove burrs or dings"
         ],
         "metrics": [
-          { "key": "x_backlash", "label": "X-Axis Backlash (in)", "placeholder": "0.002", "unit": "in" },
-          { "key": "y_backlash", "label": "Y-Axis Backlash (in)", "placeholder": "0.002", "unit": "in" },
-          { "key": "way_lube_level", "label": "One-Shot Lube Level (%)", "placeholder": "100", "unit": "%" }
+          {
+            "key": "x_backlash",
+            "label": "X-Axis Backlash (in)",
+            "placeholder": "0.002",
+            "unit": "in"
+          },
+          {
+            "key": "y_backlash",
+            "label": "Y-Axis Backlash (in)",
+            "placeholder": "0.002",
+            "unit": "in"
+          },
+          {
+            "key": "way_lube_level",
+            "label": "One-Shot Lube Level (%)",
+            "placeholder": "100",
+            "unit": "%"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_MAC01_Bridgeport_Mill_1/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_MAC01_Bridgeport_Mill_1/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - MAC-01: Bridgeport Series I Manual Knee Mill #1",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - MAC-01: Bridgeport Series I Manual Knee Mill #1",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "MAC-02",
@@ -141,7 +162,7 @@
           "Never reach around a rotating cutter or adjust workpiece while spindle is turning."
         ],
         "afterUse": [
-          "Return machine to showroom condition (brush chips with shop brush—NEVER use compressed air).",
+          "Return machine to showroom condition (brush chips with shop brush\u2014NEVER use compressed air).",
           "Home and wipe down table, ways, and vise.",
           "Remove collets/tooling from spindle and return to designated tool rack."
         ],
@@ -157,11 +178,32 @@
           "Stone table T-slots to remove burrs or dings"
         ],
         "metrics": [
-          { "key": "x_backlash", "label": "X-Axis Backlash (in)", "placeholder": "0.002", "unit": "in" },
-          { "key": "y_backlash", "label": "Y-Axis Backlash (in)", "placeholder": "0.003", "unit": "in" },
-          { "key": "way_lube_level", "label": "One-Shot Lube Level (%)", "placeholder": "100", "unit": "%" }
+          {
+            "key": "x_backlash",
+            "label": "X-Axis Backlash (in)",
+            "placeholder": "0.002",
+            "unit": "in"
+          },
+          {
+            "key": "y_backlash",
+            "label": "Y-Axis Backlash (in)",
+            "placeholder": "0.003",
+            "unit": "in"
+          },
+          {
+            "key": "way_lube_level",
+            "label": "One-Shot Lube Level (%)",
+            "placeholder": "100",
+            "unit": "%"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_MAC02_Bridgeport_Mill_2/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_MAC02_Bridgeport_Mill_2/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - MAC-02: Bridgeport Series I Manual Knee Mill #2",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - MAC-02: Bridgeport Series I Manual Knee Mill #2",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "MAC-03",
@@ -213,7 +255,7 @@
           "Never reach around a rotating cutter or adjust workpiece while spindle is turning."
         ],
         "afterUse": [
-          "Return machine to showroom condition (brush chips with shop brush—NEVER use compressed air).",
+          "Return machine to showroom condition (brush chips with shop brush\u2014NEVER use compressed air).",
           "Home and wipe down table, ways, and vise.",
           "Remove collets/tooling from spindle and return to designated tool rack."
         ],
@@ -229,11 +271,32 @@
           "Stone table T-slots to remove burrs or dings"
         ],
         "metrics": [
-          { "key": "x_backlash", "label": "X-Axis Backlash (in)", "placeholder": "0.002", "unit": "in" },
-          { "key": "y_backlash", "label": "Y-Axis Backlash (in)", "placeholder": "0.002", "unit": "in" },
-          { "key": "way_lube_level", "label": "One-Shot Lube Level (%)", "placeholder": "100", "unit": "%" }
+          {
+            "key": "x_backlash",
+            "label": "X-Axis Backlash (in)",
+            "placeholder": "0.002",
+            "unit": "in"
+          },
+          {
+            "key": "y_backlash",
+            "label": "Y-Axis Backlash (in)",
+            "placeholder": "0.002",
+            "unit": "in"
+          },
+          {
+            "key": "way_lube_level",
+            "label": "One-Shot Lube Level (%)",
+            "placeholder": "100",
+            "unit": "%"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_MAC03_Bridgeport_Mill_3/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_MAC03_Bridgeport_Mill_3/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - MAC-03: Bridgeport Series I Manual Knee Mill #3",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - MAC-03: Bridgeport Series I Manual Knee Mill #3",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "MAC-04",
@@ -301,10 +364,26 @@
           "Test emergency foot brake & limit switch interlock"
         ],
         "metrics": [
-          { "key": "chuck_runout", "label": "Chuck Runout (in)", "placeholder": "0.0015", "unit": "in" },
-          { "key": "headstock_oil", "label": "Headstock Sight Glass", "placeholder": "Full / Clear", "unit": "status" }
+          {
+            "key": "chuck_runout",
+            "label": "Chuck Runout (in)",
+            "placeholder": "0.0015",
+            "unit": "in"
+          },
+          {
+            "key": "headstock_oil",
+            "label": "Headstock Sight Glass",
+            "placeholder": "Full / Clear",
+            "unit": "status"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_MAC04_Sharp_Manual_Lathe/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_MAC04_Sharp_Manual_Lathe/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - MAC-04: Sharp Manual Engine Lathe",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - MAC-04: Sharp Manual Engine Lathe",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "CNC-01",
@@ -366,16 +445,32 @@
         "checklist": [
           "Check way lube reservoir level & delivery pressure",
           "Inspect spindle taper condition & drawbar retention force",
-          "Refractometer coolant concentration check (Target: 8–10% Brix)",
+          "Refractometer coolant concentration check (Target: 8\u201310% Brix)",
           "Clean telescoping way covers & Side-Mount Tool Changer (SMTC) arm",
           "Clean electrical cabinet cooling filters",
           "Drain pneumatic water separator bowl"
         ],
         "metrics": [
-          { "key": "coolant_brix", "label": "Coolant Concentration (% Brix)", "placeholder": "9.0", "unit": "% Brix" },
-          { "key": "air_pressure", "label": "Pneumatic Supply Pressure (PSI)", "placeholder": "85", "unit": "PSI" }
+          {
+            "key": "coolant_brix",
+            "label": "Coolant Concentration (% Brix)",
+            "placeholder": "9.0",
+            "unit": "% Brix"
+          },
+          {
+            "key": "air_pressure",
+            "label": "Pneumatic Supply Pressure (PSI)",
+            "placeholder": "85",
+            "unit": "PSI"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_CNC01_KIA_3Axis_VMC/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_CNC01_KIA_3Axis_VMC/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - CNC-01: KIA 3-Axis CNC Vertical Machining Center",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - CNC-01: KIA 3-Axis CNC Vertical Machining Center",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "CNC-02",
@@ -440,18 +535,39 @@
       },
       "monthlyPm": {
         "checklist": [
-          "Refractometer coolant concentration (Target 8–10% Brix, TRIM MicroSol 585XT) & pH check",
+          "Refractometer coolant concentration (Target 8\u201310% Brix, TRIM MicroSol 585XT) & pH check",
           "Verify Haas way lube grease/oil level & pneumatic supply pressure (85+ PSI)",
           "Wipe 40-taper spindle & check drawbar retention force",
           "Clean chip auger trough & coolant strainer screens",
           "Clean vector drive cabinet air filters"
         ],
         "metrics": [
-          { "key": "coolant_brix", "label": "TRIM MicroSol 585XT (% Brix)", "placeholder": "9.2", "unit": "% Brix" },
-          { "key": "coolant_ph", "label": "Coolant pH", "placeholder": "9.1", "unit": "pH" },
-          { "key": "pneumatic_psi", "label": "Regulator Pressure (PSI)", "placeholder": "88", "unit": "PSI" }
+          {
+            "key": "coolant_brix",
+            "label": "TRIM MicroSol 585XT (% Brix)",
+            "placeholder": "9.2",
+            "unit": "% Brix"
+          },
+          {
+            "key": "coolant_ph",
+            "label": "Coolant pH",
+            "placeholder": "9.1",
+            "unit": "pH"
+          },
+          {
+            "key": "pneumatic_psi",
+            "label": "Regulator Pressure (PSI)",
+            "placeholder": "88",
+            "unit": "PSI"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_CNC02_Haas_VF2SS_VMC/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_CNC02_Haas_VF2SS_VMC/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - CNC-02: Haas VF-2SS CNC Vertical Machining Center",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - CNC-02: Haas VF-2SS CNC Vertical Machining Center",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "CNC-03",
@@ -514,17 +630,33 @@
       },
       "monthlyPm": {
         "checklist": [
-          "Check coolant concentration (Target: 8–10% Brix)",
+          "Check coolant concentration (Target: 8\u201310% Brix)",
           "Verify hydraulic chuck clamping pressure & way lube reservoir level",
           "Inspect turret indexing alignment & coolant seals",
           "Clean bedway wipers and chip conveyor",
           "Drain pneumatic air filter moisture trap"
         ],
         "metrics": [
-          { "key": "coolant_brix", "label": "Coolant Concentration (% Brix)", "placeholder": "8.8", "unit": "% Brix" },
-          { "key": "chuck_psi", "label": "Hydraulic Chuck Pressure (PSI)", "placeholder": "350", "unit": "PSI" }
+          {
+            "key": "coolant_brix",
+            "label": "Coolant Concentration (% Brix)",
+            "placeholder": "8.8",
+            "unit": "% Brix"
+          },
+          {
+            "key": "chuck_psi",
+            "label": "Hydraulic Chuck Pressure (PSI)",
+            "placeholder": "350",
+            "unit": "PSI"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_CNC03_Hurco_Turning_Ctr/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_CNC03_Hurco_Turning_Ctr/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - CNC-03: Hurco CNC Turning Center / Lathe",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - CNC-03: Hurco CNC Turning Center / Lathe",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "WLD-01",
@@ -562,7 +694,7 @@
       "sop": {
         "noGlovesWarning": false,
         "ppe": [
-          "ANSI Z87.1 Safety Glasses Under Shade 10–13 Auto-Darkening Helmet",
+          "ANSI Z87.1 Safety Glasses Under Shade 10\u201313 Auto-Darkening Helmet",
           "Dry Hole-Free Leather TIG Gloves",
           "Flame-Resistant (FR) Cotton/Leather Apparel",
           "Active Fume Extraction Arm Positioned Within 12\""
@@ -575,7 +707,7 @@
         "beforeUse": [
           "Inspect torch collet, gas lens, ceramic cup, and ground tungsten electrode.",
           "Verify work lead (ground clamp) is securely clamped to clean bare metal.",
-          "Turn on Argon cylinder valve slowly and set flow rate (15–25 CFH)."
+          "Turn on Argon cylinder valve slowly and set flow rate (15\u201325 CFH)."
         ],
         "duringUse": [
           "Keep welding curtains closed to protect bystanders from arc flash.",
@@ -597,10 +729,26 @@
           "Check work lead clamp & terminal lug tightness"
         ],
         "metrics": [
-          { "key": "argon_psi", "label": "Cylinder Tank Pressure (PSI)", "placeholder": "1800", "unit": "PSI" },
-          { "key": "gas_flow_cfh", "label": "Regulator Flow Setting (CFH)", "placeholder": "20", "unit": "CFH" }
+          {
+            "key": "argon_psi",
+            "label": "Cylinder Tank Pressure (PSI)",
+            "placeholder": "1800",
+            "unit": "PSI"
+          },
+          {
+            "key": "gas_flow_cfh",
+            "label": "Regulator Flow Setting (CFH)",
+            "placeholder": "20",
+            "unit": "CFH"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_WLD01_Lincoln_TIG_275_1/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_WLD01_Lincoln_TIG_275_1/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - WLD-01: Lincoln Precision TIG 275 Welder #1",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - WLD-01: Lincoln Precision TIG 275 Welder #1",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "WLD-02",
@@ -638,7 +786,7 @@
       "sop": {
         "noGlovesWarning": false,
         "ppe": [
-          "ANSI Z87.1 Safety Glasses Under Shade 10–13 Auto-Darkening Helmet",
+          "ANSI Z87.1 Safety Glasses Under Shade 10\u201313 Auto-Darkening Helmet",
           "Dry Hole-Free Leather TIG Gloves",
           "Flame-Resistant (FR) Cotton/Leather Apparel",
           "Active Fume Extraction Arm Positioned Within 12\""
@@ -651,7 +799,7 @@
         "beforeUse": [
           "Inspect torch collet, gas lens, ceramic cup, and ground tungsten electrode.",
           "Verify work lead (ground clamp) is securely clamped to clean bare metal.",
-          "Turn on Argon cylinder valve slowly and set flow rate (15–25 CFH)."
+          "Turn on Argon cylinder valve slowly and set flow rate (15\u201325 CFH)."
         ],
         "duringUse": [
           "Keep welding curtains closed to protect bystanders from arc flash.",
@@ -673,10 +821,26 @@
           "Check work lead clamp & terminal lug tightness"
         ],
         "metrics": [
-          { "key": "argon_psi", "label": "Cylinder Tank Pressure (PSI)", "placeholder": "1900", "unit": "PSI" },
-          { "key": "gas_flow_cfh", "label": "Regulator Flow Setting (CFH)", "placeholder": "20", "unit": "CFH" }
+          {
+            "key": "argon_psi",
+            "label": "Cylinder Tank Pressure (PSI)",
+            "placeholder": "1900",
+            "unit": "PSI"
+          },
+          {
+            "key": "gas_flow_cfh",
+            "label": "Regulator Flow Setting (CFH)",
+            "placeholder": "20",
+            "unit": "CFH"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_WLD02_Lincoln_MIG_255C/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_WLD02_Lincoln_MIG_255C/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - WLD-02: Lincoln Precision TIG 275 Welder #2",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - WLD-02: Lincoln Precision TIG 275 Welder #2",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "WLD-03",
@@ -714,7 +878,7 @@
       "sop": {
         "noGlovesWarning": false,
         "ppe": [
-          "Shade 10–13 Welding Helmet + ANSI Z87.1 Safety Goggles",
+          "Shade 10\u201313 Welding Helmet + ANSI Z87.1 Safety Goggles",
           "Dry Heavy Leather MIG Gloves",
           "Flame-Resistant (FR) Clothing (No Open Pockets or Cuffs)",
           "Fume Extraction Active"
@@ -727,12 +891,12 @@
         "beforeUse": [
           "Check wire drive roll tension and liner alignment.",
           "Verify DC+ polarity for solid wire with gas (or DC- for flux-core).",
-          "Open C25 gas cylinder slowly and set gas flow to 25–35 CFH."
+          "Open C25 gas cylinder slowly and set gas flow to 25\u201335 CFH."
         ],
         "duringUse": [
           "Follow the 4-inch hand clearance rule from weld zone.",
-          "Maintain 1/4\"–3/8\" wire stick-out.",
-          "Respect 40% duty cycle at 250A (if thermal overload trips, let cooling fan run at idle—do not cycle power)."
+          "Maintain 1/4\"\u20133/8\" wire stick-out.",
+          "Respect 40% duty cycle at 250A (if thermal overload trips, let cooling fan run at idle\u2014do not cycle power)."
         ],
         "afterUse": [
           "Shut power switch OFF, close gas bottle valve tightly, pull trigger to purge gas line, and coil leads on hangers."
@@ -748,10 +912,26 @@
           "Check ground clamp cable insulation and lug torque"
         ],
         "metrics": [
-          { "key": "c25_tank_psi", "label": "C25 Cylinder Pressure (PSI)", "placeholder": "1650", "unit": "PSI" },
-          { "key": "flow_cfh", "label": "Shielding Gas Flow (CFH)", "placeholder": "30", "unit": "CFH" }
+          {
+            "key": "c25_tank_psi",
+            "label": "C25 Cylinder Pressure (PSI)",
+            "placeholder": "1650",
+            "unit": "PSI"
+          },
+          {
+            "key": "flow_cfh",
+            "label": "Shielding Gas Flow (CFH)",
+            "placeholder": "30",
+            "unit": "CFH"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_WLD03_CNC_Plasma_Table/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_WLD03_CNC_Plasma_Table/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - WLD-03: Lincoln Power MIG 255C Welder",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - WLD-03: Lincoln Power MIG 255C Welder",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "WLD-04",
@@ -789,7 +969,7 @@
       "sop": {
         "noGlovesWarning": false,
         "ppe": [
-          "Shade 5–8 Plasma Face Shield / Cutting Glasses",
+          "Shade 5\u20138 Plasma Face Shield / Cutting Glasses",
           "Leather Welding Gloves & FR Jacket",
           "Hearing Protection",
           "Fume / Water Table Downdraft Extraction Active"
@@ -802,7 +982,7 @@
         "beforeUse": [
           "Verify water table water level covers slats and check slat condition.",
           "Inspect torch consumables (swirl ring, electrode, nozzle, retaining cap, shield).",
-          "Verify dry air supply pressure (85–100 PSI) and empty moisture trap."
+          "Verify dry air supply pressure (85\u2013100 PSI) and empty moisture trap."
         ],
         "duringUse": [
           "Keep hands and tools completely clear of X/Y gantry travel during execution.",
@@ -821,10 +1001,26 @@
           "Drain moisture trap & inspect desiccant air filter beads"
         ],
         "metrics": [
-          { "key": "plasma_air_psi", "label": "Supply Air Pressure (PSI)", "placeholder": "95", "unit": "PSI" },
-          { "key": "consumable_cond", "label": "Nozzle / Electrode Condition", "placeholder": "Pass / Clean", "unit": "status" }
+          {
+            "key": "plasma_air_psi",
+            "label": "Supply Air Pressure (PSI)",
+            "placeholder": "95",
+            "unit": "PSI"
+          },
+          {
+            "key": "consumable_cond",
+            "label": "Nozzle / Electrode Condition",
+            "placeholder": "Pass / Clean",
+            "unit": "status"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_WLD04_BlueM_Oven_Furnace/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_WLD04_BlueM_Oven_Furnace/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - WLD-04: CNC Plasma Table & Hand Plasma Station",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - WLD-04: CNC Plasma Table & Hand Plasma Station",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "WLD-05",
@@ -841,7 +1037,7 @@
       "loto": {
         "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
         "notificationMethod": "Max Wright - Teams / Text Message",
-        "normalShutdown": "Blue M Oven: Lower setpoint to 167°F (75°C) and allow circulation fan to run until cooled below 167°F (turning off above 167°F seizes circulation motor bearings!), then toggle power switch OFF (Front lower center). Muffle Furnace: Press RUN key to stop heating program, toggle main power switch OFF.",
+        "normalShutdown": "Blue M Oven: Lower setpoint to 167\u00b0F (75\u00b0C) and allow circulation fan to run until cooled below 167\u00b0F (turning off above 167\u00b0F seizes circulation motor bearings!), then toggle power switch OFF (Front lower center). Muffle Furnace: Press RUN key to stop heating program, toggle main power switch OFF.",
         "energySources": [
           {
             "type": "Electrical (Blue M Oven)",
@@ -851,9 +1047,9 @@
           },
           {
             "type": "Thermal (Blue M Oven)",
-            "magnitude": "Up to 650°F (343°C)",
+            "magnitude": "Up to 650\u00b0F (343\u00b0C)",
             "isolationLocation": "Internal stainless steel heating chamber.",
-            "isolationProcedure": "Allow chamber to cool below 100°F / ambient before performing any internal maintenance."
+            "isolationProcedure": "Allow chamber to cool below 100\u00b0F / ambient before performing any internal maintenance."
           },
           {
             "type": "Electrical (Muffle Furnace)",
@@ -863,13 +1059,13 @@
           },
           {
             "type": "Thermal (Muffle Furnace)",
-            "magnitude": "Up to 1,250°C (2,282°F)",
+            "magnitude": "Up to 1,250\u00b0C (2,282\u00b0F)",
             "isolationLocation": "Refractory ceramic furnace chamber.",
-            "isolationProcedure": "Keep door closed until internal temp is < 200°C, then crack door slightly to reach ambient room temperature before servicing."
+            "isolationProcedure": "Keep door closed until internal temp is < 200\u00b0C, then crack door slightly to reach ambient room temperature before servicing."
           }
         ],
-        "storedEnergyRelief": "Blue M Oven: Mandatory fan-on cooldown < 167°F (75°C) then cool to < 100°F. Muffle Furnace: Closed-door cooldown < 200°C to prevent refractory thermal shock, then cool to ambient.",
-        "zeroEnergyVerification": "Verify Blue M chamber light and Muffle Furnace controller stay completely dark and chamber thermometer reads ambient (<100°F)."
+        "storedEnergyRelief": "Blue M Oven: Mandatory fan-on cooldown < 167\u00b0F (75\u00b0C) then cool to < 100\u00b0F. Muffle Furnace: Closed-door cooldown < 200\u00b0C to prevent refractory thermal shock, then cool to ambient.",
+        "zeroEnergyVerification": "Verify Blue M chamber light and Muffle Furnace controller stay completely dark and chamber thermometer reads ambient (<100\u00b0F)."
       },
       "sop": {
         "noGlovesWarning": false,
@@ -879,21 +1075,21 @@
           "Flame-Resistant (FR) Lab Coat & Closed-Toe Shoes"
         ],
         "hazards": [
-          "Extreme thermal burn and radiant heat hazard (up to 650°F in Blue M, 1,250°C in Muffle Furnace)",
+          "Extreme thermal burn and radiant heat hazard (up to 650\u00b0F in Blue M, 1,250\u00b0C in Muffle Furnace)",
           "Explosion/fire hazard if flammable solvents, resins, or volatiles are placed inside (units are NON-explosion-proof)",
-          "Thermal burping (superheated air blast) if Blue M door is opened above 200°F",
-          "Blower motor bearing seizure if Blue M power is shut off above 167°F (75°C)"
+          "Thermal burping (superheated air blast) if Blue M door is opened above 200\u00b0F",
+          "Blower motor bearing seizure if Blue M power is shut off above 167\u00b0F (75\u00b0C)"
         ],
         "beforeUse": [
           "Strictly NO flammable solvents, uncured volatiles, or sealed containers inside either chamber.",
-          "Set Over-Temperature Protection (OTP) controller 15°C above main process setpoint."
+          "Set Over-Temperature Protection (OTP) controller 15\u00b0C above main process setpoint."
         ],
         "duringUse": [
-          "Follow the '200°F Rule': Do NOT open the Blue M oven door when chamber temperature exceeds 200°F to prevent thermal burping.",
+          "Follow the '200\u00b0F Rule': Do NOT open the Blue M oven door when chamber temperature exceeds 200\u00b0F to prevent thermal burping.",
           "Use long high-temperature tongs when loading/unloading Muffle Furnace."
         ],
         "afterUse": [
-          "Mandatory Blue M Cool-Down: Lower setpoint below 167°F (75°C) and keep blower running until chamber drops below 167°F before switching power OFF."
+          "Mandatory Blue M Cool-Down: Lower setpoint below 167\u00b0F (75\u00b0C) and keep blower running until chamber drops below 167\u00b0F before switching power OFF."
         ],
         "emergencyProtocol": "Shut off heating program, disconnect wall switch/plug if safe, keep chamber door CLOSED to contain any smoke/fire, and notify Lab Supervisor."
       },
@@ -905,10 +1101,26 @@
           "Inspect power cords, relays, and Type-K thermocouple leads"
         ],
         "metrics": [
-          { "key": "otp_offset_c", "label": "OTP Fail-Safe Offset (°C)", "placeholder": "15", "unit": "°C" },
-          { "key": "blower_status", "label": "Blue M Blower Bearing Check", "placeholder": "Pass / Quiet", "unit": "status" }
+          {
+            "key": "otp_offset_c",
+            "label": "OTP Fail-Safe Offset (\u00b0C)",
+            "placeholder": "15",
+            "unit": "\u00b0C"
+          },
+          {
+            "key": "blower_status",
+            "label": "Blue M Blower Bearing Check",
+            "placeholder": "Pass / Quiet",
+            "unit": "status"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_WLD05_Lincoln_TIG_275_2/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_WLD05_Lincoln_TIG_275_2/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - WLD-05: Thermal Processing Suite: Blue M Industrial Oven & Muffle Furnace",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - WLD-05: Thermal Processing Suite: Blue M Industrial Oven & Muffle Furnace",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "SAW-01",
@@ -972,10 +1184,26 @@
           "Clean lower wheel housing swarf and inspect rubber wheel tires"
         ],
         "metrics": [
-          { "key": "blade_tpi", "label": "Installed Blade Pitch (TPI)", "placeholder": "10-14", "unit": "TPI" },
-          { "key": "guide_gap", "label": "Thrust Bearing Clearance (in)", "placeholder": "0.002", "unit": "in" }
+          {
+            "key": "blade_tpi",
+            "label": "Installed Blade Pitch (TPI)",
+            "placeholder": "10-14",
+            "unit": "TPI"
+          },
+          {
+            "key": "guide_gap",
+            "label": "Thrust Bearing Clearance (in)",
+            "placeholder": "0.002",
+            "unit": "in"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_SAW01_Vertical_Bandsaw/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_SAW01_Vertical_Bandsaw/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - SAW-01: Vertical Metal Cutting Bandsaw",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - SAW-01: Vertical Metal Cutting Bandsaw",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "SAW-02",
@@ -1039,10 +1267,26 @@
           "Verify blade guide bearings & bottom auto-shutoff limit switch"
         ],
         "metrics": [
-          { "key": "coolant_brix", "label": "Saw Coolant (% Brix)", "placeholder": "7.5", "unit": "% Brix" },
-          { "key": "shutoff_test", "label": "Bottom Limit Switch Test", "placeholder": "Pass", "unit": "status" }
+          {
+            "key": "coolant_brix",
+            "label": "Saw Coolant (% Brix)",
+            "placeholder": "7.5",
+            "unit": "% Brix"
+          },
+          {
+            "key": "shutoff_test",
+            "label": "Bottom Limit Switch Test",
+            "placeholder": "Pass",
+            "unit": "status"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_SAW02_Horizontal_Bandsaw/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_SAW02_Horizontal_Bandsaw/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - SAW-02: Horizontal Wet/Dry Drop Bandsaw",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - SAW-02: Horizontal Wet/Dry Drop Bandsaw",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "SAW-03",
@@ -1092,7 +1336,7 @@
         "duringUse": [
           "Keep hands >= 4 inches away from blade path.",
           "Aim spark deflector away from trash bins and flammables.",
-          "Feed down with steady moderate pressure—do not force or twist wheel."
+          "Feed down with steady moderate pressure\u2014do not force or twist wheel."
         ],
         "afterUse": [
           "Let abrasive blade coast to a complete stop before raising saw head.",
@@ -1108,9 +1352,20 @@
           "Verify lower retractable safety guard operation"
         ],
         "metrics": [
-          { "key": "wheel_dia_in", "label": "Abrasive Wheel Diameter (in)", "placeholder": "13.5", "unit": "in" }
+          {
+            "key": "wheel_dia_in",
+            "label": "Abrasive Wheel Diameter (in)",
+            "placeholder": "13.5",
+            "unit": "in"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_SAW03_Abrasive_Chop_Saw/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_SAW03_Abrasive_Chop_Saw/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - SAW-03: Abrasive Chop Saw",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - SAW-03: Abrasive Chop Saw",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "SAW-04",
@@ -1172,9 +1427,20 @@
           "Check arbor bolt tightness and pivot return spring"
         ],
         "metrics": [
-          { "key": "miter_squareness", "label": "90° Fence Squareness Check", "placeholder": "Pass / 90.0°", "unit": "deg" }
+          {
+            "key": "miter_squareness",
+            "label": "90\u00b0 Fence Squareness Check",
+            "placeholder": "Pass / 90.0\u00b0",
+            "unit": "deg"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_SAW04_Miter_Saw_JET_Drill1/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_SAW04_Miter_Saw_JET_Drill1/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - SAW-04: 10\" Bevel Compound Miter Saw",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - SAW-04: 10\" Bevel Compound Miter Saw",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "SAW-05",
@@ -1243,9 +1509,20 @@
           "Lubricate table elevation rack/worm gear & check quill return spring tension"
         ],
         "metrics": [
-          { "key": "quill_runout", "label": "Drill Quill Runout (in)", "placeholder": "0.0015", "unit": "in" }
+          {
+            "key": "quill_runout",
+            "label": "Drill Quill Runout (in)",
+            "placeholder": "0.0015",
+            "unit": "in"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_SAW05_JET_Drill_Press_2/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_SAW05_JET_Drill_Press_2/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - SAW-05: JET Industrial Floor Drill Presses",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - SAW-05: JET Industrial Floor Drill Presses",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "FAB-01",
@@ -1308,9 +1585,20 @@
           "Empty dust collection trap / spark arrestor bin"
         ],
         "metrics": [
-          { "key": "table_gap_in", "label": "Table-to-Belt/Disc Gap (in, max 0.0625)", "placeholder": "0.050", "unit": "in" }
+          {
+            "key": "table_gap_in",
+            "label": "Table-to-Belt/Disc Gap (in, max 0.0625)",
+            "placeholder": "0.050",
+            "unit": "in"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_FAB01_General_Belt_Sander/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_FAB01_General_Belt_Sander/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - FAB-01: General International 15-015M1 6\"x48\" Belt / 12\" Disc Sander",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - FAB-01: General International 15-015M1 6\"x48\" Belt / 12\" Disc Sander",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "FAB-02",
@@ -1351,7 +1639,7 @@
           "Extreme thermal heat buildup in notched steel/chromoly tubing"
         ],
         "beforeUse": [
-          "Match grinding mandrel roller precisely to tube OD and lock quick-release vise (0–30° angle).",
+          "Match grinding mandrel roller precisely to tube OD and lock quick-release vise (0\u201330\u00b0 angle).",
           "Inspect 4\"x79\" grinding belt for tears or fraying."
         ],
         "duringUse": [
@@ -1371,9 +1659,20 @@
           "Lubricate feed slide ways and check quick-release tube vise cam lock"
         ],
         "metrics": [
-          { "key": "notcher_belt_cond", "label": "G0767 4\"x79\" Belt Condition", "placeholder": "Good / Centered", "unit": "status" }
+          {
+            "key": "notcher_belt_cond",
+            "label": "G0767 4\"x79\" Belt Condition",
+            "placeholder": "Good / Centered",
+            "unit": "status"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_FAB02_Notcher_Hand_Brake/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_FAB02_Notcher_Hand_Brake/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - FAB-02: Grizzly G0767 4\"x79\" Tube & Pipe Notcher",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - FAB-02: Grizzly G0767 4\"x79\" Tube & Pipe Notcher",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "FAB-03",
@@ -1439,9 +1738,20 @@
           "Lubricate pivot joints and linkage pins"
         ],
         "metrics": [
-          { "key": "shear_gap_in", "label": "Shear Blade Clearance Gap (in)", "placeholder": "0.003", "unit": "in" }
+          {
+            "key": "shear_gap_in",
+            "label": "Shear Blade Clearance Gap (in)",
+            "placeholder": "0.003",
+            "unit": "in"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_FAB03_Pedestal_Grinders/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_FAB03_Pedestal_Grinders/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - FAB-03: Tennsmith HBU48-16 Hand Brake & Industrial Metal Shear",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - FAB-03: Tennsmith HBU48-16 Hand Brake & Industrial Metal Shear",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "FAB-04",
@@ -1467,7 +1777,7 @@
             "isolationProcedure": "Unplug grinder and apply Rotating Electrical Plug Lockout to electrical plug."
           }
         ],
-        "storedEnergyRelief": "Wait for high-inertia grinding and wire wheels to coast to a complete standstill (1–2 minutes).",
+        "storedEnergyRelief": "Wait for high-inertia grinding and wire wheels to coast to a complete standstill (1\u20132 minutes).",
         "zeroEnergyVerification": "Toggle front power switch ON and verify grinding wheel does not spin."
       },
       "sop": {
@@ -1503,10 +1813,26 @@
           "Inspect eye shields & check wire wheel arbor nuts"
         ],
         "metrics": [
-          { "key": "tool_rest_gap", "label": "Tool Rest Gap (in, max 0.0625)", "placeholder": "0.050", "unit": "in" },
-          { "key": "tongue_guard_gap", "label": "Tongue Guard Gap (in, max 0.125)", "placeholder": "0.100", "unit": "in" }
+          {
+            "key": "tool_rest_gap",
+            "label": "Tool Rest Gap (in, max 0.0625)",
+            "placeholder": "0.050",
+            "unit": "in"
+          },
+          {
+            "key": "tongue_guard_gap",
+            "label": "Tongue Guard Gap (in, max 0.125)",
+            "placeholder": "0.100",
+            "unit": "in"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_FAB04_Blast_Cab_10T_Press/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_FAB04_Blast_Cab_10T_Press/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - FAB-04: Pedestal Bench Top Grinders & Deburring Station",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - FAB-04: Pedestal Bench Top Grinders & Deburring Station",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "FAB-05",
@@ -1551,10 +1877,10 @@
         "noGlovesWarning": false,
         "ppe": [
           "Blast Cabinet: ANSI Z87.1 Safety Glasses + Integrated Cabinet Rubber Gloves",
-          "Hydraulic Presses: ANSI Z87.1 Goggles + Full Face Shield (Mandatory—Ballistic Shatter Hazard) + Steel-Toe Boots"
+          "Hydraulic Presses: ANSI Z87.1 Goggles + Full Face Shield (Mandatory\u2014Ballistic Shatter Hazard) + Steel-Toe Boots"
         ],
         "hazards": [
-          "Hydraulic Press: Ballistic part shattering under 10–20 tons of load; high-pressure hydraulic fluid injection hazard from pinhole leaks",
+          "Hydraulic Press: Ballistic part shattering under 10\u201320 tons of load; high-pressure hydraulic fluid injection hazard from pinhole leaks",
           "Blast Cabinet: Dust inhalation if opened before 30s dwell time; severe slip hazard from spilled glass bead media on shop floor"
         ],
         "beforeUse": [
@@ -1562,7 +1888,7 @@
           "Enerpac 10T & Redline 20T Presses: Verify bed support pins are fully seated through both sides of H-frame; inspect hoses, GA2 adapter, and GF10P pressure gauge; use ONLY rated V-blocks/mandrels (NEVER use hardened chrome tool sockets)."
         ],
         "duringUse": [
-          "Blast Cabinet: Blast at 45–60° angle away from viewing window and gloves.",
+          "Blast Cabinet: Blast at 45\u201360\u00b0 angle away from viewing window and gloves.",
           "Hydraulic Presses: Strictly obey the 'Center Rule' (align load vertically through center of gravity); stand to the side out of the 'Line of Fire' behind Lexan/mesh shield; STOP IMMEDIATELY if gauge pressure rises without ram movement."
         ],
         "afterUse": [
@@ -1579,10 +1905,26 @@
           "Verify GF10P pressure gauge zero return and inspect H-frame bed pins & arbor plates for bending/deformation"
         ],
         "metrics": [
-          { "key": "blast_psi", "label": "Blast Cabinet Regulator (PSI, max 100)", "placeholder": "90", "unit": "PSI" },
-          { "key": "press_gauge_zero", "label": "GF10P Gauge Zero Return", "placeholder": "Pass / 0 PSI", "unit": "status" }
+          {
+            "key": "blast_psi",
+            "label": "Blast Cabinet Regulator (PSI, max 100)",
+            "placeholder": "90",
+            "unit": "PSI"
+          },
+          {
+            "key": "press_gauge_zero",
+            "label": "GF10P Gauge Zero Return",
+            "placeholder": "Pass / 0 PSI",
+            "unit": "status"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_FAB05_Metal_Shear_20T_Press/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_FAB05_Metal_Shear_20T_Press/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - FAB-05: Abrasive Blast Cabinet & Hydraulic Shop Presses (Enerpac 10T & Redline 20T)",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - FAB-05: Abrasive Blast Cabinet & Hydraulic Shop Presses (Enerpac 10T & Redline 20T)",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "FAC-01",
@@ -1603,7 +1945,7 @@
         "energySources": [
           {
             "type": "Electrical / Chemical (HV Battery Bench)",
-            "magnitude": ">55–60V DC High-Voltage Tractive Packs & Li-Ion Cells",
+            "magnitude": ">55\u201360V DC High-Voltage Tractive Packs & Li-Ion Cells",
             "isolationLocation": "Dedicated High-Voltage Battery Bench & quarantine drum.",
             "isolationProcedure": "Remove Manual Service Disconnect (MSD), apply insulated HV lockout cover, and verify 0V DC across main busbars with 1000V rated multimeter."
           }
@@ -1615,7 +1957,7 @@
         "noGlovesWarning": false,
         "ppe": [
           "ANSI Z87.1 Safety Glasses (Required Throughout 930 Kinnear Rd Shop)",
-          "HV Battery Bench: Class 0 High-Voltage Insulated Gloves (>55–60V), Face Shield, No Metal Jewelry",
+          "HV Battery Bench: Class 0 High-Voltage Insulated Gloves (>55\u201360V), Face Shield, No Metal Jewelry",
           "Paint/Prep Booth: Organic Vapor / Particulate Respirator & Nitrile Gloves"
         ],
         "hazards": [
@@ -1628,7 +1970,7 @@
         ],
         "duringUse": [
           "Maintain clear 36\" access around all electrical panels, eyewash stations, and fire extinguishers.",
-          "Never work alone on high-voltage (>55–60V) battery systems."
+          "Never work alone on high-voltage (>55\u201360V) battery systems."
         ],
         "afterUse": [
           "Return all LOTO devices to master board upon maintenance completion and log in shop portal."
@@ -1643,10 +1985,26 @@
           "Inspect Paint/Prep Booth differential manometer and intake/exhaust arrestor filters"
         ],
         "metrics": [
-          { "key": "loto_locks_count", "label": "Available Master LOTO Padlocks", "placeholder": "12", "unit": "locks" },
-          { "key": "booth_manometer", "label": "Paint Booth Manometer Reading", "placeholder": "Pass / Normal", "unit": "inH2O" }
+          {
+            "key": "loto_locks_count",
+            "label": "Available Master LOTO Padlocks",
+            "placeholder": "12",
+            "unit": "locks"
+          },
+          {
+            "key": "booth_manometer",
+            "label": "Paint Booth Manometer Reading",
+            "placeholder": "Pass / Normal",
+            "unit": "inH2O"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_FAC01_Safety_Hub_Paint_Booth/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_FAC01_Safety_Hub_Paint_Booth/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - FAC-01: Safety Hub, LOTO Lock Center, High-Voltage Battery Bench & Paint/Prep Booth",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - FAC-01: Safety Hub, LOTO Lock Center, High-Voltage Battery Bench & Paint/Prep Booth",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     },
     {
       "id": "FAC-02",
@@ -1673,7 +2031,7 @@
           },
           {
             "type": "Pneumatic",
-            "magnitude": "125 PSI Receiver Tank & 80–100 PSI Distribution Header",
+            "magnitude": "125 PSI Receiver Tank & 80\u2013100 PSI Distribution Header",
             "isolationLocation": "Receiver tank isolation valve & manual blowdown drain.",
             "isolationProcedure": "Close header valve, slowly open tank manual drain valve to bleed stored air pressure, and verify tank & manifold gauges read 0 PSI."
           }
@@ -1689,11 +2047,11 @@
         ],
         "hazards": [
           "High-pressure hose whip if disconnected under load",
-          "Compressed air embolism hazard—NEVER direct compressed air at skin or clothing",
+          "Compressed air embolism hazard\u2014NEVER direct compressed air at skin or clothing",
           "STRICTLY NO compressed air blowdown on manual/CNC mills or lathes"
         ],
         "beforeUse": [
-          "Verify local drop regulator is set to machine specification (80–100 PSI) and inspect quick-connect coupler."
+          "Verify local drop regulator is set to machine specification (80\u2013100 PSI) and inspect quick-connect coupler."
         ],
         "duringUse": [
           "Hold hose end firmly when disconnecting self-venting safety couplers."
@@ -1708,13 +2066,29 @@
           "Verify automatic condensate drain trap operation on receiver tank",
           "Check air compressor pump oil sight glass level & V-belt tension",
           "Inspect refrigerated air dryer dew point indicator",
-          "Check wall drops & regulators (80–100 PSI) across CNC, Welding, and Fab zones for leaks or water bypass"
+          "Check wall drops & regulators (80\u2013100 PSI) across CNC, Welding, and Fab zones for leaks or water bypass"
         ],
         "metrics": [
-          { "key": "header_psi", "label": "Main Shop Header Pressure (PSI)", "placeholder": "100", "unit": "PSI" },
-          { "key": "dryer_dewpoint", "label": "Air Dryer Dew Point Status", "placeholder": "Green / Normal", "unit": "status" }
+          {
+            "key": "header_psi",
+            "label": "Main Shop Header Pressure (PSI)",
+            "placeholder": "100",
+            "unit": "PSI"
+          },
+          {
+            "key": "dryer_dewpoint",
+            "label": "Air Dryer Dew Point Status",
+            "placeholder": "Green / Normal",
+            "unit": "status"
+          }
         ]
-      }
+      },
+      "sop_drive_url": "https://drive.google.com/file/d/1SPL_SOP_FAC02_Compressed_Air_System/view",
+      "loto_drive_url": "https://drive.google.com/file/d/1SPL_LOTO_FAC02_Compressed_Air_System/view",
+      "sop_doc_title": "Standard Operating Procedure (SOP) - FAC-02: Shop Compressed Air System & Distribution Drops",
+      "sop_revision_date": "Rev. 2026-10 (March 2027 Standard)",
+      "loto_doc_title": "Lockout / Tagout (LOTO) Procedure - FAC-02: Shop Compressed Air System & Distribution Drops",
+      "loto_revision_date": "Rev. 2026-10 (March 2027 Standard)"
     }
   ]
 }

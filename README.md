@@ -17,8 +17,8 @@ A zero-build, static industrial web application hosted on GitHub Pages for the *
   7. **Buckeye Experimental Aeronautics (BExA)**
 - **Single-QR "All-In-One" Machine Hub (`?asset=<ASSET_ID>`):** Scanning any machine's physical `2" × 3"` QR decal immediately opens that asset's **Unified 4-Tab Asset Hub Modal**:
   - **Tab 1 (`&tab=fault`): Condition & Fault Report** — Instant condition/fault reporting + pre-filled GitHub Issue (`unscheduled_downtime_fault.yml`).
-  - **Tab 2 (`&tab=sop`): Standard Operating Procedure (SOP)** — Required PPE badges (including prominent red `🚫 NO GLOVES` warnings on rotating spindle/blade/belt equipment), hazards, Before/During/After use checklists, and emergency protocols.
-  - **Tab 3 (`&tab=loto`): Lockout / Tagout (LOTO)** — Authorized personnel, notification channel (`Max Wright - Teams / Text Message`), normal shutdown controls, energy sources & magnitudes, isolation device locations, stored energy relief (e.g., 5-min vector drive capacitor bleed, Argon/C25 line purge, `<167°F` Blue M oven cool-down), and zero-energy verification.
+  - **Tab 2 (`&tab=sop`): Standard Operating Procedure (SOP)** — Embedded Google Drive PDF preview (`<iframe>` transforming `https://drive.google.com/file/d/DOC_ID/view` to `https://drive.google.com/file/d/DOC_ID/preview`), "Open Full Document in Google Drive" and "Print / Download PDF" quick-actions, plus required PPE badges (`🚫 NO GLOVES`), hazards, and Before/During/After checklists.
+  - **Tab 3 (`&tab=loto`): Lockout / Tagout (LOTO)** — Embedded Google Drive PDF preview (`loto_drive_url` -> `/preview`), "Open Full Document in Google Drive" and "Print / Download PDF" buttons, plus authorized personnel, notification channel (`Max Wright - Teams / Text Message`), energy sources & magnitudes, isolation device locations, stored energy relief, and zero-energy verification.
   - **Tab 4 (`&tab=pm`): Monthly PM Matrix** — Standardized monthly preventative maintenance checklist, quantitative wear logging (Coolant Brix %, pH, X/Y leadscrew backlash, pneumatic PSI), and one-click GitHub Issue submission (`monthly_pm_log.yml`).
 
 ---

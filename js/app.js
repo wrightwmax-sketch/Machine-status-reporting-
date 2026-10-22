@@ -450,6 +450,46 @@
   }
 
   /**
+   * Transform standard Google Drive sharing links (https://drive.google.com/file/d/DOC_ID/view)
+   * into responsive embed preview URLs (https://drive.google.com/file/d/DOC_ID/preview),
+   * full view URLs, and direct PDF download/print URLs.
+   */
+  function transformGoogleDriveUrl(rawUrl) {
+    const clean = String(rawUrl || '').trim();
+    if (!clean) {
+      return {
+        docId: '',
+        viewUrl: 'https://drive.google.com/',
+        previewUrl: 'about:blank',
+        downloadUrl: 'https://drive.google.com/'
+      };
+    }
+
+    const fileMatch = clean.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    const idParamMatch = clean.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    const docId = (fileMatch && fileMatch[1]) || (idParamMatch && idParamMatch[1]) || '';
+
+    if (docId) {
+      return {
+        docId: docId,
+        viewUrl: `https://drive.google.com/file/d/${docId}/view`,
+        previewUrl: `https://drive.google.com/file/d/${docId}/preview`,
+        downloadUrl: `https://drive.google.com/uc?export=download&id=${docId}`
+      };
+    }
+
+    const fallbackPreview = clean.replace(/\/view(\?.*)?$/i, '/preview');
+    return {
+      docId: '',
+      viewUrl: clean,
+      previewUrl: fallbackPreview,
+      downloadUrl: clean
+    };
+  }
+
+  window.transformGoogleDriveUrl = transformGoogleDriveUrl;
+
+  /**
    * Populate the 4-Tab Unified Asset Hub Modal for a given asset
    */
   function openAssetHubModal(assetId, initialTab, pushUrl) {
@@ -484,6 +524,47 @@
     if (elLastPm) elLastPm.textContent = `Last PM: ${asset.lastPmDate || 'N/A'}`;
     if (elNextPm) elNextPm.textContent = `Next Due: ${asset.nextPmDue || 'N/A'}`;
     if (elPmTech) elPmTech.textContent = `Tech: ${asset.lastPmTech || 'M. Wright'}`;
+
+    // Populate Google Drive PDF Viewer for Tab 2 (SOP) & Tab 3 (LOTO)
+    const bindDriveViewer = (prefix, rawDriveUrl, docTitle, docRev) => {
+      const urls = transformGoogleDriveUrl(rawDriveUrl);
+      const titleEl = document.getElementById(`${prefix}-doc-title`);
+      const revEl = document.getElementById(`${prefix}-doc-rev`);
+      const openBtn = document.getElementById(`${prefix}-open-drive-btn`);
+      const dlBtn = document.getElementById(`${prefix}-download-pdf-btn`);
+      const urlInput = document.getElementById(`${prefix}-drive-url-input`);
+      const captionEl = document.getElementById(`${prefix}-embed-url-caption`);
+      const spinnerEl = document.getElementById(`${prefix}-iframe-spinner`);
+      const iframeEl = document.getElementById(`${prefix}-drive-iframe`);
+
+      if (titleEl) titleEl.textContent = docTitle;
+      if (revEl) revEl.textContent = docRev;
+      if (openBtn) openBtn.href = urls.viewUrl;
+      if (dlBtn) dlBtn.href = urls.downloadUrl;
+      if (urlInput) urlInput.value = rawDriveUrl || urls.viewUrl;
+      if (captionEl) captionEl.textContent = `Embed URL: ${urls.previewUrl}`;
+      if (spinnerEl) spinnerEl.classList.remove('hidden');
+      if (iframeEl) {
+        iframeEl.onload = () => {
+          if (spinnerEl) spinnerEl.classList.add('hidden');
+        };
+        iframeEl.src = urls.previewUrl;
+      }
+    };
+
+    bindDriveViewer(
+      'sop',
+      asset.sop_drive_url || `https://drive.google.com/file/d/1SPL_SOP_${asset.id.replace('-', '')}/view`,
+      asset.sop_doc_title || `Standard Operating Procedure (SOP) — ${asset.id}: ${asset.name}`,
+      asset.sop_revision_date || 'Rev. 2026-10 (March 2027 Standard)'
+    );
+
+    bindDriveViewer(
+      'loto',
+      asset.loto_drive_url || `https://drive.google.com/file/d/1SPL_LOTO_${asset.id.replace('-', '')}/view`,
+      asset.loto_doc_title || `Lockout / Tagout (LOTO) Procedure — ${asset.id}: ${asset.name}`,
+      asset.loto_revision_date || 'Rev. 2026-10 (March 2027 Standard)'
+    );
 
     // Populate Tab 2: SOP
     const sop = asset.sop || {};
@@ -1069,6 +1150,29 @@
     const backdrop = document.getElementById('asset-hub-modal-backdrop');
     if (closeBtn) closeBtn.addEventListener('click', closeAssetHubModal);
     if (backdrop) backdrop.addEventListener('click', closeAssetHubModal);
+
+    // Save custom Google Drive SOP / LOTO PDF links per asset
+    const saveSopDriveBtn = document.getElementById('btn-save-sop-drive-url');
+    if (saveSopDriveBtn) {
+      saveSopDriveBtn.addEventListener('click', () => {
+        const inp = document.getElementById('sop-drive-url-input');
+        if (!state.activeAssetId || !inp || !inp.value.trim()) return;
+        saveAssetOverride(state.activeAssetId, { sop_drive_url: inp.value.trim() });
+        openAssetHubModal(state.activeAssetId, 'sop', false);
+        showToast(`Bound Google Drive SOP PDF for ${state.activeAssetId}`);
+      });
+    }
+
+    const saveLotoDriveBtn = document.getElementById('btn-save-loto-drive-url');
+    if (saveLotoDriveBtn) {
+      saveLotoDriveBtn.addEventListener('click', () => {
+        const inp = document.getElementById('loto-drive-url-input');
+        if (!state.activeAssetId || !inp || !inp.value.trim()) return;
+        saveAssetOverride(state.activeAssetId, { loto_drive_url: inp.value.trim() });
+        openAssetHubModal(state.activeAssetId, 'loto', false);
+        showToast(`Bound Google Drive LOTO PDF for ${state.activeAssetId}`);
+      });
+    }
 
     // Fault report form submissions
     const faultForm = document.getElementById('fault-report-form');
