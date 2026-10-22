@@ -928,7 +928,7 @@
       type: 'MONTHLY_PM',
       assetId: asset.id,
       assetName: asset.name,
-      teamOrRole: 'Shop Staff / SRA',
+      teamOrRole: 'Shop Staff',
       technician: technician,
       statusAfter: postStatus,
       pmStatusAfter: postStatus === 'OPERATIONAL' ? 'COMPLIANT' : 'ATTENTION',
@@ -944,7 +944,7 @@
     renderHistoryTable();
     openAssetHubModal(asset.id, 'pm', false);
 
-    await dispatchTeamsAlert('Monthly PM Logged', asset, postStatus, technician, 'Shop Staff / SRA', notes);
+    await dispatchTeamsAlert('Monthly PM Logged', asset, postStatus, technician, 'Shop Staff', notes);
 
     if (openGithubIssue) {
       const issueUrl = buildGithubIssueUrl('monthly_pm_log.yml', {

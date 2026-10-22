@@ -7,14 +7,15 @@ A zero-build, static industrial web application hosted on GitHub Pages for the *
 ## 1. Core Operations & Single-QR Architecture
 
 - **Real-Time Shop Operations & Monthly PM Hub:** Provides a live **Preventative Maintenance (PM) Matrix**, **Machine Condition / Fault Reporting System**, and **Native Local PDF SOP / LOTO Safety Repository** across all 24 primary shop assets across 6 facility zones.
-- **Supported Academic & Student Programs:** Experimental Methods laboratory courses and 7 student engineering project groups:
+- **Supported Student Project Teams & Shop Groups:**
   1. **Formula Buckeyes**
-  2. **Baja Engineering**
+  2. **Baja Buckeyes**
   3. **Buckeye Current**
-  4. **Advanced Vehicle Team**
-  5. **Venturi**
-  6. **DBR**
-  7. **Buckeye Experimental Aeronautics (BExA)**
+  4. **Eco-Car**
+  5. **Buckeye Solar Racing**
+  6. **Capstone**
+  7. **Buckeye Experimental Aeronautics**
+  8. **Shop Staff**
 - **Single-QR "All-In-One" Machine Hub (`?asset=<ASSET_ID>`):** Scanning any machine's physical `2" × 3"` QR decal immediately opens that asset's **Unified 4-Tab Asset Hub Modal**:
   - **Tab 1 (`&tab=fault`): Condition & Fault Report** — Instant condition/fault reporting + pre-filled GitHub Issue (`unscheduled_downtime_fault.yml`).
   - **Tab 2 (`&tab=sop`): Standard Operating Procedure (SOP)** — Native repository-hosted PDF viewer (`docs/sop/{ID}-SOP.pdf`) using a dual `<object type="application/pdf">` + `<iframe>` + fallback engine, with **View Fullscreen**, **Download PDF**, and optional **Open Drive Mirror** actions, plus PPE badges (`🚫 NO GLOVES`), hazards, and Before/During/After checklists. All three Bridgeport Series I Knee Mills (`MAC-01`, `MAC-02`, `MAC-03`) share the unified Bridgeport Mill SOP (`docs/sop/MAC-01-SOP.pdf`).
