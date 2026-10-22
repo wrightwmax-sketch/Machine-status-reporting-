@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        ### CAR Student Projects Shop (930 Kinnear Rd) — Machine Condition & Fault Ticket
+        ### Student Projects Laboratory (930 Kinnear Rd) — Machine Condition & Fault Ticket
         Submitting this ticket automatically updates the live shop portal status board (`data/equipment_master.json`) and logs the event in `data/pm_history.json`.
         **For severe hazards or LOTO lockouts, also notify Max Wright immediately via Microsoft Teams or Text Message.**
 
@@ -24,10 +24,10 @@ body:
     attributes:
       label: "Student Team / Course Affiliation"
       options:
-        - "Baja SAE"
-        - "Formula SAE"
+        - "Formula Buckeyes"
+        - "Baja Engineering"
         - "Buckeye Current"
-        - "EcoCAR"
+        - "Advanced Vehicle Team"
         - "Venturi"
         - "DBR"
         - "Buckeye Experimental Aeronautics (BExA)"
@@ -50,25 +50,24 @@ body:
   - type: input
     id: reporter
     attributes:
-      label: "Reporter Name & OSU Email"
-      placeholder: "Alex Smith (smith.1@osu.edu)"
+      label: "Reporter Name & Email"
+      placeholder: "Alex Smith (smith.1@example.edu)"
     validations:
       required: true
 
   - type: textarea
     id: fault_description
     attributes:
-      label: "Fault Description, Alarm Code, or Broken Tooling Details"
-      description: "Provide specific details (e.g., Haas VF-2SS Alarm Code, broken endmill/tap size, shielding gas leak, or blade snap)"
-      placeholder: "Describe what happened, current machine state, and whether LOTO has been applied..."
+      label: "Fault Description, Broken Tooling, or Alarm Code"
+      description: "Describe exactly what happened, any abnormal noises/alarms, and whether a physical LOTO padlock was applied."
+      placeholder: "Broken 1/2\" endmill in collet; spindle stopped immediately."
     validations:
       required: true
 
-  - type: textarea
-    id: photo_upload
+  - type: checkboxes
+    id: safety_acknowledgement
     attributes:
-      label: "Photo / Evidence Upload (Drag & Drop or Paste Image Below)"
-      description: "Tap or drag-and-drop a photo of the alarm screen, broken tool, or workpiece setup directly into this box."
-      placeholder: "Drag & drop or paste photo here (optional)..."
-    validations:
-      required: false
+      label: "Safety & LOTO Protocol Verification"
+      options:
+        - label: "If the machine is unsafe to operate, I have turned off the machine and notified Max Wright (Teams / Text Message) or an SRA on duty."
+          required: true

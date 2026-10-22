@@ -1,15 +1,159 @@
 /* ==========================================================================
-   CAR STUDENT PROJECTS SHOP (930 KINNEAR RD) — OPERATIONS, SOP/LOTO & PM PORTAL
-   High-Contrast Industrial UI + @media print 2"x3" 3-in-1 QR Machine Decals
+   STUDENT PROJECTS LABORATORY (930 KINNEAR RD) — OPERATIONS, SOP/LOTO & PM PORTAL
+   Dual-Theme (High-Contrast Day Mode + Low-Glare Night Mode) & 2"x3" QR Decals
    ========================================================================== */
 
-:root {
-  --scarlet: #BB0000;
-  --scarlet-hover: #D90429;
+:root,
+html[data-theme="dark"] {
+  --crimson: #BB0000;
+  --crimson-hover: #D90429;
   --shop-bg: #0b0e14;
-  --shop-card: #131822;
+  --shop-surface: #131822;
   --shop-elevated: #1a2130;
-  --border-slate: #1e293b;
+  --shop-input: #0f141d;
+  --shop-border: #1e293b;
+  --shop-border-strong: #334155;
+  --text-main: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --shadow-tile: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+}
+
+html[data-theme="light"] {
+  --crimson: #BB0000;
+  --crimson-hover: #990000;
+  --shop-bg: #f1f5f9;
+  --shop-surface: #ffffff;
+  --shop-elevated: #f8fafc;
+  --shop-input: #ffffff;
+  --shop-border: #cbd5e1;
+  --shop-border-strong: #94a3b8;
+  --text-main: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #475569;
+  --shadow-tile: 0 6px 18px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.05);
+}
+
+html,
+body {
+  background-color: var(--shop-bg) !important;
+  color: var(--text-main) !important;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+/* Light-mode overrides for utility classes used across index.html and qr-sheets.html */
+html[data-theme="light"] header,
+html[data-theme="light"] footer {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: var(--shop-border) !important;
+}
+
+html[data-theme="light"] .bg-shopSurface,
+html[data-theme="light"] .bg-slate-900\/80,
+html[data-theme="light"] .bg-slate-900\/70,
+html[data-theme="light"] .bg-slate-900\/60,
+html[data-theme="light"] .bg-slate-950,
+html[data-theme="light"] .bg-slate-950\/90,
+html[data-theme="light"] .bg-slate-950\/80,
+html[data-theme="light"] .bg-slate-950\/70,
+html[data-theme="light"] .bg-slate-950\/60 {
+  background-color: var(--shop-surface) !important;
+}
+
+html[data-theme="light"] .bg-shopElevated,
+html[data-theme="light"] .bg-slate-900\/50,
+html[data-theme="light"] .bg-slate-900\/40 {
+  background-color: var(--shop-elevated) !important;
+}
+
+html[data-theme="light"] .border-slate-800,
+html[data-theme="light"] .border-slate-800\/80,
+html[data-theme="light"] .border-slate-700 {
+  border-color: var(--shop-border) !important;
+}
+
+html[data-theme="light"] .text-white,
+html[data-theme="light"] .text-slate-100,
+html[data-theme="light"] .text-slate-200 {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .text-slate-300,
+html[data-theme="light"] .text-slate-400 {
+  color: #334155 !important;
+}
+
+html[data-theme="light"] .text-slate-500 {
+  color: #475569 !important;
+}
+
+html[data-theme="light"] .text-emerald-400,
+html[data-theme="light"] .text-emerald-300 {
+  color: #047857 !important;
+}
+
+html[data-theme="light"] .text-amber-400,
+html[data-theme="light"] .text-amber-300,
+html[data-theme="light"] .text-amber-200 {
+  color: #b45309 !important;
+}
+
+html[data-theme="light"] .text-red-400,
+html[data-theme="light"] .text-red-300,
+html[data-theme="light"] .text-red-200,
+html[data-theme="light"] .text-red-100 {
+  color: #b91c1c !important;
+}
+
+/* Keep solid crimson buttons white-text in both themes */
+html[data-theme="light"] .bg-crimson,
+html[data-theme="light"] .bg-crimson *,
+html[data-theme="light"] .portal-nav-btn.active,
+html[data-theme="light"] .portal-nav-btn.active *,
+html[data-theme="light"] .qr-decal-banner,
+html[data-theme="light"] .qr-decal-banner *,
+html[data-theme="light"] .qr-decal-footer,
+html[data-theme="light"] .qr-decal-footer * {
+  color: #ffffff !important;
+}
+
+/* Theme Toggle Button (#theme-toggle-btn) */
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.48rem 0.85rem;
+  border-radius: 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  background-color: var(--shop-surface);
+  color: var(--text-main);
+  border: 1.5px solid var(--shop-border-strong);
+  cursor: pointer;
+  transition: all 0.16s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--crimson);
+  transform: translateY(-1px);
+}
+
+.theme-status-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 0.12rem 0.42rem;
+  border-radius: 9999px;
+  background-color: rgba(187, 0, 0, 0.18);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+html[data-theme="light"] .theme-status-pill {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-color: #f87171;
 }
 
 /* Navigation Buttons */
@@ -21,21 +165,22 @@
   border-radius: 0.6rem;
   font-size: 0.8rem;
   font-weight: 700;
-  background-color: var(--shop-card);
-  color: #cbd5e1;
-  border: 1px solid #334155;
+  background-color: var(--shop-surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--shop-border-strong);
   transition: all 0.16s ease;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .portal-nav-btn:hover {
   background-color: var(--shop-elevated);
-  color: #ffffff;
-  border-color: #64748b;
+  color: var(--text-main);
+  border-color: var(--crimson);
 }
 
 .portal-nav-btn.active {
-  background-color: var(--scarlet);
+  background-color: var(--crimson);
   color: #ffffff;
   border-color: #ef4444;
   box-shadow: 0 4px 14px rgba(187, 0, 0, 0.35);
@@ -49,24 +194,32 @@
   font-size: 0.75rem;
   font-weight: 600;
   background-color: var(--shop-bg);
-  color: #94a3b8;
-  border: 1px solid #1e293b;
+  color: var(--text-muted);
+  border: 1px solid var(--shop-border);
   transition: all 0.15s ease;
   cursor: pointer;
 }
 
 .status-filter-pill:hover,
 .zone-filter-pill:hover {
-  color: #f8fafc;
-  border-color: #475569;
+  color: var(--text-main);
+  border-color: var(--shop-border-strong);
   background-color: var(--shop-elevated);
 }
 
 .status-filter-pill.active,
 .zone-filter-pill.active {
   background-color: rgba(187, 0, 0, 0.22);
-  color: #ffffff;
-  border-color: #ef4444;
+  color: var(--text-main);
+  border-color: var(--crimson);
+  font-weight: 800;
+}
+
+html[data-theme="light"] .status-filter-pill.active,
+html[data-theme="light"] .zone-filter-pill.active {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-color: #BB0000;
 }
 
 /* Status Badges */
@@ -83,205 +236,242 @@
   letter-spacing: 0.04em;
 }
 
-.status-operational {
-  background: rgba(16, 185, 129, 0.15);
+.status-badge-operational {
+  background-color: rgba(16, 185, 129, 0.14);
   color: #34d399;
   border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
-.status-due-soon {
-  background: rgba(245, 158, 11, 0.16);
+html[data-theme="light"] .status-badge-operational {
+  background-color: #d1fae5;
+  color: #065f46;
+  border-color: #059669;
+}
+
+.status-badge-due {
+  background-color: rgba(245, 158, 11, 0.15);
   color: #fbbf24;
   border: 1px solid rgba(245, 158, 11, 0.45);
 }
 
-.status-overdue {
-  background: rgba(249, 115, 22, 0.18);
-  color: #fb923c;
-  border: 1px solid rgba(249, 115, 22, 0.5);
+html[data-theme="light"] .status-badge-due {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-color: #d97706;
 }
 
-.status-down {
-  background: rgba(239, 68, 68, 0.2);
+.status-badge-down {
+  background-color: rgba(239, 68, 68, 0.18);
   color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.55);
+  border: 1px solid rgba(239, 68, 68, 0.5);
 }
 
-/* Unified 4-Tab Modal Navigation */
-.hub-tab-btn {
-  padding: 0.85rem 0.75rem;
-  font-size: 0.78rem;
+html[data-theme="light"] .status-badge-down {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-color: #dc2626;
+}
+
+/* Equipment Matrix Asset Tiles */
+.asset-tile {
+  background-color: var(--shop-surface);
+  border: 1px solid var(--shop-border);
+  border-radius: 0.85rem;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-tile);
+}
+
+.asset-tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #10b981;
+}
+
+.asset-tile.tile-due::before {
+  background-color: #f59e0b;
+}
+
+.asset-tile.tile-down::before {
+  background-color: #ef4444;
+}
+
+.asset-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--shop-border-strong);
+}
+
+/* Quick Tab Action Buttons on Asset Tiles */
+.tile-tab-btn {
+  padding: 0.42rem 0.5rem;
+  border-radius: 0.45rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: #94a3b8;
-  border-bottom: 3px solid transparent;
-  transition: all 0.15s ease;
+  background-color: var(--shop-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--shop-border);
+  transition: all 0.14s ease;
   text-align: center;
   cursor: pointer;
-  background: rgba(11, 14, 20, 0.7);
 }
 
-.hub-tab-btn:hover {
-  color: #ffffff;
-  background: rgba(26, 33, 48, 0.8);
+.tile-tab-btn:hover {
+  background-color: var(--shop-elevated);
+  color: var(--text-main);
+  border-color: var(--crimson);
 }
 
-.hub-tab-btn.active {
-  color: #ffffff;
-  background: var(--shop-card);
-  border-bottom-color: var(--scarlet);
+/* 4-Tab Unified Modal Tabs */
+.modal-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.8rem 1.1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  border-bottom: 3px solid transparent;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  background: transparent;
+}
+
+.modal-tab-btn:hover {
+  color: var(--text-main);
+  background-color: rgba(148, 163, 184, 0.08);
+}
+
+.modal-tab-btn.active {
+  color: var(--text-main);
+  border-bottom-color: var(--crimson);
+  background-color: rgba(187, 0, 0, 0.14);
+}
+
+/* 3-State Fault Severity Selector */
+.fault-severity-option input:checked + .severity-tile {
+  outline: 2px solid var(--text-main);
+  box-shadow: 0 0 0 3px rgba(187, 0, 0, 0.35);
 }
 
 /* ==========================================================================
-   PRINTABLE 2" x 3" 3-IN-1 QR DECAL CARDS
+   2" x 3" UNIFIED 3-IN-1 QR MACHINE DECAL SHEET (SCREEN + @media print)
    ========================================================================== */
 
-.qr-decals-grid {
+.decal-sheet-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
 }
 
-.qr-decal-card {
-  background: #ffffff;
+.qr-decal-tile {
+  background-color: #ffffff;
   color: #0f172a;
-  border: 3px solid #0f172a;
-  border-radius: 10px;
+  border: 2px solid #0f172a;
+  border-radius: 0.5rem;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
-  page-break-inside: avoid;
-  break-inside: avoid;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
-.decal-header {
-  background: #BB0000;
+.qr-decal-banner {
+  background-color: #BB0000;
   color: #ffffff;
+  padding: 0.35rem 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   font-weight: 800;
-  letter-spacing: 0.05em;
-  padding: 0.35rem 0.45rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  border-bottom: 2px solid #0f172a;
 }
 
-.decal-body {
-  padding: 0.6rem 0.55rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.decal-top-meta {
+.qr-decal-body {
+  padding: 0.65rem 0.7rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  width: 100%;
+  gap: 0.7rem;
 }
 
-.decal-asset-id {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #0f172a;
-  background: #f1f5f9;
-  border: 2px solid #0f172a;
-  padding: 0.05rem 0.55rem;
-  border-radius: 5px;
-  line-height: 1.15;
-}
-
-.decal-hazard-pill {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  font-weight: 800;
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1.5px solid #dc2626;
-  padding: 0.1rem 0.35rem;
-  border-radius: 4px;
-}
-
-.decal-zone-pill {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  font-weight: 800;
-  background: #e2e8f0;
-  color: #1e293b;
-  border: 1.5px solid #475569;
-  padding: 0.1rem 0.35rem;
-  border-radius: 4px;
-}
-
-.decal-machine-name {
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: #0f172a;
-  line-height: 1.2;
-  min-height: 2.35em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.decal-equip-id {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: #475569;
-}
-
-.decal-qr-mount {
-  width: 124px;
-  height: 124px;
+.qr-decal-code-box {
+  width: 108px;
+  height: 108px;
+  flex-shrink: 0;
+  border: 1.5px solid #0f172a;
+  border-radius: 0.35rem;
   padding: 4px;
-  background: #ffffff;
-  border: 2px solid #0f172a;
-  border-radius: 6px;
+  background-color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0.15rem auto;
 }
 
-.decal-qr-mount img,
-.decal-qr-mount canvas,
-.decal-qr-mount svg {
-  width: 116px !important;
-  height: 116px !important;
+.qr-decal-code-box img,
+.qr-decal-code-box canvas,
+.qr-decal-code-box svg {
+  width: 96px !important;
+  height: 96px !important;
   display: block;
 }
 
-.decal-footer {
-  background: #0f172a;
-  color: #ffffff;
-  padding: 0.38rem 0.4rem;
+.qr-decal-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.qr-decal-asset-id {
   font-family: 'JetBrains Mono', monospace;
-  border-top: 2px solid #0f172a;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1.1;
 }
 
-.decal-callout-title {
-  font-size: 0.58rem;
-  font-weight: 800;
-  color: #fbbf24;
-  letter-spacing: 0.06em;
-}
-
-.decal-callout-items {
-  font-size: 0.55rem;
+.qr-decal-tag-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
   font-weight: 700;
-  color: #ffffff;
-  line-height: 1.25;
+  color: #475569;
+  margin-bottom: 0.2rem;
 }
 
-/* ==========================================================================
-   PRINT STYLESHEET (@media print) — 2" x 3" INDUSTRIAL MACHINE DECALS
-   ========================================================================== */
+.qr-decal-name {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.25;
+  margin-bottom: 0.25rem;
+}
+
+.qr-decal-zone {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+}
+
+.qr-decal-footer {
+  background-color: #0f172a;
+  color: #ffffff;
+  padding: 0.35rem 0.55rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
 
 @media print {
   @page {
@@ -304,27 +494,21 @@
     display: none !important;
   }
 
-  main {
-    max-width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  #view-qr {
+  #view-qr,
+  #qr-sheets-main {
     display: block !important;
   }
 
-  .qr-decals-grid {
+  .decal-sheet-grid {
     display: grid !important;
-    grid-template-columns: repeat(3, 2.25in) !important;
+    grid-template-columns: repeat(2, 3in) !important;
+    gap: 0.2in !important;
     justify-content: center !important;
-    gap: 0.18in !important;
   }
 
-  .qr-decal-card {
-    width: 2.25in !important;
-    min-height: 3.0in !important;
-    border: 2px solid #000000 !important;
+  .qr-decal-tile {
+    width: 3in !important;
+    height: 2in !important;
     box-shadow: none !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
@@ -332,15 +516,15 @@
     print-color-adjust: exact !important;
   }
 
-  .decal-header {
-    background: #BB0000 !important;
+  .qr-decal-banner {
+    background-color: #BB0000 !important;
     color: #ffffff !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  .decal-footer {
-    background: #0f172a !important;
+  .qr-decal-footer {
+    background-color: #0f172a !important;
     color: #ffffff !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;

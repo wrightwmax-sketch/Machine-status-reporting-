@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" class="dark" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2&quot;&times;3&quot; QR Machine Decal Generator (24 Assets) — Student Projects Laboratory (930 Kinnear Rd)</title>
+  <meta name="description" content="Printable 2x3 inch high-contrast industrial QR code machine decals for all 24 workstations in the Student Projects Laboratory at 930 Kinnear Rd." />
+  <!-- Day / Night Theme Switcher loaded in head to prevent FOUC -->
+  <script src="js/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            crimson: '#BB0000',
+            crimsonDark: '#8A0000',
+            shopBg: '#0b0e14',
+            shopSurface: '#131822',
+            shopElevated: '#1a2130'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <!-- QRCode.js via CDN for 2"x3" 3-in-1 Machine Decals -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body id="qr-sheets-standalone-page" class="bg-shopBg text-slate-100 font-sans min-h-screen flex flex-col">
+  <!-- TOP CRIMSON SAFETY ACCENT STRIPE -->
+  <div class="h-1.5 bg-gradient-to-r from-crimson via-red-500 to-amber-500 no-print"></div>
+
+  <!-- =====================================================================
+       APPLICATION HEADER & NAVIGATION BANNER
+       ===================================================================== -->
+  <header class="bg-slate-950/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-xl bg-crimson flex flex-col items-center justify-center text-white font-mono font-extrabold shadow-lg shadow-red-950/60 border border-red-400/30">
+          <span class="text-xs leading-none">SPL</span>
+          <span class="text-[10px] leading-tight opacity-90">930</span>
+        </div>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-[11px] font-mono uppercase tracking-widest px-2 py-0.5 rounded bg-red-500/15 text-red-400 border border-red-500/30 font-bold">
+              930 KINNEAR RD • STUDENT PROJECTS MACHINE SHOP
+            </span>
+            <span class="text-[11px] font-mono text-slate-400 hidden sm:inline">
+              2&quot;&times;3&quot; Equipment QR Decal Sheet Generator
+            </span>
+          </div>
+          <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white">
+            Student Projects Laboratory — Printable 2&quot;&times;3&quot; Machine QR Decals
+          </h1>
+        </div>
+      </div>
+
+      <!-- Navigation & Banner Theme Selector Control -->
+      <nav class="flex flex-wrap items-center gap-2" aria-label="QR Sheet Navigation">
+        <a href="index.html" class="portal-nav-btn">
+          <span>⬅️</span>
+          <span>Back to Operations &amp; PM Portal</span>
+        </a>
+        <a href="index.html?view=history" class="portal-nav-btn">
+          <span>📋</span>
+          <span>PM &amp; Fault Log</span>
+        </a>
+        <span class="portal-nav-btn active">
+          <span>🏷️</span>
+          <span>QR Decal Sheets (<span id="qr-decal-total-count">24</span>)</span>
+        </span>
+        <button id="theme-toggle-btn" type="button" class="theme-toggle-btn" aria-label="Toggle Day or Night Theme">
+          <span class="theme-icon" aria-hidden="true">☀️</span>
+          <span class="theme-label">Day Mode</span>
+          <span class="theme-status-pill">NIGHT ACTIVE</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       MAIN QR DECAL GENERATOR CONTENT
+       ===================================================================== -->
+  <main id="qr-sheets-main" class="max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex-1 space-y-5">
+    <!-- Controls & Print Instructions Panel -->
+    <section class="bg-shopSurface border border-slate-800 rounded-xl p-5 space-y-4 no-print">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-wider text-red-400 font-bold">UNIFIED 3-IN-1 MACHINE DECALS (24 SHOP ASSETS)</span>
+          <h2 class="text-xl font-extrabold text-white">Print-Ready 2&quot;&times;3&quot; Industrial QR Labels</h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Each decal encodes <code class="text-amber-300 font-mono">?asset=&lt;ASSET_ID&gt;</code> so scanning from a smartphone immediately opens the 4-Tab Unified Asset Hub Modal (1. Report Condition / Fault | 2. SOP &amp; PPE | 3. LOTO Procedure | 4. Monthly PM Matrix).
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <input
+            id="qr-base-url-input"
+            type="url"
+            aria-label="Portal Base URL for QR Codes"
+            class="w-72 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white"
+            placeholder="https://wrightwmax-sketch.github.io/Machine-status-reporting-/"
+          />
+          <button id="btn-regenerate-qr" type="button" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700">
+            Regenerate QR Codes
+          </button>
+          <button id="btn-print-qr-sheet" type="button" class="px-4 py-2 rounded-lg bg-crimson hover:bg-red-600 text-white text-xs font-bold flex items-center gap-2 shadow-lg">
+            <span>🖨️</span>
+            <span>Print 2&quot;&times;3&quot; Decals (Ctrl+P)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Zone Decal Filter Bar -->
+      <div class="flex flex-wrap items-center gap-1.5 pt-3 border-t border-slate-800/80" role="group" aria-label="Filter Decals by Shop Zone">
+        <span class="text-[11px] font-mono uppercase text-slate-400 mr-1">Filter Decal Sheet by Zone:</span>
+        <button type="button" class="zone-filter-pill zone-decal-filter-btn active" data-zone="ALL">All 6 Zones (24 Assets)</button>
+        <button type="button" class="zone-filter-pill zone-decal-filter-btn" data-zone="MAC">Zone 1: Manual Machining (4)</button>
+        <button type="button" class="zone-filter-pill zone-decal-filter-btn" data-zone="CNC">Zone 2: CNC Machining (3)</button>
+        <button type="button" class="zone-filter-pill zone-decal-filter-btn" data-zone="WLD">Zone 3: Welding &amp; Thermal (5)</button>
+        <button type="button" class="zone-filter-pill zone-decal-filter-btn" data-zone="SAW">Zone 4: Cutting, Saws &amp; Drilling (5)</button>
+        <button type="button" class="zone-filter-pill zone-decal-filter-btn" data-zone="FAB">Zone 5: Sheet Metal &amp; Abrasive (5)</button>
+        <button type="button" class="zone-filter-pill zone-decal-filter-btn" data-zone="FAC">Zone 6: Facility &amp; Infrastructure (2)</button>
+      </div>
+    </section>
+
+    <!-- 2" x 3" Decal Sheet Grid -->
+    <div id="qr-decal-grid" class="decal-sheet-grid" aria-live="polite"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-950 border-t border-slate-900 py-4 px-6 text-center text-xs text-slate-400 font-mono no-print">
+    Student Projects Laboratory (`930 Kinnear Rd`) • 2&quot;&times;3&quot; Machine QR Decal Generator • Target Milestone: March 2027
+  </footer>
+
+  <!-- QR Generator Script -->
+  <script src="js/qr-generator.js"></script>
+</body>
+</html>

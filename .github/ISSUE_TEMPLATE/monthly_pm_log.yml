@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        ### CAR Student Projects Shop (930 Kinnear Rd) — Monthly PM Submission
+        ### Student Projects Laboratory (930 Kinnear Rd) — Monthly PM Submission
         This issue is automatically parsed by the `process_shop_submission.yml` workflow to update `data/equipment_master.json` and append to `data/pm_history.json`.
 
   - type: input
@@ -53,16 +53,16 @@ body:
     id: quantitative_metrics
     attributes:
       label: "Quantitative Wear & Calibration Metrics (JSON or Key: Value)"
-      description: "Logged numerical readings (e.g., Coolant Brix %, X/Y Backlash 0.000\", Tool Rest Gap, Regulator PSI)"
-      placeholder: "x_backlash: 0.002 in\ny_backlash: 0.002 in\nway_lube_level: 100 %"
+      description: "Logged numerical readings (e.g., Coolant Brix %, X/Y Backlash 0.002 in, Way Lube PSI)"
+      placeholder: "x_backlash_in: 0.002 in\ny_backlash_in: 0.002 in\nway_oil_level: 100 %"
     validations:
       required: false
 
   - type: textarea
     id: pm_notes
     attributes:
-      label: "Maintenance Notes, Parts Replaced, or Follow-Up Actions"
-      description: "Document any consumables replaced, adjustments made, or parts ordered"
-      placeholder: "Ways oiled, T-slots stoned, gib play within spec."
+      label: "Inspection Notes, Parts Replaced, or Follow-Up Actions"
+      description: "Summary of condition findings or follow-up maintenance required before March 2027 milestone"
+      placeholder: "Ways lubricated, gibs snug, drawbar threads clean."
     validations:
       required: true

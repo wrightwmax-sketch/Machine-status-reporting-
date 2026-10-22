@@ -4,25 +4,26 @@
     "timestamp": "2026-10-15T14:30:00Z",
     "type": "MONTHLY_PM",
     "assetId": "FAC-01",
-    "assetName": "General Shop Safety, LOTO Station, Battery Activity Zone & Paint/Prep Booth",
+    "assetName": "Safety Hub, LOTO Lock Center, High-Voltage Battery Bench, and Paint/Prep Booth",
     "teamOrRole": "Shop Staff / SRA",
     "technician": "M. Wright",
     "statusAfter": "OPERATIONAL",
     "pmStatusAfter": "COMPLIANT",
     "metrics": {
       "loto_locks_count": "12 locks",
-      "eyewash_psi": "Pass"
+      "eyewash_psi": "Pass",
+      "booth_manometer_inwc": "0.18 in. w.c."
     },
     "completedItemsCount": 4,
     "totalItemsCount": 4,
-    "notes": "Audited LOTO locks/tags in machine shop cage and welding room; verified eyewash flush tags and Class ABC/D fire extinguishers."
+    "notes": "Audited LOTO locks/tags in machine shop cage and welding room; verified eyewash flush tags, paint booth differential manometer, and Class ABC/D fire extinguishers."
   },
   {
     "id": "PM-2026-1012-WLD04",
     "timestamp": "2026-10-12T16:15:00Z",
     "type": "MONTHLY_PM",
     "assetId": "WLD-04",
-    "assetName": "Thermal Processing Suite: Blue M Industrial Oven & Muffle Furnace",
+    "assetName": "Thermal Suite: Blue M Industrial Oven & Muffle Furnace",
     "teamOrRole": "Shop Staff / SRA",
     "technician": "M. Wright",
     "statusAfter": "OPERATIONAL",
@@ -52,29 +53,29 @@
     },
     "completedItemsCount": 5,
     "totalItemsCount": 5,
-    "notes": "Refractometer check on TRIM MicroSol 585XT (9.2% Brix); cleaned primary cloth net filter and CAT40 spindle taper."
+    "notes": "Completed monthly PM check on Haas VF-2SS (Tag 01191439). Skimmed tramp oil, verified 9.2% Brix concentration, and checked way lube reservoir."
   },
   {
-    "id": "PM-2026-1010-FAB03",
-    "timestamp": "2026-10-10T09:45:00Z",
-    "type": "MONTHLY_PM",
-    "assetId": "FAB-03",
-    "assetName": "Pedestal Bench Top Grinders & De-burring Station",
-    "teamOrRole": "Shop Staff / SRA",
+    "id": "FLT-2026-1009-SAW02",
+    "timestamp": "2026-10-09T15:05:00Z",
+    "type": "FAULT_RESOLVED",
+    "assetId": "SAW-02",
+    "assetName": "Horizontal Drop Bandsaw",
+    "teamOrRole": "Formula Buckeyes",
     "technician": "M. Wright",
     "statusAfter": "OPERATIONAL",
     "pmStatusAfter": "COMPLIANT",
     "metrics": {
-      "tool_rest_gap": "0.050 in",
-      "tongue_guard_gap": "0.100 in"
+      "blade_tension": "28,000 PSI",
+      "downfeed_check": "Smooth"
     },
-    "completedItemsCount": 3,
-    "totalItemsCount": 3,
-    "notes": "Ring-tested and dressed stone wheels square; adjusted tool rest strictly <= 1/16\" and spark tongue guard <= 1/8\"."
+    "completedItemsCount": 4,
+    "totalItemsCount": 4,
+    "notes": "Replaced dull bi-metal blade reported by Formula Buckeyes chassis fabrication group; bled air from hydraulic downfeed cylinder and returned saw to service."
   },
   {
     "id": "PM-2026-1005-MAC01",
-    "timestamp": "2026-10-05T13:00:00Z",
+    "timestamp": "2026-10-05T09:45:00Z",
     "type": "MONTHLY_PM",
     "assetId": "MAC-01",
     "assetName": "Bridgeport Series I Manual Knee Mill #1",
@@ -83,12 +84,12 @@
     "statusAfter": "OPERATIONAL",
     "pmStatusAfter": "COMPLIANT",
     "metrics": {
-      "x_backlash": "0.002 in",
-      "y_backlash": "0.002 in",
-      "way_lube_level": "100 %"
+      "x_backlash_in": "0.002 in",
+      "y_backlash_in": "0.002 in",
+      "way_oil_level": "100 %"
     },
-    "completedItemsCount": 6,
-    "totalItemsCount": 6,
-    "notes": "Filled one-shot lubricator with Mobil Vactra No. 2; stoned table T-slots and logged X/Y backlash."
+    "completedItemsCount": 5,
+    "totalItemsCount": 5,
+    "notes": "Baseline October monthly PM completed across Bridgeport Knee Mills #1, #2, and #3. Topped off Mobil Vactra No. 2 way oil reservoirs."
   }
 ]

@@ -1,12 +1,12 @@
 /**
- * CAR Student Projects Shop (930 Kinnear Rd)
+ * Student Projects Laboratory (930 Kinnear Rd)
  * Printable 2" x 3" 3-in-1 QR Machine Decal Sheet Generator (js/qr-generator.js)
  */
 
 (function (window) {
   'use strict';
 
-  const STORAGE_KEY_QR_BASE = 'car_shop_portal_qr_base_url_v1';
+  const STORAGE_KEY_QR_BASE = 'spl_shop_portal_qr_base_url_v2';
 
   function escapeHtml(str) {
     if (str === null || str === undefined) return '';
@@ -44,126 +44,194 @@
     for (let r = 0; r < modules; r++) {
       for (let c = 0; c < modules; c++) {
         let dark = false;
-        if (r < 7 && c < 7) dark = finderCell(r, c, 0, 0);
-        else if (r < 7 && c >= modules - 7) dark = finderCell(r, c, 0, modules - 7);
-        else if (r >= modules - 7 && c < 7) dark = finderCell(r, c, modules - 7, 0);
-        else if (!isFinder(r, c)) {
-          const seed = Math.imul(hash ^ (r * 31 + c * 17), 1597334677);
-          dark = (seed & 1) === 1;
+        if (isFinder(r, c)) {
+          if (r < 7 && c < 7) dark = finderCell(r, c, 0, 0);
+          else if (r < 7 && c >= modules - 7) dark = finderCell(r, c, 0, modules - 7);
+          else dark = finderCell(r, c, modules - 7, 0);
+        } else {
+          const bitIdx = (r * modules + c) % 31;
+          dark = (((hash >>> bitIdx) ^ (r * 17 + c * 31)) & 1) === 1;
         }
         if (dark) {
-          rects += `<rect x="${c}" y="${r}" width="1" height="1" fill="#000000" />`;
+          rects += `<rect x="${c}" y="${r}" width="1" height="1" fill="#0f172a"/>`;
         }
       }
     }
 
-    return `<svg viewBox="0 0 ${modules} ${modules}" width="${sizePx}" height="${sizePx}" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><rect width="${modules}" height="${modules}" fill="#ffffff"/>${rects}</svg>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${modules} ${modules}" width="${sizePx}" height="${sizePx}" shape-rendering="crispEdges"><rect width="${modules}" height="${modules}" fill="#ffffff"/>${rects}</svg>`;
   }
 
   /**
-   * Resolve production base URL for QR decals
+   * Resolve base URL for QR code target links
    */
-  function getBaseUrl() {
-    const inputEl = document.getElementById('qr-base-url-input');
-    if (inputEl && inputEl.value.trim()) {
-      return inputEl.value.trim().replace(/\?.*$/, '');
+  function getPortalBaseUrl() {
+    const saved = localStorage.getItem(STORAGE_KEY_QR_BASE);
+    if (saved && saved.trim()) {
+      return saved.trim().replace(/\?.*$/, '').replace(/qr-sheets\.html$/i, '');
     }
-    const stored = localStorage.getItem(STORAGE_KEY_QR_BASE);
-    if (stored && stored.trim()) {
-      return stored.trim().replace(/\?.*$/, '');
+    const loc = window.location;
+    let path = loc.pathname || '/';
+    path = path.replace(/qr-sheets\.html$/i, '').replace(/index\.html$/i, '');
+    if (!path.endsWith('/')) {
+      path += '/';
     }
-    return window.location.origin + window.location.pathname;
+    return `${loc.origin}${path}`;
+  }
+
+  function saveBaseUrlOverride(url) {
+    if (!url || !url.trim()) {
+      localStorage.removeItem(STORAGE_KEY_QR_BASE);
+      return;
+    }
+    localStorage.setItem(STORAGE_KEY_QR_BASE, url.trim());
   }
 
   /**
-   * Render all 2" x 3" 3-in-1 QR Machine Decals into #qr-decals-grid
+   * Render 2" x 3" industrial QR decals for all shop assets into #qr-decal-grid
    */
-  function renderQrDecalSheet(assets) {
-    const gridEl = document.getElementById('qr-decals-grid');
-    const baseInputEl = document.getElementById('qr-base-url-input');
-    if (!gridEl || !Array.isArray(assets)) return;
+  function renderQrDecalSheet(assets, customBaseUrl) {
+    const gridEl = document.getElementById('qr-decal-grid');
+    if (!gridEl) return;
 
-    const baseUrl = getBaseUrl();
-    if (baseInputEl && !baseInputEl.value) {
-      baseInputEl.value = baseUrl;
+    const baseUrl = (customBaseUrl && customBaseUrl.trim())
+      ? customBaseUrl.trim().replace(/\?.*$/, '').replace(/qr-sheets\.html$/i, '')
+      : getPortalBaseUrl();
+
+    const baseInput = document.getElementById('qr-base-url-input');
+    if (baseInput && !baseInput.value) {
+      baseInput.value = baseUrl;
     }
 
-    gridEl.innerHTML = assets
-      .map((asset) => {
-        const deepLinkUrl = `${baseUrl}?asset=${encodeURIComponent(asset.id)}`;
-        const noGlovesTag =
-          asset.sop && asset.sop.noGlovesWarning
-            ? `<span class="decal-hazard-pill">🚫 NO GLOVES</span>`
-            : `<span class="decal-zone-pill">${escapeHtml(asset.zoneCode || 'SHOP')}</span>`;
+    const countEl = document.getElementById('qr-decal-total-count');
+    if (countEl) {
+      countEl.textContent = String((assets || []).length);
+    }
 
-        return `
-          <article class="qr-decal-card" data-decal-asset="${escapeHtml(asset.id)}">
-            <header class="decal-header">
-              <span>CAR STUDENT PROJECTS SHOP • 930 KINNEAR RD</span>
-            </header>
+    gridEl.innerHTML = '';
 
-            <div class="decal-body">
-              <div class="decal-top-meta">
-                <span class="decal-asset-id">${escapeHtml(asset.id)}</span>
-                ${noGlovesTag}
-              </div>
+    (assets || []).forEach((asset) => {
+      const separator = baseUrl.includes('?') ? '&' : '?';
+      const targetUrl = `${baseUrl}${separator}asset=${encodeURIComponent(asset.id)}`;
+      const qrBoxId = `qr-decal-box-${asset.id.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+      const tagLabel = asset.equipmentTag || 'N/A';
 
-              <h3 class="decal-machine-name">${escapeHtml(asset.name)}</h3>
-              <div class="decal-equip-id">OSU ID: ${escapeHtml(asset.osuEquipmentId || 'N/A')}</div>
+      const tile = document.createElement('article');
+      tile.className = 'qr-decal-tile';
+      tile.setAttribute('data-asset-id', asset.id);
+      tile.setAttribute('data-zone-code', asset.zoneCode || '');
 
-              <div
-                class="decal-qr-mount"
-                id="decal-qr-${escapeHtml(asset.id)}"
-                data-qr-target="${escapeHtml(deepLinkUrl)}"
-              ></div>
-            </div>
+      tile.innerHTML = `
+        <div class="qr-decal-banner">
+          <span>STUDENT PROJECTS LAB • 930 KINNEAR RD</span>
+          <span>${escapeHtml(asset.zoneCode || 'SHOP')}</span>
+        </div>
+        <div class="qr-decal-body">
+          <div id="${qrBoxId}" class="qr-decal-code-box" aria-label="QR Code for ${escapeHtml(asset.id)}"></div>
+          <div class="qr-decal-info">
+            <div class="qr-decal-asset-id">${escapeHtml(asset.id)}</div>
+            <div class="qr-decal-tag-id">TAG: ${escapeHtml(tagLabel)}</div>
+            <div class="qr-decal-name">${escapeHtml(asset.name)}</div>
+            <div class="qr-decal-zone">${escapeHtml(asset.zone)}</div>
+          </div>
+        </div>
+        <div class="qr-decal-footer">
+          SCAN FOR: 1. SOP &amp; PPE | 2. LOTO Procedure | 3. Report Fault / Log PM
+        </div>
+      `;
 
-            <footer class="decal-footer">
-              <div class="decal-callout-title">SCAN FOR:</div>
-              <div class="decal-callout-items">
-                1. SOP &amp; PPE &nbsp;|&nbsp; 2. LOTO Procedure &nbsp;|&nbsp; 3. Report Fault / Log PM
-              </div>
-            </footer>
-          </article>
-        `;
-      })
-      .join('');
+      gridEl.appendChild(tile);
 
-    // Populate QR code canvases/images inside each decal mount
-    for (const asset of assets) {
-      const mountEl = document.getElementById(`decal-qr-${asset.id}`);
-      if (!mountEl) continue;
-      const targetUrl = mountEl.getAttribute('data-qr-target');
-      mountEl.innerHTML = '';
+      const qrContainer = document.getElementById(qrBoxId);
+      if (!qrContainer) return;
 
       if (typeof window.QRCode === 'function') {
         try {
-          new window.QRCode(mountEl, {
+          new window.QRCode(qrContainer, {
             text: targetUrl,
-            width: 116,
-            height: 116,
-            colorDark: '#000000',
+            width: 96,
+            height: 96,
+            colorDark: '#0f172a',
             colorLight: '#ffffff',
             correctLevel: window.QRCode.CorrectLevel ? window.QRCode.CorrectLevel.M : 0
           });
         } catch (err) {
-          mountEl.innerHTML = createFallbackQrSvg(targetUrl, 116);
+          qrContainer.innerHTML = createFallbackQrSvg(targetUrl, 96);
         }
       } else {
-        mountEl.innerHTML = createFallbackQrSvg(targetUrl, 116);
+        qrContainer.innerHTML = createFallbackQrSvg(targetUrl, 96);
       }
-    }
+    });
   }
 
-  function saveBaseUrlOverride(url) {
-    if (url && url.trim()) {
-      localStorage.setItem(STORAGE_KEY_QR_BASE, url.trim());
+  /**
+   * Standalone initializer for qr-sheets.html
+   */
+  async function initStandaloneQrSheetsPage() {
+    const standaloneMarker = document.getElementById('qr-sheets-standalone-page');
+    if (!standaloneMarker) return;
+
+    let allAssets = [];
+    let activeZone = 'ALL';
+
+    try {
+      const resp = await fetch(`data/equipment_master.json?t=${Date.now()}`, { cache: 'no-store' });
+      if (resp.ok) {
+        const data = await resp.json();
+        allAssets = Array.isArray(data.assets) ? data.assets : [];
+      }
+    } catch (err) {
+      console.error('Failed to load equipment_master.json on qr-sheets.html:', err);
     }
+
+    const baseInput = document.getElementById('qr-base-url-input');
+    if (baseInput) {
+      baseInput.value = getPortalBaseUrl();
+    }
+
+    const applyFilterAndRender = () => {
+      const filtered = activeZone === 'ALL'
+        ? allAssets
+        : allAssets.filter((a) => a.zoneCode === activeZone);
+      renderQrDecalSheet(filtered, baseInput ? baseInput.value : undefined);
+    };
+
+    applyFilterAndRender();
+
+    const regenBtn = document.getElementById('btn-regenerate-qr');
+    if (regenBtn && baseInput) {
+      regenBtn.addEventListener('click', () => {
+        saveBaseUrlOverride(baseInput.value);
+        applyFilterAndRender();
+      });
+    }
+
+    const printBtn = document.getElementById('btn-print-qr-sheet');
+    if (printBtn) {
+      printBtn.addEventListener('click', () => {
+        window.print();
+      });
+    }
+
+    document.querySelectorAll('.zone-decal-filter-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activeZone = btn.getAttribute('data-zone') || 'ALL';
+        document.querySelectorAll('.zone-decal-filter-btn').forEach((b) => {
+          b.classList.toggle('active', b === btn);
+        });
+        applyFilterAndRender();
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStandaloneQrSheetsPage);
+  } else {
+    initStandaloneQrSheetsPage();
   }
 
   window.ShopQrGenerator = {
-    renderQrDecalSheet,
-    getBaseUrl,
-    saveBaseUrlOverride
+    getPortalBaseUrl,
+    saveBaseUrlOverride,
+    renderQrDecalSheet
   };
 })(window);

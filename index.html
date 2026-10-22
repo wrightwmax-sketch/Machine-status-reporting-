@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="dark" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CAR Student Projects Shop — Operations, Safety (SOP/LOTO) &amp; PM Portal (930 Kinnear Rd)</title>
-  <meta name="description" content="Unified Preventative Maintenance (PM), Machine Condition/Fault Reporting, and Digital SOP/LOTO Safety Repository for the CAR Student Projects Shop at 930 Kinnear Rd." />
+  <title>Student Projects Laboratory — Operations, Safety (SOP/LOTO) &amp; PM Portal (930 Kinnear Rd)</title>
+  <meta name="description" content="Unified Preventative Maintenance (PM), Machine Condition/Fault Reporting, and Digital SOP/LOTO Safety Repository for the Student Projects Laboratory at 930 Kinnear Rd." />
+  <!-- Day / Night Theme Switcher loaded in head to prevent FOUC -->
+  <script src="js/theme.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
@@ -16,10 +18,10 @@
       theme: {
         extend: {
           colors: {
-            scarlet: '#BB0000',
-            scarletDark: '#8A0000',
+            crimson: '#BB0000',
+            crimsonDark: '#8A0000',
             shopBg: '#0b0e14',
-            shopCard: '#131822',
+            shopSurface: '#131822',
             shopElevated: '#1a2130'
           },
           fontFamily: {
@@ -35,92 +37,108 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="bg-shopBg text-slate-100 font-sans min-h-screen flex flex-col">
-  <!-- TOP SCARLET SAFETY ACCENT STRIPE -->
-  <div class="h-1.5 bg-gradient-to-r from-scarlet via-red-500 to-amber-500 no-print"></div>
+  <!-- TOP CRIMSON SAFETY ACCENT STRIPE -->
+  <div class="h-1.5 bg-gradient-to-r from-crimson via-red-500 to-amber-500 no-print"></div>
 
   <!-- =====================================================================
-       APPLICATION HEADER & NAVIGATION
+       APPLICATION HEADER & NAVIGATION BANNER
        ===================================================================== -->
-  <header class="sticky top-0 z-40 bg-shopBg/95 backdrop-blur-md border-b border-slate-800 no-print">
+  <header class="bg-slate-950/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30 no-print">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
-      <a href="./" id="brand-home-link" class="flex items-center gap-3.5 group">
-        <div class="w-12 h-12 rounded-xl bg-scarlet flex flex-col items-center justify-center font-mono font-extrabold text-white shadow-lg shadow-scarlet/30 border border-white/20">
-          <span class="text-xs tracking-wider leading-none">CAR</span>
-          <span class="text-[10px] tracking-widest text-red-100 mt-0.5">SHOP</span>
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-xl bg-crimson flex flex-col items-center justify-center text-white font-mono font-extrabold shadow-lg shadow-red-950/60 border border-red-400/30">
+          <span class="text-xs leading-none">SPL</span>
+          <span class="text-[10px] leading-tight opacity-90">930</span>
         </div>
         <div>
-          <div class="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-slate-400">
-            <span>930 KINNEAR RD</span>
-            <span>•</span>
-            <span class="text-emerald-400 font-semibold">SUPERVISOR: MAX WRIGHT</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-[11px] font-mono uppercase tracking-widest px-2 py-0.5 rounded bg-red-500/15 text-red-400 border border-red-500/30 font-bold">
+              930 KINNEAR RD • STUDENT PROJECTS MACHINE SHOP
+            </span>
+            <span class="text-[11px] font-mono text-slate-400 hidden sm:inline">
+              Supervisor: Max Wright (Sr. Instructional Lab Supervisor)
+            </span>
           </div>
-          <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white group-hover:text-red-400 transition-colors">
-            CAR Student Projects Shop — Operations, Safety (SOP/LOTO) &amp; PM Portal
+          <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white">
+            Student Projects Laboratory Operations, Safety (SOP/LOTO) &amp; PM Portal
           </h1>
         </div>
-      </a>
+      </div>
 
+      <!-- View Switcher & Banner Theme Selector Control -->
       <nav class="flex flex-wrap items-center gap-2" aria-label="Portal Navigation">
-        <button type="button" id="nav-dashboard" data-view="dashboard" class="portal-nav-btn active">
-          <span>🛠️ Equipment &amp; PM Matrix</span>
+        <button id="nav-btn-dashboard" type="button" class="portal-nav-btn active" data-view="dashboard">
+          <span>🛠️</span>
+          <span>Equipment Matrix</span>
         </button>
-        <button type="button" id="nav-history" data-view="history" class="portal-nav-btn">
-          <span>📜 PM &amp; Fault Log</span>
+        <button id="nav-btn-history" type="button" class="portal-nav-btn" data-view="history">
+          <span>📋</span>
+          <span>PM &amp; Fault Log</span>
         </button>
-        <button type="button" id="nav-qr" data-view="qr" class="portal-nav-btn">
-          <span>🏷️ 2"&times;3" QR Decals</span>
+        <button id="nav-btn-qr" type="button" class="portal-nav-btn" data-view="qr">
+          <span>🏷️</span>
+          <span>2&quot;&times;3&quot; QR Preview</span>
         </button>
-        <button type="button" id="btn-export-csv" class="portal-nav-btn" title="Export Equipment &amp; PM Matrix to CSV">
-          <span>📥 Export CSV</span>
+        <a href="qr-sheets.html" class="portal-nav-btn" title="Open Dedicated 2x3 QR Decal Sheet Generator Page">
+          <span>🖨️</span>
+          <span>QR Decal Sheets</span>
+        </a>
+        <button id="theme-toggle-btn" type="button" class="theme-toggle-btn" aria-label="Toggle Day or Night Theme">
+          <span class="theme-icon" aria-hidden="true">☀️</span>
+          <span class="theme-label">Day Mode</span>
+          <span class="theme-status-pill">NIGHT ACTIVE</span>
         </button>
-        <button type="button" id="btn-open-settings" class="p-2 rounded-lg bg-shopCard border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white transition" title="Supervisor Settings &amp; GitHub Sync Config" aria-label="Supervisor Settings">
-          ⚙️
+        <button id="nav-btn-settings" type="button" class="portal-nav-btn" title="GitHub &amp; Teams Alert Settings">
+          <span>⚙️</span>
+          <span class="hidden md:inline">Config</span>
         </button>
       </nav>
     </div>
   </header>
 
   <!-- =====================================================================
-       MAIN CONTENT CONTAINER
+       MAIN PORTAL CONTENT
        ===================================================================== -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+  <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex-1">
+
     <!-- ===================================================================
-         VIEW 1: MAIN EQUIPMENT DASHBOARD, KPI BANNER & FILTERS
+         VIEW 1: EXECUTIVE KPI BANNER + EQUIPMENT MATRIX DASHBOARD
          =================================================================== -->
-    <section id="view-dashboard" class="portal-view space-y-6">
-      <!-- EXECUTIVE KPI & MARCH 2027 MILESTONE BANNER -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <!-- Card 1: Monthly PM Compliance % -->
-        <div class="lg:col-span-3 bg-shopCard border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col justify-between relative overflow-hidden">
-          <div class="absolute top-0 left-0 w-1.5 h-full bg-emerald-500"></div>
+    <section id="view-dashboard" class="space-y-6">
+
+      <!-- Executive KPI & March 2027 Milestone Banner -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- KPI 1: Monthly PM Compliance % -->
+        <div class="bg-shopSurface border border-slate-800 rounded-xl p-4 shadow-lg flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">MONTHLY PM COMPLIANCE</span>
-            <span class="px-2 py-0.5 text-[11px] font-mono font-bold rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">30-DAY CYCLE</span>
+            <span class="text-xs font-mono uppercase tracking-wider text-slate-400">Monthly PM Compliance</span>
+            <span class="px-2 py-0.5 text-[11px] font-mono font-bold rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              30-DAY CYCLE
+            </span>
           </div>
           <div class="my-2 flex items-baseline gap-2">
             <span id="kpi-pm-compliance" class="text-3xl font-mono font-extrabold text-emerald-400">100%</span>
-            <span id="kpi-pm-count-sub" class="text-xs font-mono text-slate-400">(21 / 21 Compliant)</span>
+            <span id="kpi-pm-count-sub" class="text-xs font-mono text-slate-400">(24 / 24 Compliant)</span>
           </div>
-          <div class="text-xs text-slate-400">
-            Quantitative wear &amp; calibration checks logged across all 6 shop zones.
+          <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
+            <div id="kpi-pm-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 100%"></div>
           </div>
         </div>
 
-        <!-- Card 2: Shop Operational Readiness % -->
-        <div class="lg:col-span-5 bg-shopCard border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col justify-between relative overflow-hidden">
-          <div class="absolute top-0 left-0 w-1.5 h-full bg-sky-500"></div>
+        <!-- KPI 2: Shop Operational Readiness % -->
+        <div class="bg-shopSurface border border-slate-800 rounded-xl p-4 shadow-lg flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">SHOP OPERATIONAL READINESS</span>
-            <span id="kpi-readiness-pct" class="text-2xl font-mono font-extrabold text-white">100%</span>
+            <span class="text-xs font-mono uppercase tracking-wider text-slate-400">Shop Operational Readiness</span>
+            <span id="kpi-readiness-pct" class="text-lg font-mono font-extrabold text-white">100%</span>
           </div>
-
           <div class="grid grid-cols-4 gap-2 my-2">
             <button type="button" data-status-quick="OPERATIONAL" class="kpi-mini-pill bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-2 text-left hover:bg-emerald-500/20 transition">
               <div class="text-[10px] font-mono uppercase text-emerald-300">Operational</div>
-              <div id="kpi-count-operational" class="text-lg font-mono font-extrabold text-emerald-400">21</div>
+              <div id="kpi-count-operational" class="text-lg font-mono font-extrabold text-emerald-400">24</div>
             </button>
             <button type="button" data-status-quick="PM_DUE_SOON" class="kpi-mini-pill bg-amber-500/10 border border-amber-500/30 rounded-lg p-2 text-left hover:bg-amber-500/20 transition">
-              <div class="text-[10px] font-mono uppercase text-amber-300">Due Soon/Deg</div>
+              <div class="text-[10px] font-mono uppercase text-amber-300">PM Due &le;7d</div>
               <div id="kpi-count-due-soon" class="text-lg font-mono font-extrabold text-amber-400">0</div>
             </button>
             <button type="button" data-status-quick="PM_OVERDUE" class="kpi-mini-pill bg-orange-500/10 border border-orange-500/30 rounded-lg p-2 text-left hover:bg-orange-500/20 transition">
@@ -132,549 +150,610 @@
               <div id="kpi-count-down" class="text-lg font-mono font-extrabold text-red-400">0</div>
             </button>
           </div>
-          <div class="text-[11px] text-slate-400">
-            Supporting Experimental Methods courses &amp; 7 student teams (Baja SAE, Formula SAE, Buckeye Current, EcoCAR, Venturi, DBR, BExA).
+          <div class="text-[11px] text-slate-400 font-mono">
+            Click any readiness bucket above to filter the equipment matrix.
           </div>
         </div>
 
-        <!-- Card 3: March 2027 Milestone Progress Banner -->
-        <div class="lg:col-span-4 bg-shopCard border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col justify-between relative overflow-hidden">
-          <div class="absolute top-0 left-0 w-1.5 h-full bg-scarlet"></div>
+        <!-- KPI 3: March 2027 PM Standardization Milestone Progress -->
+        <div class="bg-shopSurface border border-slate-800 rounded-xl p-4 shadow-lg flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono uppercase tracking-wider text-red-400 font-bold">TARGET MILESTONE: MARCH 2027</span>
-            <span id="milestone-pct-badge" class="px-2 py-0.5 text-xs font-mono font-extrabold rounded bg-scarlet text-white">100% READY</span>
+            <span class="text-xs font-mono uppercase tracking-wider text-slate-400">March 2027 Standardization Goal</span>
+            <span class="px-2 py-0.5 text-[11px] font-mono font-bold rounded bg-red-500/20 text-red-300 border border-red-500/40">
+              TARGET: MAR 2027
+            </span>
           </div>
-          <div class="text-sm font-bold text-white mt-1">
-            PM Matrix, Digital SOP &amp; LOTO Standardization
-          </div>
-          <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden my-2 border border-slate-700">
-            <div id="milestone-progress-bar" class="bg-gradient-to-r from-scarlet via-amber-500 to-emerald-400 h-full transition-all duration-500" style="width: 100%"></div>
+          <div class="my-1.5">
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="font-semibold text-slate-200">SOP + LOTO + Monthly PM Coverage</span>
+              <span id="kpi-milestone-coverage" class="font-mono font-bold text-emerald-400">100% Standardized</span>
+            </div>
+            <div class="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden border border-slate-800">
+              <div class="bg-gradient-to-r from-crimson via-amber-500 to-emerald-400 h-full" style="width: 100%"></div>
+            </div>
           </div>
           <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
-            <span>SOPs: <strong class="text-emerald-400">21/21</strong></span>
-            <span>LOTO Cards: <strong class="text-emerald-400">21/21</strong></span>
-            <span>PM Matrix: <strong class="text-emerald-400">21/21</strong></span>
+            <span>SOPs: <strong class="text-emerald-400">24/24</strong></span>
+            <span>LOTO Specs: <strong class="text-emerald-400">24/24</strong></span>
+            <span>PM Matrix: <strong class="text-emerald-400">24/24</strong></span>
           </div>
         </div>
       </div>
 
-      <!-- SEARCH, ZONE & STATUS FILTER PANEL -->
-      <div class="bg-shopCard border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div class="relative flex-1 min-w-[260px]">
+      <!-- Supported Student Teams & Academic Courses Bar -->
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="font-mono uppercase text-[11px] text-slate-400 mr-1">Supported Programs:</span>
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-medium">Formula Buckeyes</span>
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-medium">Baja Engineering</span>
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-medium">Buckeye Current</span>
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-medium">Advanced Vehicle Team</span>
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-medium">Venturi</span>
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-medium">DBR</span>
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-medium">BExA</span>
+          <span class="px-2 py-0.5 rounded bg-red-950/70 border border-red-500/30 text-red-200 font-medium">Experimental Methods Courses</span>
+        </div>
+        <div class="font-mono text-[11px] text-amber-300">
+          🔔 Urgent LOTO / Fault Channel: <strong>Max Wright (Teams / Text Message)</strong>
+        </div>
+      </div>
+
+      <!-- Filter & Search Controls -->
+      <div class="bg-shopSurface border border-slate-800 rounded-xl p-4 shadow-md space-y-3">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <!-- Search Box -->
+          <div class="relative flex-1">
             <input
+              id="asset-search-input"
               type="search"
-              id="search-input"
-              class="w-full bg-shopBg border border-slate-700 focus:border-scarlet rounded-xl pl-4 pr-10 py-2.5 text-sm text-white placeholder-slate-400 focus:outline-none"
-              placeholder="Search by Asset ID (MAC-01, CNC-02), OSU ID (01191439, 747061), machine name, LOTO energy source, or SOP rule..."
-              aria-label="Search shop equipment"
+              placeholder="Search by Asset ID (MAC-01, CNC-02, WLD-05), Equipment Tag (01191439), machine name, or hazard..."
+              class="w-full bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-red-500"
             />
-            <button type="button" id="btn-clear-search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-sm">✕</button>
+            <span class="absolute left-3 top-2.5 text-slate-400 text-sm">🔍</span>
           </div>
 
+          <!-- Status Filter Pills -->
           <div class="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filter by Status">
-            <button type="button" class="status-filter-pill active" data-status="ALL">All Assets (<span id="count-all-assets">21</span>)</button>
+            <button type="button" class="status-filter-pill active" data-status="ALL">All Assets (<span id="count-all-assets">24</span>)</button>
             <button type="button" class="status-filter-pill" data-status="OPERATIONAL">🟢 Operational</button>
-            <button type="button" class="status-filter-pill" data-status="PM_DUE_SOON">🟡 PM Due Soon / Caution</button>
+            <button type="button" class="status-filter-pill" data-status="PM_DUE_SOON">🟡 PM Due / Degraded</button>
             <button type="button" class="status-filter-pill" data-status="PM_OVERDUE">🟠 PM Overdue</button>
-            <button type="button" class="status-filter-pill" data-status="DOWN">🔴 Down / Locked Out</button>
+            <button type="button" class="status-filter-pill" data-status="DOWN">🔴 Down / LOTO</button>
           </div>
         </div>
 
-        <!-- 6 Shop Zone Filter Pills -->
-        <div class="flex flex-wrap items-center gap-1.5 pt-1" id="zone-filter-bar" role="group" aria-label="Filter by Shop Zone">
-          <button type="button" class="zone-filter-pill active" data-zone="ALL">All 6 Shop Zones</button>
+        <!-- 6 Zone Filter Bar -->
+        <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-800/80" role="group" aria-label="Filter by Shop Zone">
+          <span class="text-[11px] font-mono uppercase text-slate-400 mr-1">Shop Zones:</span>
+          <button type="button" class="zone-filter-pill active" data-zone="ALL">All 6 Zones</button>
           <button type="button" class="zone-filter-pill" data-zone="MAC">Zone 1: Manual Machining (MAC)</button>
           <button type="button" class="zone-filter-pill" data-zone="CNC">Zone 2: CNC Machining (CNC)</button>
           <button type="button" class="zone-filter-pill" data-zone="WLD">Zone 3: Welding &amp; Thermal (WLD)</button>
           <button type="button" class="zone-filter-pill" data-zone="SAW">Zone 4: Cutting, Saws &amp; Drilling (SAW)</button>
-          <button type="button" class="zone-filter-pill" data-zone="FAB">Zone 5: Fabrication &amp; Abrasive (FAB)</button>
+          <button type="button" class="zone-filter-pill" data-zone="FAB">Zone 5: Sheet Metal &amp; Abrasive (FAB)</button>
           <button type="button" class="zone-filter-pill" data-zone="FAC">Zone 6: Facility &amp; Infrastructure (FAC)</button>
         </div>
       </div>
 
-      <!-- EQUIPMENT CARDS GRID -->
-      <div id="equipment-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" role="list" aria-label="Shop Equipment Cards"></div>
+      <!-- Equipment Matrix Grid -->
+      <div id="equipment-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" aria-live="polite"></div>
 
-      <!-- EMPTY SEARCH STATE -->
-      <div id="empty-grid-state" class="hidden bg-shopCard border border-dashed border-slate-700 rounded-2xl p-10 text-center">
-        <p class="text-slate-300 font-semibold mb-3">No shop equipment matches your current filter criteria.</p>
-        <button type="button" id="btn-reset-filters" class="px-4 py-2 rounded-lg bg-scarlet text-white text-sm font-bold hover:bg-red-700 transition">
-          Reset Search &amp; Filters
+      <!-- Empty Filter State -->
+      <div id="empty-filter-state" class="hidden bg-shopSurface border border-slate-800 rounded-xl p-8 text-center">
+        <p class="text-base font-bold text-slate-200">No shop assets match your current filter criteria.</p>
+        <p class="text-xs text-slate-400 mt-1">Clear the search query or reset the zone/status filters below.</p>
+        <button id="btn-reset-filters" type="button" class="mt-4 px-4 py-2 rounded-lg bg-crimson text-white text-xs font-bold hover:bg-red-600 transition">
+          Reset All Filters
         </button>
       </div>
     </section>
 
     <!-- ===================================================================
-         VIEW 2: HISTORICAL PM & CONDITION LOG TABLE
+         VIEW 2: HISTORICAL PM & CONDITION LOG TABLE + CSV EXPORT
          =================================================================== -->
-    <section id="view-history" class="portal-view hidden space-y-4">
-      <div class="bg-shopCard border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-wrap items-center justify-between gap-4">
+    <section id="view-history" class="hidden space-y-5">
+      <div class="bg-shopSurface border border-slate-800 rounded-xl p-5 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 class="text-lg font-extrabold text-white">Historical Monthly PM &amp; Condition Ledger</h2>
-          <p class="text-xs text-slate-400">Complete audit trail of monthly preventative maintenance checklists, quantitative wear readings, and student fault reports.</p>
+          <span class="text-xs font-mono uppercase tracking-wider text-red-400 font-bold">AUDIT &amp; COMPLIANCE LEDGER</span>
+          <h2 class="text-xl font-extrabold text-white">Preventative Maintenance (PM) &amp; Fault History Log</h2>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Complete timestamped ledger of monthly PM inspections, quantitative wear measurements (Brix %, leadscrew backlash, pressure), and resolved faults toward the March 2027 milestone.
+          </p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <button type="button" id="btn-export-history-json" class="px-3.5 py-2 rounded-lg bg-shopElevated border border-slate-700 hover:border-slate-500 text-xs font-mono font-bold text-slate-200">
-            📄 Export pm_history.json
+          <button id="btn-export-csv" type="button" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-2 shadow">
+            <span>📥</span>
+            <span>Export PM History (CSV)</span>
           </button>
-          <button type="button" id="btn-export-history-csv" class="px-3.5 py-2 rounded-lg bg-scarlet hover:bg-red-700 text-xs font-mono font-bold text-white">
-            📥 Export Ledger (.CSV)
+          <button id="btn-export-json" type="button" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold">
+            Download Master JSON
           </button>
         </div>
       </div>
 
-      <div class="bg-shopCard border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+      <div class="bg-shopSurface border border-slate-800 rounded-xl overflow-hidden shadow-lg">
         <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-sm">
+          <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-shopElevated border-b border-slate-800 text-[11px] font-mono uppercase text-slate-400">
-                <th class="py-3 px-4">Timestamp</th>
-                <th class="py-3 px-4">Event Type</th>
-                <th class="py-3 px-4">Asset</th>
-                <th class="py-3 px-4">Team / Role</th>
-                <th class="py-3 px-4">Technician / Reporter</th>
-                <th class="py-3 px-4">Status After</th>
-                <th class="py-3 px-4">Quantitative Metrics &amp; Notes</th>
+              <tr class="bg-slate-950 border-b border-slate-800 text-[11px] font-mono uppercase text-slate-400">
+                <th class="px-4 py-3">Timestamp</th>
+                <th class="px-4 py-3">Event Type</th>
+                <th class="px-4 py-3">Asset</th>
+                <th class="px-4 py-3">Tech / Team</th>
+                <th class="px-4 py-3">Post-Status</th>
+                <th class="px-4 py-3">Quantitative Metrics</th>
+                <th class="px-4 py-3">Inspection / Fault Notes</th>
               </tr>
             </thead>
-            <tbody id="history-table-body" class="divide-y divide-slate-800/80"></tbody>
+            <tbody id="history-table-body" class="divide-y divide-slate-800/80 text-sm"></tbody>
           </table>
         </div>
       </div>
     </section>
 
     <!-- ===================================================================
-         VIEW 3: PRINTABLE 2"x3" 3-IN-1 QR DECAL SHEET GENERATOR
+         VIEW 3: PRINTABLE 2" x 3" 3-IN-1 QR MACHINE DECAL SHEET GENERATOR
          =================================================================== -->
-    <section id="view-qr" class="portal-view hidden space-y-5">
-      <div class="bg-shopCard border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4 no-print">
-        <div class="flex flex-wrap items-center justify-between gap-4">
+    <section id="view-qr" class="hidden space-y-5">
+      <div class="bg-shopSurface border border-slate-800 rounded-xl p-5 no-print">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <span class="text-xs font-mono uppercase tracking-wider text-red-400 font-bold">UNIFIED 3-IN-1 MACHINE DECALS</span>
-            <h2 class="text-lg font-extrabold text-white">Printable 2"&times;3" Equipment QR Decal Sheet (21 Assets)</h2>
-            <p class="text-xs text-slate-400">
-              Each decal links to <code class="text-emerald-400">?asset=&lt;ASSET_ID&gt;</code>, launching the machine's 4-tab modal for <strong>1. SOP &amp; PPE | 2. LOTO Procedure | 3. Report Fault / Log PM</strong>.
+            <h2 class="text-xl font-extrabold text-white">Printable 2&quot;&times;3&quot; Equipment QR Decal Sheet (24 Assets)</h2>
+            <p class="text-xs text-slate-400 mt-1">
+              Each decal links directly to <code class="text-amber-300 font-mono">?asset=&lt;ASSET_ID&gt;</code>, launching the 4-Tab Unified Asset Hub Modal (1. SOP &amp; PPE | 2. LOTO Procedure | 3. Report Fault / Log PM).
             </p>
           </div>
-          <button type="button" id="btn-print-decals" class="px-5 py-2.5 rounded-xl bg-scarlet hover:bg-red-700 text-white font-bold text-sm shadow-lg shadow-scarlet/30 transition">
-            🖨️ Print 2"&times;3" QR Decal Sheet
-          </button>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800">
-          <label for="qr-base-url-input" class="text-xs font-mono font-bold text-slate-300">Production Base URL:</label>
-          <input
-            type="url"
-            id="qr-base-url-input"
-            class="flex-1 min-w-[260px] bg-shopBg border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-mono text-white"
-            placeholder="https://wrightwmax-sketch.github.io/Machine-status-reporting-/"
-          />
-          <button type="button" id="btn-update-qr-url" class="px-3.5 py-1.5 rounded-lg bg-shopElevated border border-slate-700 hover:border-slate-500 text-xs font-mono font-bold text-white">
-            Regenerate QR Codes
-          </button>
+          <div class="flex flex-wrap items-center gap-2">
+            <input
+              id="qr-base-url-input"
+              type="url"
+              class="w-72 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white"
+              placeholder="https://wrightwmax-sketch.github.io/Machine-status-reporting-/"
+            />
+            <button id="btn-regenerate-qr" type="button" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700">
+              Update Base URL
+            </button>
+            <a href="qr-sheets.html" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700">
+              Open Dedicated QR Page
+            </a>
+            <button id="btn-print-qr-sheet" type="button" class="px-4 py-2 rounded-lg bg-crimson hover:bg-red-600 text-white text-xs font-bold flex items-center gap-2 shadow-lg">
+              <span>🖨️</span>
+              <span>Print 2&quot;&times;3&quot; Decals</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- PRINTABLE DECALS GRID -->
-      <div id="qr-decals-grid" class="qr-decals-grid" aria-label="Printable 2x3 QR Machine Decals"></div>
+      <!-- Printable Decal Sheet Grid -->
+      <div id="qr-decal-grid" class="decal-sheet-grid"></div>
     </section>
+
   </main>
 
   <!-- =====================================================================
-       UNIFIED 4-TAB QR ASSET HUB MODAL (?asset=MAC-01&tab=fault|sop|loto|pm)
+       SINGLE-QR 4-TAB UNIFIED ASSET HUB MODAL (?asset=MAC-01&tab=...)
        ===================================================================== -->
-  <div id="asset-hub-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto no-print" role="dialog" aria-modal="true" aria-labelledby="modal-asset-name">
-    <div class="bg-shopCard border border-slate-700 rounded-2xl max-w-4xl w-full max-h-[94vh] flex flex-col shadow-2xl overflow-hidden my-auto">
-      <!-- MODAL ASSET HEADER -->
-      <div class="p-4 sm:p-5 bg-shopElevated border-b border-slate-800 flex flex-wrap items-start justify-between gap-3">
-        <div class="space-y-1">
-          <div class="flex flex-wrap items-center gap-2">
-            <span id="modal-asset-id" class="px-2.5 py-0.5 rounded-md bg-scarlet text-white font-mono font-extrabold text-sm">MAC-01</span>
-            <span id="modal-osu-id" class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono text-xs">OSU ID: 001</span>
-            <span id="modal-zone-badge" class="text-xs font-mono text-slate-400">Zone 1: Manual Machining (MAC)</span>
-          </div>
-          <h2 id="modal-asset-name" class="text-lg sm:text-xl font-extrabold text-white">Bridgeport Series I Manual Knee Mill #1</h2>
-        </div>
+  <div id="asset-hub-modal" class="fixed inset-0 z-50 hidden overflow-y-auto no-print" role="dialog" aria-modal="true" aria-labelledby="modal-asset-name">
+    <div class="min-h-screen px-3 sm:px-6 py-6 flex items-center justify-center">
+      <!-- Backdrop -->
+      <div id="asset-hub-modal-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
 
-        <div class="flex items-center gap-2">
-          <span id="modal-status-pill" class="status-badge status-operational">🟢 OPERATIONAL</span>
-          <button type="button" id="btn-copy-asset-link" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-mono text-slate-200" title="Copy direct QR link to this tab">
-            🔗 Copy Link
+      <!-- Modal Container -->
+      <div class="relative z-10 w-full max-w-4xl bg-shopSurface border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Top Modal Header -->
+        <div class="bg-slate-950 px-5 py-4 border-b border-slate-800 flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-1">
+              <span id="modal-asset-id" class="px-2.5 py-0.5 rounded bg-crimson text-white font-mono text-xs font-extrabold">MAC-01</span>
+              <span id="modal-equipment-tag" class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono text-xs">TAG: 001</span>
+              <span id="modal-asset-zone" class="text-xs font-mono text-slate-400">Zone 1: Manual Machining (MAC)</span>
+              <span id="modal-asset-status-pill"></span>
+            </div>
+            <h2 id="modal-asset-name" class="text-xl sm:text-2xl font-extrabold text-white">Bridgeport Series I Manual Knee Mill #1</h2>
+          </div>
+          <button id="btn-close-asset-modal" type="button" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-bold border border-slate-700">
+            ✕ ESC / Close
           </button>
-          <button type="button" id="btn-close-asset-modal" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white font-bold text-base flex items-center justify-center transition" aria-label="Close Asset Hub Modal">
-            ✕
+        </div>
+
+        <!-- Current Condition & PM Metadata Bar -->
+        <div class="bg-slate-900/90 px-5 py-2.5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="text-slate-300">
+            <strong class="font-mono uppercase text-slate-400 mr-1">Current Note:</strong>
+            <span id="modal-asset-condition-note">Ways lubricated with Mobil Vactra No. 2; X/Y backlash within spec.</span>
+          </div>
+          <div class="flex items-center gap-3 font-mono text-[11px] text-slate-400">
+            <span id="modal-asset-last-pm">Last PM: 2026-10-05</span>
+            <span>•</span>
+            <span id="modal-asset-next-pm" class="text-emerald-400 font-bold">Next Due: 2026-11-05</span>
+            <span>•</span>
+            <span id="modal-asset-pm-tech">Tech: M. Wright</span>
+          </div>
+        </div>
+
+        <!-- 4-Tab Bar -->
+        <div class="bg-slate-950/60 px-4 border-b border-slate-800 flex overflow-x-auto" role="tablist">
+          <button type="button" class="modal-tab-btn active" data-modal-tab="fault" role="tab">
+            <span>🚨</span>
+            <span>1. Condition &amp; Fault Report</span>
+          </button>
+          <button type="button" class="modal-tab-btn" data-modal-tab="sop" role="tab">
+            <span>🦺</span>
+            <span>2. Standard Operating Procedure (SOP)</span>
+          </button>
+          <button type="button" class="modal-tab-btn" data-modal-tab="loto" role="tab">
+            <span>🔒</span>
+            <span>3. Lockout / Tagout (LOTO)</span>
+          </button>
+          <button type="button" class="modal-tab-btn" data-modal-tab="pm" role="tab">
+            <span>🛠️</span>
+            <span>4. Monthly PM Matrix</span>
           </button>
         </div>
-      </div>
 
-      <!-- 4-TAB SWITCHER BAR -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 bg-shopBg border-b border-slate-800" role="tablist" aria-label="Asset Hub Tabs">
-        <button type="button" role="tab" data-hub-tab="fault" class="hub-tab-btn active">
-          <span>🚨 1. Report Condition / Fault</span>
-        </button>
-        <button type="button" role="tab" data-hub-tab="sop" class="hub-tab-btn">
-          <span>🛡️ 2. SOP &amp; PPE</span>
-        </button>
-        <button type="button" role="tab" data-hub-tab="loto" class="hub-tab-btn">
-          <span>🔒 3. LOTO Procedure</span>
-        </button>
-        <button type="button" role="tab" data-hub-tab="pm" class="hub-tab-btn">
-          <span>📋 4. Monthly PM Checklist</span>
-        </button>
-      </div>
+        <!-- Tab Panels -->
+        <div class="p-5 sm:p-6 max-h-[75vh] overflow-y-auto space-y-5">
 
-      <!-- MODAL SCROLLABLE BODY -->
-      <div class="p-4 sm:p-6 overflow-y-auto space-y-5 flex-1">
-        <!-- ===============================================================
-             TAB 1: REPORT CONDITION / FAULT
-             =============================================================== -->
-        <div id="hub-panel-fault" class="hub-tab-panel space-y-4">
-          <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <div class="text-[11px] font-mono uppercase text-slate-400">CURRENT LOGGED CONDITION</div>
-              <div id="fault-tab-current-note" class="text-sm text-slate-200 font-medium">Ways lubricated with Mobil Vactra No. 2; X/Y backlash within spec.</div>
-            </div>
-            <div class="text-right font-mono text-xs text-slate-400">
-              <div>Last PM: <span id="fault-tab-last-pm" class="text-emerald-400">2026-10-05</span></div>
-              <div>Next Due: <span id="fault-tab-next-pm" class="text-slate-200">2026-11-05</span></div>
-            </div>
-          </div>
-
-          <form id="fault-report-form" class="space-y-4" novalidate>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- ===============================================================
+               TAB 1: REPORT CONDITION / FAULT
+               =============================================================== -->
+          <div id="modal-tab-fault" class="modal-tab-panel space-y-4">
+            <div class="bg-red-950/30 border border-red-500/30 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div>
-                <label for="fault-team-select" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">
-                  Student Team / Course Affiliation <span class="text-red-500">*</span>
-                </label>
-                <select id="fault-team-select" required class="w-full bg-shopBg border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white">
-                  <option value="" disabled selected>Select team or course...</option>
-                  <option value="Baja SAE">Baja SAE</option>
-                  <option value="Formula SAE">Formula SAE</option>
-                  <option value="Buckeye Current">Buckeye Current</option>
-                  <option value="EcoCAR">EcoCAR</option>
-                  <option value="Venturi">Venturi</option>
-                  <option value="DBR">DBR</option>
-                  <option value="Buckeye Experimental Aeronautics (BExA)">Buckeye Experimental Aeronautics (BExA)</option>
-                  <option value="Experimental Methods Course">Experimental Methods Course</option>
-                  <option value="Shop Staff / SRA">Shop Staff / SRA</option>
-                </select>
-              </div>
-
-              <div>
-                <label for="fault-severity-select" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">
-                  Machine Condition / Severity <span class="text-red-500">*</span>
-                </label>
-                <select id="fault-severity-select" required class="w-full bg-shopBg border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white">
-                  <option value="DOWN - LOCKED OUT">🔴 DOWN - LOCKED OUT (Red Tag / Unsafe / Do Not Operate)</option>
-                  <option value="DEGRADED">🟡 DEGRADED / CAUTION (Yellow Tag / Broken Tool / Minor Issue)</option>
-                  <option value="OPERATIONAL">🟢 OPERATIONAL (Cleared Fault / Returned to Service)</option>
-                </select>
+                <strong class="text-red-300 uppercase font-mono">Immediate Shop Floor Reporting:</strong>
+                <span class="text-slate-200 ml-1">Log broken tooling, machine alarms, or safety lockouts. For critical LOTO events, also message <strong>Max Wright</strong> via Teams or Text.</span>
               </div>
             </div>
 
-            <div>
-              <label for="fault-reporter-input" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">
-                Reporter Name &amp; Email <span class="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="fault-reporter-input"
-                required
-                class="w-full bg-shopBg border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white"
-                placeholder="e.g., Alex Smith (smith.1@osu.edu)"
-              />
-            </div>
-
-            <div>
-              <label for="fault-desc-input" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">
-                Fault Description, Alarm Code, or Broken Tooling Details <span class="text-red-500">*</span>
-              </label>
-              <textarea
-                id="fault-desc-input"
-                rows="3"
-                required
-                class="w-full bg-shopBg border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white"
-                placeholder="Describe alarm code (e.g., Haas Alarm 102), broken tap/endmill size, gas/coolant issue, and whether LOTO has been applied..."
-              ></textarea>
-            </div>
-
-            <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 space-y-1">
-              <div class="font-bold">📸 Photo Upload &amp; Supervisor Notification Protocol:</div>
-              <p>
-                Clicking <strong>Submit &amp; Open GitHub Issue Ticket</strong> updates this browser immediately and opens a pre-filled GitHub Issue (`unscheduled_downtime_fault.yml`) where you can drag-and-drop smartphone photos of the alarm screen or broken tool. For urgent lockouts, also message <strong>Max Wright</strong> via Microsoft Teams or Text Message.
-              </p>
-            </div>
-
-            <div id="fault-form-error" class="hidden p-3 rounded-xl bg-red-500/20 border border-red-500 text-xs text-red-200 font-bold"></div>
-
-            <div class="flex flex-wrap items-center gap-3 pt-1">
-              <button type="submit" data-submit-mode="local" class="flex-1 min-w-[200px] py-3 px-4 rounded-xl bg-scarlet hover:bg-red-700 text-white font-bold text-sm shadow-lg shadow-scarlet/30 transition">
-                ✅ Log Condition Update to Shop Portal
-              </button>
-              <button type="button" id="btn-fault-github-issue" class="py-3 px-4 rounded-xl bg-shopElevated hover:bg-slate-700 border border-slate-600 text-slate-100 font-mono font-bold text-xs transition">
-                🐙 Submit &amp; Open GitHub Issue (`unscheduled_downtime_fault.yml`) ↗
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- ===============================================================
-             TAB 2: STANDARD OPERATING PROCEDURE (SOP)
-             =============================================================== -->
-        <div id="hub-panel-sop" class="hub-tab-panel hidden space-y-4">
-          <!-- Red NO GLOVES Warning Banner (shown dynamically when noGlovesWarning is true) -->
-          <div id="sop-no-gloves-banner" class="p-3.5 rounded-xl bg-red-600/20 border-2 border-red-500 flex items-center gap-3">
-            <span class="text-2xl">🚫</span>
-            <div>
-              <div class="text-xs font-mono uppercase tracking-wider text-red-300 font-extrabold">CRITICAL ROTATING SPINDLE / BLADE ENTANGLEMENT RULE</div>
-              <div class="text-sm font-extrabold text-white">NO GLOVES PERMITTED WHILE OPERATING THIS MACHINE</div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Required PPE -->
-            <div class="p-4 rounded-xl bg-shopBg border border-slate-800 space-y-2">
-              <h3 class="text-xs font-mono uppercase tracking-wider text-emerald-400 font-bold">🦺 Required Personal Protective Equipment (PPE)</h3>
-              <ul id="sop-ppe-list" class="space-y-1.5 text-sm text-slate-200 list-disc list-inside"></ul>
-            </div>
-
-            <!-- Potential Hazards -->
-            <div class="p-4 rounded-xl bg-shopBg border border-slate-800 space-y-2">
-              <h3 class="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold">⚠️ Primary Operational Hazards</h3>
-              <ul id="sop-hazards-list" class="space-y-1.5 text-sm text-slate-200 list-disc list-inside"></ul>
-            </div>
-          </div>
-
-          <!-- Before / During / After Use Steps -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="p-4 rounded-xl bg-shopBg border border-slate-800 space-y-2">
-              <h3 class="text-xs font-mono uppercase tracking-wider text-sky-400 font-bold">1. Before Use (Pre-Check)</h3>
-              <ul id="sop-before-list" class="space-y-1.5 text-xs sm:text-sm text-slate-200 list-decimal list-inside"></ul>
-            </div>
-
-            <div class="p-4 rounded-xl bg-shopBg border border-slate-800 space-y-2">
-              <h3 class="text-xs font-mono uppercase tracking-wider text-amber-300 font-bold">2. During Operation</h3>
-              <ul id="sop-during-list" class="space-y-1.5 text-xs sm:text-sm text-slate-200 list-decimal list-inside"></ul>
-            </div>
-
-            <div class="p-4 rounded-xl bg-shopBg border border-slate-800 space-y-2">
-              <h3 class="text-xs font-mono uppercase tracking-wider text-emerald-400 font-bold">3. After Use (Showroom Reset)</h3>
-              <ul id="sop-after-list" class="space-y-1.5 text-xs sm:text-sm text-slate-200 list-decimal list-inside"></ul>
-            </div>
-          </div>
-
-          <!-- Emergency Protocol -->
-          <div class="p-4 rounded-xl bg-red-950/50 border border-red-800 space-y-1">
-            <div class="text-xs font-mono uppercase tracking-wider text-red-400 font-bold">🚨 Emergency Shutdown &amp; Incident Protocol</div>
-            <p id="sop-emergency-text" class="text-sm text-slate-100 font-medium"></p>
-          </div>
-        </div>
-
-        <!-- ===============================================================
-             TAB 3: LOCKOUT / TAGOUT (LOTO) PROCEDURE
-             =============================================================== -->
-        <div id="hub-panel-loto" class="hub-tab-panel hidden space-y-4">
-          <div class="p-4 rounded-xl bg-red-950/40 border-l-4 border-scarlet border border-red-900/60 flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <div class="text-xs font-mono uppercase text-red-300 font-bold">OFFICIAL MACHINE-SPECIFIC LOTO PROCEDURE • 930 KINNEAR RD</div>
-              <div class="text-sm font-bold text-white mt-0.5">
-                Authorized Personnel: <span id="loto-authorized" class="text-amber-300">Sr. Instructional Lab Supervisor (Max Wright) &amp; SRAs</span>
-              </div>
-            </div>
-            <div class="px-3 py-1.5 rounded-lg bg-black/50 border border-red-800 text-xs font-mono text-red-200">
-              Notify: <strong id="loto-notify">Max Wright - Teams / Text Message</strong>
-            </div>
-          </div>
-
-          <!-- Step 1: Normal Shutdown -->
-          <div class="p-4 rounded-xl bg-shopBg border border-slate-800 space-y-1">
-            <div class="text-xs font-mono uppercase text-sky-400 font-bold">STEP 1 — NORMAL MACHINE SHUTDOWN</div>
-            <p id="loto-normal-shutdown" class="text-sm text-white font-medium"></p>
-          </div>
-
-          <!-- Step 2: Energy Sources & Isolation Table -->
-          <div class="p-4 rounded-xl bg-shopBg border border-slate-800 space-y-3">
-            <div class="text-xs font-mono uppercase text-amber-400 font-bold">STEP 2 — ENERGY SOURCES, MAGNITUDES &amp; ISOLATION DEVICE LOCATIONS</div>
-            <div id="loto-energy-sources-list" class="space-y-2.5"></div>
-          </div>
-
-          <!-- Step 3 & Step 4: Stored Energy & Zero-Energy Verification -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="p-4 rounded-xl bg-shopBg border border-amber-500/40 space-y-1.5">
-              <div class="text-xs font-mono uppercase text-amber-400 font-bold">STEP 3 — STORED / RESIDUAL ENERGY RELIEF</div>
-              <p id="loto-stored-energy" class="text-sm text-slate-200"></p>
-            </div>
-
-            <div class="p-4 rounded-xl bg-shopBg border border-emerald-500/40 space-y-1.5">
-              <div class="text-xs font-mono uppercase text-emerald-400 font-bold">STEP 4 — ZERO-ENERGY VERIFICATION (TRY STEP)</div>
-              <p id="loto-verification" class="text-sm text-slate-200"></p>
-            </div>
-          </div>
-        </div>
-
-        <!-- ===============================================================
-             TAB 4: LOG MONTHLY PM CHECKLIST
-             =============================================================== -->
-        <div id="hub-panel-pm" class="hub-tab-panel hidden space-y-4">
-          <div class="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-700/50 flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <div class="text-xs font-mono uppercase text-emerald-300 font-bold">MARCH 2027 STANDARDIZED MONTHLY PM MATRIX</div>
-              <div class="text-xs text-slate-300">Check off each inspection task and record quantitative wear/calibration readings below.</div>
-            </div>
-            <button type="button" id="btn-check-all-pm" class="px-3 py-1 rounded bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/40 text-xs font-mono text-emerald-200 font-bold">
-              ☑️ Check All Items
-            </button>
-          </div>
-
-          <form id="monthly-pm-form" class="space-y-4" novalidate>
-            <!-- Dynamic Checklist Items -->
-            <div class="space-y-2">
-              <label class="block text-xs font-mono uppercase text-slate-300 font-bold">
-                1. Standardized Monthly Inspection Tasks <span class="text-red-500">*</span>
-              </label>
-              <div id="pm-checklist-container" class="space-y-2"></div>
-            </div>
-
-            <!-- Dynamic Quantitative Wear & Calibration Inputs -->
-            <div class="space-y-2">
-              <label class="block text-xs font-mono uppercase text-slate-300 font-bold">
-                2. Quantitative Wear &amp; Calibration Measurements
-              </label>
-              <div id="pm-metrics-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form id="fault-report-form" class="space-y-4">
+              <!-- Severity Selection -->
               <div>
-                <label for="pm-tech-input" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">
-                  3. Technician / SRA Name &amp; Initials <span class="text-red-500">*</span>
+                <label class="block text-xs font-mono uppercase text-slate-300 font-bold mb-2">1. Select Machine Condition / Severity *</label>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  <label class="fault-severity-option cursor-pointer">
+                    <input type="radio" name="fault-severity" value="DOWN" class="sr-only" checked />
+                    <div class="severity-tile p-3 rounded-xl border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 transition">
+                      <div class="font-mono font-extrabold text-xs text-red-400">🔴 DOWN — LOCKED OUT</div>
+                      <div class="text-[11px] text-slate-300 mt-0.5">Safety hazard, crash, or LOTO padlock applied. Do not operate.</div>
+                    </div>
+                  </label>
+                  <label class="fault-severity-option cursor-pointer">
+                    <input type="radio" name="fault-severity" value="DEGRADED" class="sr-only" />
+                    <div class="severity-tile p-3 rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 transition">
+                      <div class="font-mono font-extrabold text-xs text-amber-300">🟡 DEGRADED / CAUTION</div>
+                      <div class="text-[11px] text-slate-300 mt-0.5">Dull tooling, low coolant/lube, or minor issue needing attention.</div>
+                    </div>
+                  </label>
+                  <label class="fault-severity-option cursor-pointer">
+                    <input type="radio" name="fault-severity" value="OPERATIONAL" class="sr-only" />
+                    <div class="severity-tile p-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 transition">
+                      <div class="font-mono font-extrabold text-xs text-emerald-400">🟢 OPERATIONAL / CLEARED</div>
+                      <div class="text-[11px] text-slate-300 mt-0.5">Fault resolved, LOTO removed by authorized staff, ready for use.</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Student Team & Reporter -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="fault-team-select" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">2. Student Team / Course Affiliation *</label>
+                  <select id="fault-team-select" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500">
+                    <option value="Formula Buckeyes">Formula Buckeyes</option>
+                    <option value="Baja Engineering">Baja Engineering</option>
+                    <option value="Buckeye Current">Buckeye Current</option>
+                    <option value="Advanced Vehicle Team">Advanced Vehicle Team</option>
+                    <option value="Venturi">Venturi</option>
+                    <option value="DBR">DBR</option>
+                    <option value="Buckeye Experimental Aeronautics (BExA)">Buckeye Experimental Aeronautics (BExA)</option>
+                    <option value="Experimental Methods Course">Experimental Methods Course</option>
+                    <option value="Shop Staff / SRA">Shop Staff / SRA</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="fault-reporter-input" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">3. Your Name &amp; Email *</label>
+                  <input
+                    id="fault-reporter-input"
+                    type="text"
+                    required
+                    placeholder="e.g., Alex Smith (smith.1@example.edu)"
+                    class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                  />
+                </div>
+              </div>
+
+              <!-- Fault Description -->
+              <div>
+                <label for="fault-description-input" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">
+                  4. Fault Description, Broken Tooling, or Alarm Code *
                 </label>
-                <input
-                  type="text"
-                  id="pm-tech-input"
+                <textarea
+                  id="fault-description-input"
+                  rows="3"
                   required
-                  class="w-full bg-shopBg border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white"
-                  placeholder="e.g., Max Wright (MW)"
-                />
+                  placeholder="Describe exactly what happened, any abnormal noises/alarms, and whether an SRA or Max Wright was notified..."
+                  class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                ></textarea>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800">
+                <button
+                  id="btn-fault-local-save"
+                  type="button"
+                  class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700 transition"
+                >
+                  ⚡ Instant Local Board Update + Teams Alert
+                </button>
+                <button
+                  type="submit"
+                  class="px-5 py-2.5 rounded-xl bg-crimson hover:bg-red-600 text-white text-xs font-extrabold shadow-lg shadow-red-950/60 transition"
+                >
+                  🚨 Update Portal &amp; Submit Pre-Filled GitHub Fault Ticket &rarr;
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- ===============================================================
+               TAB 2: STANDARD OPERATING PROCEDURE (SOP)
+               =============================================================== -->
+          <div id="modal-tab-sop" class="modal-tab-panel hidden space-y-5">
+            <!-- Rotating Spindle / No Gloves Callout -->
+            <div id="sop-no-gloves-banner" class="bg-red-950/70 border-2 border-red-500 rounded-xl p-3.5 flex items-center gap-3">
+              <span class="text-2xl">🚫🧤</span>
+              <div>
+                <div class="text-xs font-mono uppercase font-extrabold text-red-300">CRITICAL ENTANGLEMENT HAZARD — NO GLOVES PERMITTED</div>
+                <div class="text-xs text-red-100">
+                  Strictly <strong>NO GLOVES</strong> while operating rotating spindles, chucks, blades, or abrasive belts/discs on this machine. Secure long hair, lanyards, and loose sleeves.
+                </div>
+              </div>
+            </div>
+
+            <!-- Required PPE & Potential Hazards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4">
+                <h3 class="text-xs font-mono uppercase tracking-wider text-emerald-400 font-bold mb-2.5">🦺 Required Personal Protective Equipment (PPE)</h3>
+                <div id="sop-ppe-badges" class="flex flex-wrap gap-2"></div>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4">
+                <h3 class="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold mb-2.5">⚠️ Primary Operational Hazards</h3>
+                <ul id="sop-hazards-list" class="space-y-1.5 text-xs text-slate-200 list-disc list-inside"></ul>
+              </div>
+            </div>
+
+            <!-- Step-by-Step Before / During / After Use -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-4">
+                <div class="text-xs font-mono uppercase font-extrabold text-sky-400 mb-2">1. Before Operation</div>
+                <ol id="sop-before-list" class="space-y-2 text-xs text-slate-200 list-decimal list-inside"></ol>
+              </div>
+              <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-4">
+                <div class="text-xs font-mono uppercase font-extrabold text-amber-300 mb-2">2. During Operation</div>
+                <ol id="sop-during-list" class="space-y-2 text-xs text-slate-200 list-decimal list-inside"></ol>
+              </div>
+              <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-4">
+                <div class="text-xs font-mono uppercase font-extrabold text-emerald-400 mb-2">3. After Use &amp; Cleanup</div>
+                <ol id="sop-after-list" class="space-y-2 text-xs text-slate-200 list-decimal list-inside"></ol>
+              </div>
+            </div>
+
+            <!-- Emergency Protocol -->
+            <div class="bg-red-950/40 border border-red-500/40 rounded-xl p-4">
+              <div class="text-xs font-mono uppercase font-bold text-red-300 mb-1">🚨 Emergency Shutdown &amp; Incident Protocol</div>
+              <p id="sop-emergency-text" class="text-xs text-slate-200"></p>
+            </div>
+          </div>
+
+          <!-- ===============================================================
+               TAB 3: LOCKOUT / TAGOUT (LOTO) ENERGY ISOLATION SPEC
+               =============================================================== -->
+          <div id="modal-tab-loto" class="modal-tab-panel hidden space-y-5">
+            <!-- Authorized Personnel & Notification Banner -->
+            <div class="bg-amber-950/40 border border-amber-500/40 rounded-xl p-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div>
+                <div class="font-mono uppercase text-[11px] text-amber-300 font-bold">🔒 Authorized LOTO Personnel</div>
+                <div id="loto-authorized" class="text-slate-100 font-semibold mt-0.5"></div>
+              </div>
+              <div>
+                <div class="font-mono uppercase text-[11px] text-amber-300 font-bold">📲 Affected User Notification Channel</div>
+                <div id="loto-notify" class="text-slate-100 font-semibold mt-0.5"></div>
+              </div>
+            </div>
+
+            <!-- Step 1: Normal Shutdown Procedure -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4">
+              <div class="text-xs font-mono uppercase font-extrabold text-sky-400 mb-1">Step 1 — Normal Machine Shutdown Procedure</div>
+              <p id="loto-normal-shutdown" class="text-xs sm:text-sm text-slate-100 font-medium"></p>
+            </div>
+
+            <!-- Step 2: Energy Sources, Magnitudes & Isolation Device Locations -->
+            <div class="space-y-2.5">
+              <div class="text-xs font-mono uppercase font-extrabold text-red-400">
+                Step 2 — Hazardous Energy Sources, Magnitudes &amp; Isolation Points
+              </div>
+              <div id="loto-energy-sources" class="space-y-3"></div>
+            </div>
+
+            <!-- Step 3 & Step 4: Stored Energy Dissipation + Zero-Energy Verification -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-slate-900/90 border border-amber-500/30 rounded-xl p-4">
+                <div class="text-xs font-mono uppercase font-extrabold text-amber-300 mb-1">
+                  Step 3 — Stored / Residual Energy Dissipation
+                </div>
+                <p id="loto-stored-energy" class="text-xs text-slate-200 leading-relaxed"></p>
+              </div>
+              <div class="bg-emerald-950/30 border border-emerald-500/40 rounded-xl p-4">
+                <div class="text-xs font-mono uppercase font-extrabold text-emerald-300 mb-1">
+                  Step 4 — Zero-Energy Verification (&quot;Try&quot; Step)
+                </div>
+                <p id="loto-verification" class="text-xs text-slate-200 leading-relaxed"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===============================================================
+               TAB 4: MONTHLY PREVENTATIVE MAINTENANCE (PM) CHECKLIST
+               =============================================================== -->
+          <div id="modal-tab-pm" class="modal-tab-panel hidden space-y-5">
+            <div class="bg-emerald-950/30 border border-emerald-500/30 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div>
+                <strong class="text-emerald-300 font-mono uppercase">March 2027 PM Standardization Matrix:</strong>
+                <span class="text-slate-200 ml-1">Check off completed monthly inspection items and log quantitative wear readings below.</span>
+              </div>
+              <span id="pm-frequency-badge" class="px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">
+                Monthly (30-Day Interval)
+              </span>
+            </div>
+
+            <form id="monthly-pm-form" class="space-y-4">
+              <!-- Dynamic Checklist Items -->
+              <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+                <div class="text-xs font-mono uppercase font-extrabold text-white mb-3">
+                  1. Standardized Monthly Inspection &amp; Lubrication Checklist
+                </div>
+                <div id="pm-checklist-items" class="space-y-2.5"></div>
+              </div>
+
+              <!-- Dynamic Quantitative Wear & Calibration Metrics -->
+              <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+                <div class="text-xs font-mono uppercase font-extrabold text-amber-300 mb-3">
+                  2. Quantitative Wear, Fluid &amp; Calibration Measurements
+                </div>
+                <div id="pm-quantitative-fields" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+              </div>
+
+              <!-- Technician, Post-PM Status & Notes -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="pm-tech-input" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">
+                    3. Technician / SRA Name &amp; Initials *
+                  </label>
+                  <input
+                    id="pm-tech-input"
+                    type="text"
+                    required
+                    placeholder="e.g., Max Wright (MW)"
+                    class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label for="pm-post-status-select" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">
+                    4. Post-PM Machine Status *
+                  </label>
+                  <select id="pm-post-status-select" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                    <option value="OPERATIONAL">🟢 OPERATIONAL — PM Compliant (+30 Days)</option>
+                    <option value="PM_DUE_SOON">🟡 PM DUE SOON — Follow-up Parts Needed</option>
+                    <option value="DOWN">🔴 DOWN — Locked Out Pending Repair</option>
+                  </select>
+                </div>
               </div>
 
               <div>
-                <label for="pm-status-select" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">
-                  4. Post-PM Operational Status <span class="text-red-500">*</span>
+                <label for="pm-notes-input" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">
+                  5. Inspection Summary, Consumables Replaced &amp; Follow-Up Notes *
                 </label>
-                <select id="pm-status-select" required class="w-full bg-shopBg border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white">
-                  <option value="OPERATIONAL">🟢 OPERATIONAL — PM Compliant (Next Due +30 Days)</option>
-                  <option value="PM_DUE_SOON">🟡 PM DUE SOON / FOLLOW-UP REQUIRED</option>
-                  <option value="DOWN - LOCKED OUT">🔴 DOWN - LOCKED OUT (Failed Inspection / Unsafe)</option>
-                </select>
+                <textarea
+                  id="pm-notes-input"
+                  rows="2"
+                  required
+                  placeholder="e.g., Topped off Mobil Vactra No. 2 way oil, cleaned chip pan, verified leadscrew backlash..."
+                  class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                ></textarea>
               </div>
-            </div>
 
-            <div>
-              <label for="pm-notes-input" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1.5">
-                5. PM Notes, Consumables Replaced, or Adjustments <span class="text-red-500">*</span>
-              </label>
-              <textarea
-                id="pm-notes-input"
-                rows="2"
-                required
-                class="w-full bg-shopBg border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white"
-                placeholder="e.g., Topped off Mobil Vactra No. 2 way oil, stoned table, backlash within spec."
-              ></textarea>
-            </div>
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800">
+                <button
+                  id="btn-pm-local-save"
+                  type="button"
+                  class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700 transition"
+                >
+                  ✅ Log Monthly PM Locally (+30 Days)
+                </button>
+                <button
+                  type="submit"
+                  class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-lg transition"
+                >
+                  🛠️ Record PM &amp; Open Pre-Filled GitHub PM Log Issue &rarr;
+                </button>
+              </div>
+            </form>
+          </div>
 
-            <div id="pm-form-error" class="hidden p-3 rounded-xl bg-red-500/20 border border-red-500 text-xs text-red-200 font-bold"></div>
-
-            <div class="flex flex-wrap items-center gap-2.5 pt-1">
-              <button type="submit" class="flex-1 min-w-[200px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg transition">
-                ✅ Log Monthly PM &amp; Update Compliance
-              </button>
-              <button type="button" id="btn-pm-github-issue" class="py-3 px-3.5 rounded-xl bg-shopElevated hover:bg-slate-700 border border-slate-600 text-slate-100 font-mono font-bold text-xs transition">
-                🐙 Submit via GitHub Issue (`monthly_pm_log.yml`) ↗
-              </button>
-              <button type="button" id="btn-pm-download-json" class="py-3 px-3.5 rounded-xl bg-shopElevated hover:bg-slate-700 border border-slate-600 text-slate-200 font-mono font-bold text-xs transition">
-                📄 Export PM JSON
-              </button>
-            </div>
-          </form>
         </div>
       </div>
     </div>
   </div>
 
   <!-- =====================================================================
-       SUPERVISOR SETTINGS & GITHUB / TEAMS CONFIG MODAL
+       GITHUB REPOSITORY & MICROSOFT TEAMS WEBHOOK SETTINGS MODAL
        ===================================================================== -->
-  <div id="settings-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 no-print" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
-    <div class="bg-shopCard border border-slate-700 rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <div>
-          <span class="text-[11px] font-mono uppercase text-red-400 font-bold">930 KINNEAR RD • SUPERVISOR CONTROLS</span>
-          <h2 id="settings-modal-title" class="text-lg font-extrabold text-white">Portal Sync &amp; Ledger Administration</h2>
-        </div>
-        <button type="button" id="btn-close-settings" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white font-bold">✕</button>
-      </div>
-
-      <div class="space-y-3">
-        <div>
-          <label for="config-github-repo" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1">
-            GitHub Repository (`owner/repo`) for Issue Submissions:
-          </label>
-          <input
-            type="text"
-            id="config-github-repo"
-            class="w-full bg-shopBg border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white"
-            placeholder="wrightwmax-sketch/Machine-status-reporting-"
-          />
-          <p class="text-[11px] text-slate-400 mt-1">
-            Used when opening pre-filled `monthly_pm_log.yml` and `unscheduled_downtime_fault.yml` GitHub Issues.
-          </p>
+  <div id="settings-modal" class="fixed inset-0 z-50 hidden overflow-y-auto no-print" role="dialog" aria-modal="true">
+    <div class="min-h-screen px-4 py-8 flex items-center justify-center">
+      <div id="settings-modal-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+      <div class="relative z-10 w-full max-w-lg bg-shopSurface border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div>
+            <span class="text-[11px] font-mono uppercase text-red-400 font-bold">PORTAL CONFIGURATION</span>
+            <h3 class="text-lg font-extrabold text-white">GitHub Issues &amp; Teams Webhook Settings</h3>
+          </div>
+          <button id="btn-close-settings" type="button" class="text-slate-400 hover:text-white text-sm font-mono">✕</button>
         </div>
 
-        <div>
-          <label for="config-teams-webhook" class="block text-xs font-mono uppercase text-slate-300 font-bold mb-1">
-            Microsoft Teams Incoming Webhook URL (Optional):
-          </label>
-          <input
-            type="url"
-            id="config-teams-webhook"
-            class="w-full bg-shopBg border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white"
-            placeholder="https://prod-xx.westus.logic.azure.com:443/workflows/..."
-          />
-        </div>
+        <form id="portal-settings-form" class="space-y-4 text-xs">
+          <div>
+            <label for="settings-github-repo" class="block font-mono uppercase text-slate-300 font-bold mb-1">
+              GitHub Repository (<code class="text-amber-300">owner/repo</code>)
+            </label>
+            <input
+              id="settings-github-repo"
+              type="text"
+              placeholder="wrightwmax-sketch/Machine-status-reporting-"
+              class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-white"
+            />
+            <p class="text-[11px] text-slate-400 mt-1">
+              Used to launch pre-filled GitHub Issue Forms (<code class="font-mono">monthly_pm_log.yml</code> &amp; <code class="font-mono">unscheduled_downtime_fault.yml</code>).
+            </p>
+          </div>
 
-        <div class="flex gap-2 pt-1">
-          <button type="button" id="btn-save-settings" class="flex-1 py-2.5 rounded-lg bg-scarlet hover:bg-red-700 text-white font-bold text-xs">
-            Save Configuration
-          </button>
-          <button type="button" id="btn-export-master-json" class="py-2.5 px-3 rounded-lg bg-shopElevated border border-slate-700 text-xs font-mono text-slate-200 hover:border-slate-500">
-            Export equipment_master.json
-          </button>
-        </div>
+          <div>
+            <label for="settings-teams-webhook" class="block font-mono uppercase text-slate-300 font-bold mb-1">
+              Microsoft Teams Workflows Webhook URL (Optional)
+            </label>
+            <input
+              id="settings-teams-webhook"
+              type="url"
+              placeholder="https://prod-xx.westus.logic.azure.com:443/workflows/..."
+              class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-white"
+            />
+            <p class="text-[11px] text-slate-400 mt-1">
+              When configured, submitting a Fault or Monthly PM also dispatches a real-time Adaptive Message alert to Microsoft Teams.
+            </p>
+          </div>
 
-        <hr class="border-slate-800 my-2" />
-
-        <div class="flex items-center justify-between gap-2">
-          <span class="text-xs text-slate-400">Reset browser local status/PM overrides to baseline JSON:</span>
-          <button type="button" id="btn-reset-portal" class="px-3 py-2 rounded-lg bg-red-950/80 hover:bg-red-700 border border-red-700 text-xs font-mono font-bold text-red-200 hover:text-white transition">
-            🔄 Reset All to Baseline
-          </button>
-        </div>
+          <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+            <button id="btn-clear-local-overrides" type="button" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-red-950 text-red-300 border border-red-500/30 font-bold">
+              Reset Local Overrides to Master JSON
+            </button>
+            <button type="submit" class="px-4 py-2 rounded-lg bg-crimson hover:bg-red-600 text-white font-bold">
+              Save Configuration
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 
-  <!-- TOAST NOTIFICATION CONTAINER -->
-  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-md no-print" aria-live="polite"></div>
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 no-print pointer-events-none"></div>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-slate-800/80 bg-shopCard/60 py-4 px-4 sm:px-6 mt-10 no-print">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
-      <span><strong>CAR Student Projects Shop (930 Kinnear Rd)</strong> • Operations, Safety (SOP/LOTO) &amp; Preventative Maintenance Portal</span>
-      <span class="font-mono">March 2027 PM Standardization • Sr. Lab Supervisor: Max Wright</span>
-    </div>
+  <!-- Footer -->
+  <footer class="bg-slate-950 border-t border-slate-900 py-4 px-6 text-center text-xs text-slate-400 font-mono no-print">
+    Student Projects Laboratory (`930 Kinnear Rd`) • Preventative Maintenance (PM), LOTO &amp; SOP Portal • Target Milestone: March 2027
   </footer>
 
+  <!-- Portal Scripts -->
   <script src="js/qr-generator.js"></script>
   <script src="js/app.js"></script>
 </body>

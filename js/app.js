@@ -1,5 +1,5 @@
 /**
- * CAR Student Projects Shop (930 Kinnear Rd)
+ * Student Projects Laboratory (930 Kinnear Rd)
  * Operations, Safety (SOP/LOTO) & Preventative Maintenance (PM) Portal
  * Main Application Controller (js/app.js)
  */
@@ -8,10 +8,10 @@
   'use strict';
 
   const STORAGE_KEYS = {
-    ASSET_OVERRIDES: 'car_shop_portal_asset_overrides_v2',
-    HISTORY_LOG: 'car_shop_portal_history_log_v2',
-    GITHUB_REPO: 'car_shop_portal_github_repo_v2',
-    TEAMS_WEBHOOK: 'car_shop_portal_teams_webhook_v2'
+    ASSET_OVERRIDES: 'spl_shop_portal_asset_overrides_v3',
+    HISTORY_LOG: 'spl_shop_portal_history_log_v3',
+    GITHUB_REPO: 'spl_shop_portal_github_repo_v3',
+    TEAMS_WEBHOOK: 'spl_shop_portal_teams_webhook_v3'
   };
 
   const DEFAULT_GITHUB_REPO = 'wrightwmax-sketch/Machine-status-reporting-';
@@ -69,616 +69,17 @@
     return 'OPERATIONAL';
   }
 
-  function getStatusMeta(bucket, rawStatus) {
-    switch (bucket) {
-      case 'DOWN':
-        return {
-          label: '🔴 DOWN - LOCKED OUT',
-          badgeClass: 'status-badge status-down',
-          borderTopClass: 'border-t-4 border-t-red-500'
-        };
-      case 'PM_OVERDUE':
-        return {
-          label: '🟠 PM OVERDUE',
-          badgeClass: 'status-badge status-overdue',
-          borderTopClass: 'border-t-4 border-t-orange-500'
-        };
-      case 'PM_DUE_SOON':
-        return {
-          label:
-            rawStatus && rawStatus.toUpperCase().includes('DEGRADED')
-              ? '🟡 DEGRADED / CAUTION'
-              : '🟡 PM DUE SOON',
-          badgeClass: 'status-badge status-due-soon',
-          borderTopClass: 'border-t-4 border-t-amber-500'
-        };
-      default:
-        return {
-          label: '🟢 OPERATIONAL',
-          badgeClass: 'status-badge status-operational',
-          borderTopClass: 'border-t-4 border-t-emerald-500'
-        };
+  function getStatusBadgeMarkup(bucket, customLabel) {
+    if (bucket === 'DOWN') {
+      return `<span class="status-badge status-badge-down">🔴 ${escapeHtml(customLabel || 'DOWN / LOCKED OUT')}</span>`;
     }
-  }
-
-  /**
-   * Load equipment_master.json & pm_history.json and merge localStorage overrides
-   */
-  async function loadPortalData() {
-    try {
-      const masterRes = await fetch('data/equipment_master.json', { cache: 'no-store' });
-      if (masterRes.ok) {
-        const masterJson = await masterRes.json();
-        state.metadata = masterJson.metadata || {};
-        state.assets = Array.isArray(masterJson.assets) ? masterJson.assets : [];
-      }
-    } catch (err) {
-      console.warn('Error loading equipment_master.json:', err);
+    if (bucket === 'PM_OVERDUE') {
+      return `<span class="status-badge status-badge-down">⚠️ ${escapeHtml(customLabel || 'PM OVERDUE')}</span>`;
     }
-
-    let baseHistory = [];
-    try {
-      const histRes = await fetch('data/pm_history.json', { cache: 'no-store' });
-      if (histRes.ok) {
-        baseHistory = await histRes.json();
-      }
-    } catch (err) {
-      console.warn('Error loading pm_history.json:', err);
+    if (bucket === 'PM_DUE_SOON') {
+      return `<span class="status-badge status-badge-due">🟡 ${escapeHtml(customLabel || 'DEGRADED / PM DUE')}</span>`;
     }
-
-    // Apply local asset overrides
-    let overrides = {};
-    try {
-      const raw = localStorage.getItem(STORAGE_KEYS.ASSET_OVERRIDES);
-      if (raw) overrides = JSON.parse(raw);
-    } catch (e) {
-      overrides = {};
-    }
-
-    state.assets = state.assets.map((asset) => {
-      if (overrides[asset.id]) {
-        return Object.assign({}, asset, overrides[asset.id]);
-      }
-      return asset;
-    });
-
-    // Merge local history entries
-    let localHistory = [];
-    try {
-      const rawHist = localStorage.getItem(STORAGE_KEYS.HISTORY_LOG);
-      if (rawHist) localHistory = JSON.parse(rawHist);
-    } catch (e) {
-      localHistory = [];
-    }
-
-    const seenIds = new Set(localHistory.map((h) => h.id));
-    state.history = [
-      ...localHistory,
-      ...baseHistory.filter((h) => !seenIds.has(h.id))
-    ];
-  }
-
-  function findAssetById(assetId) {
-    if (!assetId) return null;
-    const clean = String(assetId).trim().toUpperCase();
-    return state.assets.find((a) => a.id.toUpperCase() === clean) || null;
-  }
-
-  function saveAssetOverride(assetId, patch) {
-    let overrides = {};
-    try {
-      const raw = localStorage.getItem(STORAGE_KEYS.ASSET_OVERRIDES);
-      if (raw) overrides = JSON.parse(raw);
-    } catch (e) {
-      overrides = {};
-    }
-
-    overrides[assetId] = Object.assign({}, overrides[assetId] || {}, patch);
-    localStorage.setItem(STORAGE_KEYS.ASSET_OVERRIDES, JSON.stringify(overrides));
-
-    state.assets = state.assets.map((asset) =>
-      asset.id === assetId ? Object.assign({}, asset, patch) : asset
-    );
-  }
-
-  function prependHistoryEntry(entry) {
-    let localHistory = [];
-    try {
-      const raw = localStorage.getItem(STORAGE_KEYS.HISTORY_LOG);
-      if (raw) localHistory = JSON.parse(raw);
-    } catch (e) {
-      localHistory = [];
-    }
-
-    localHistory.unshift(entry);
-    localStorage.setItem(STORAGE_KEYS.HISTORY_LOG, JSON.stringify(localHistory.slice(0, 300)));
-    state.history.unshift(entry);
-  }
-
-  /**
-   * Render Executive KPI & March 2027 Milestone Banner
-   */
-  function renderExecutiveKpis() {
-    const total = state.assets.length || 1;
-    let operationalCount = 0;
-    let dueSoonCount = 0;
-    let overdueCount = 0;
-    let downCount = 0;
-    let pmCompliantCount = 0;
-
-    for (const asset of state.assets) {
-      const bucket = getEffectiveAssetBucket(asset);
-      if (bucket === 'DOWN') downCount++;
-      else if (bucket === 'PM_OVERDUE') overdueCount++;
-      else if (bucket === 'PM_DUE_SOON') dueSoonCount++;
-      else operationalCount++;
-
-      if (bucket !== 'PM_OVERDUE') {
-        pmCompliantCount++;
-      }
-    }
-
-    const pmCompliancePct = Math.round((pmCompliantCount / total) * 100);
-    const readinessPct = Math.round(((total - downCount) / total) * 100);
-
-    const pmPctEl = document.getElementById('kpi-pm-compliance');
-    const pmSubEl = document.getElementById('kpi-pm-count-sub');
-    const readyPctEl = document.getElementById('kpi-readiness-pct');
-    const cOpEl = document.getElementById('kpi-count-operational');
-    const cDueEl = document.getElementById('kpi-count-due-soon');
-    const cOverEl = document.getElementById('kpi-count-overdue');
-    const cDownEl = document.getElementById('kpi-count-down');
-    const allCountEl = document.getElementById('count-all-assets');
-
-    if (pmPctEl) pmPctEl.textContent = `${pmCompliancePct}%`;
-    if (pmSubEl) pmSubEl.textContent = `(${pmCompliantCount} / ${state.assets.length} Compliant)`;
-    if (readyPctEl) readyPctEl.textContent = `${readinessPct}%`;
-    if (cOpEl) cOpEl.textContent = String(operationalCount);
-    if (cDueEl) cDueEl.textContent = String(dueSoonCount);
-    if (cOverEl) cOverEl.textContent = String(overdueCount);
-    if (cDownEl) cDownEl.textContent = String(downCount);
-    if (allCountEl) allCountEl.textContent = String(state.assets.length);
-  }
-
-  /**
-   * Render Equipment & PM Matrix Grid
-   */
-  function renderEquipmentGrid() {
-    const gridEl = document.getElementById('equipment-grid');
-    const emptyEl = document.getElementById('empty-grid-state');
-    if (!gridEl) return;
-
-    const q = state.filters.search.trim().toLowerCase();
-    const zoneFilter = state.filters.zone;
-    const statusFilter = state.filters.status;
-
-    const filtered = state.assets.filter((asset) => {
-      const bucket = getEffectiveAssetBucket(asset);
-
-      if (zoneFilter !== 'ALL' && asset.zoneCode !== zoneFilter) {
-        return false;
-      }
-
-      if (statusFilter !== 'ALL' && bucket !== statusFilter) {
-        return false;
-      }
-
-      if (q) {
-        const energyText = (asset.loto && asset.loto.energySources || [])
-          .map((e) => `${e.type} ${e.magnitude} ${e.isolationLocation}`)
-          .join(' ');
-        const sopText = asset.sop
-          ? [...(asset.sop.ppe || []), ...(asset.sop.beforeUse || [])].join(' ')
-          : '';
-        const haystack = [
-          asset.id,
-          asset.name,
-          asset.osuEquipmentId,
-          asset.zone,
-          asset.status,
-          asset.conditionNote,
-          energyText,
-          sopText
-        ]
-          .join(' ')
-          .toLowerCase();
-
-        if (!haystack.includes(q)) return false;
-      }
-
-      return true;
-    });
-
-    if (filtered.length === 0) {
-      gridEl.innerHTML = '';
-      if (emptyEl) emptyEl.classList.remove('hidden');
-      return;
-    }
-
-    if (emptyEl) emptyEl.classList.add('hidden');
-
-    gridEl.innerHTML = filtered
-      .map((asset) => {
-        const bucket = getEffectiveAssetBucket(asset);
-        const meta = getStatusMeta(bucket, asset.status);
-        const noGlovesBadge =
-          asset.sop && asset.sop.noGlovesWarning
-            ? `<span class="px-2 py-0.5 rounded bg-red-500/20 border border-red-500/50 text-red-300 font-mono text-[10px] font-bold">🚫 NO GLOVES</span>`
-            : '';
-
-        const primaryEnergy =
-          asset.loto && asset.loto.energySources && asset.loto.energySources[0]
-            ? `${asset.loto.energySources[0].type}: ${asset.loto.energySources[0].magnitude}`
-            : 'LOTO Spec Ready';
-
-        return `
-          <article
-            class="bg-shopCard border border-slate-800 hover:border-slate-600 rounded-2xl p-4 shadow-xl flex flex-col justify-between gap-3.5 transition-all hover:-translate-y-0.5 cursor-pointer ${meta.borderTopClass}"
-            role="listitem"
-            data-card-asset="${escapeHtml(asset.id)}"
-          >
-            <div class="space-y-2">
-              <div class="flex items-center justify-between gap-2 flex-wrap">
-                <div class="flex items-center gap-1.5">
-                  <span class="px-2.5 py-0.5 rounded-md bg-slate-800 border border-slate-600 text-white font-mono font-extrabold text-xs">
-                    ${escapeHtml(asset.id)}
-                  </span>
-                  <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[11px]">
-                    ID: ${escapeHtml(asset.osuEquipmentId)}
-                  </span>
-                </div>
-                <span class="${meta.badgeClass}">${meta.label}</span>
-              </div>
-
-              <div>
-                <h3 class="text-base font-extrabold text-white leading-snug">${escapeHtml(asset.name)}</h3>
-                <div class="text-[11px] font-mono text-slate-400 mt-0.5">${escapeHtml(asset.zone)}</div>
-              </div>
-
-              <div class="flex flex-wrap items-center gap-1.5">
-                ${noGlovesBadge}
-                <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-300 font-mono text-[10px]">
-                  ⚡ ${escapeHtml(primaryEnergy)}
-                </span>
-              </div>
-
-              <div class="p-2.5 rounded-xl bg-shopBg border border-slate-800/90 text-xs text-slate-200 space-y-1">
-                <div class="text-[10px] font-mono uppercase text-slate-400 flex items-center justify-between">
-                  <span>Latest Condition / PM Note</span>
-                  <span class="text-emerald-400">Tech: ${escapeHtml(asset.lastPmTech || 'M. Wright')}</span>
-                </div>
-                <p class="leading-relaxed text-slate-200">${escapeHtml(asset.conditionNote)}</p>
-              </div>
-            </div>
-
-            <div class="space-y-2.5 pt-2 border-t border-slate-800/80">
-              <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
-                <span>Last PM: <strong class="text-slate-200">${escapeHtml(asset.lastPmDate)}</strong></span>
-                <span>Next Due: <strong class="text-emerald-400">${escapeHtml(asset.nextPmDue)}</strong></span>
-              </div>
-
-              <!-- 4 Direct Tab Launch Buttons -->
-              <div class="grid grid-cols-4 gap-1.5">
-                <button
-                  type="button"
-                  data-open-asset="${escapeHtml(asset.id)}"
-                  data-open-tab="fault"
-                  class="py-1.5 px-1 rounded-lg bg-red-600/20 hover:bg-red-600 text-red-200 hover:text-white border border-red-500/40 font-mono font-bold text-[10px] transition text-center"
-                >
-                  🚨 Fault
-                </button>
-                <button
-                  type="button"
-                  data-open-asset="${escapeHtml(asset.id)}"
-                  data-open-tab="sop"
-                  class="py-1.5 px-1 rounded-lg bg-sky-600/20 hover:bg-sky-600 text-sky-200 hover:text-white border border-sky-500/40 font-mono font-bold text-[10px] transition text-center"
-                >
-                  🛡️ SOP
-                </button>
-                <button
-                  type="button"
-                  data-open-asset="${escapeHtml(asset.id)}"
-                  data-open-tab="loto"
-                  class="py-1.5 px-1 rounded-lg bg-amber-600/20 hover:bg-amber-600 text-amber-200 hover:text-white border border-amber-500/40 font-mono font-bold text-[10px] transition text-center"
-                >
-                  🔒 LOTO
-                </button>
-                <button
-                  type="button"
-                  data-open-asset="${escapeHtml(asset.id)}"
-                  data-open-tab="pm"
-                  class="py-1.5 px-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600 text-emerald-200 hover:text-white border border-emerald-500/40 font-mono font-bold text-[10px] transition text-center"
-                >
-                  📋 Log PM
-                </button>
-              </div>
-            </div>
-          </article>
-        `;
-      })
-      .join('');
-  }
-
-  /**
-   * Render Historical PM & Fault Log Table
-   */
-  function renderHistoryTable() {
-    const tbody = document.getElementById('history-table-body');
-    if (!tbody) return;
-
-    tbody.innerHTML = state.history
-      .map((entry) => {
-        const isPm = entry.type === 'MONTHLY_PM';
-        const typeBadge = isPm
-          ? `<span class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono text-[10px] font-bold">MONTHLY PM</span>`
-          : `<span class="px-2 py-0.5 rounded bg-red-500/20 border border-red-500/40 text-red-300 font-mono text-[10px] font-bold">FAULT REPORT</span>`;
-
-        const metricsStr = entry.metrics
-          ? Object.entries(entry.metrics)
-              .map(([k, v]) => `${k}: ${v}`)
-              .join(' | ')
-          : '';
-
-        return `
-          <tr class="hover:bg-shopElevated/60 transition">
-            <td class="py-3 px-4 font-mono text-xs text-slate-400 whitespace-nowrap">${escapeHtml((entry.timestamp || '').slice(0, 16).replace('T', ' '))}</td>
-            <td class="py-3 px-4">${typeBadge}</td>
-            <td class="py-3 px-4">
-              <button type="button" data-open-asset="${escapeHtml(entry.assetId)}" data-open-tab="${isPm ? 'pm' : 'fault'}" class="font-mono font-bold text-white hover:text-red-400 underline">
-                ${escapeHtml(entry.assetId)}
-              </button>
-              <div class="text-xs text-slate-400">${escapeHtml(entry.assetName || '')}</div>
-            </td>
-            <td class="py-3 px-4 text-xs text-slate-300">${escapeHtml(entry.teamOrRole || '')}</td>
-            <td class="py-3 px-4 text-xs font-semibold text-white">${escapeHtml(entry.technician || '')}</td>
-            <td class="py-3 px-4 font-mono text-xs text-emerald-400">${escapeHtml(entry.statusAfter || '')}</td>
-            <td class="py-3 px-4 text-xs text-slate-200">
-              ${metricsStr ? `<div class="font-mono text-[11px] text-amber-300 mb-0.5">${escapeHtml(metricsStr)}</div>` : ''}
-              <div>${escapeHtml(entry.notes || '')}</div>
-            </td>
-          </tr>
-        `;
-      })
-      .join('');
-  }
-
-  /**
-   * Open the Unified 4-Tab QR Asset Hub Modal for a given asset & tab
-   */
-  function openAssetHubModal(assetId, tabName = 'fault', updateHistoryUrl = true) {
-    const asset = findAssetById(assetId);
-    if (!asset) return;
-
-    state.activeAssetId = asset.id;
-    const validTabs = ['fault', 'sop', 'loto', 'pm'];
-    const targetTab = validTabs.includes((tabName || '').toLowerCase())
-      ? tabName.toLowerCase()
-      : 'fault';
-    state.activeModalTab = targetTab;
-
-    const modalEl = document.getElementById('asset-hub-modal');
-    if (!modalEl) return;
-
-    // Populate Modal Header
-    const bucket = getEffectiveAssetBucket(asset);
-    const meta = getStatusMeta(bucket, asset.status);
-
-    document.getElementById('modal-asset-id').textContent = asset.id;
-    document.getElementById('modal-osu-id').textContent = `OSU ID: ${asset.osuEquipmentId}`;
-    document.getElementById('modal-zone-badge').textContent = asset.zone;
-    document.getElementById('modal-asset-name').textContent = asset.name;
-
-    const pillEl = document.getElementById('modal-status-pill');
-    if (pillEl) {
-      pillEl.className = meta.badgeClass;
-      pillEl.textContent = meta.label;
-    }
-
-    // Tab 1: Report Condition / Fault summary
-    document.getElementById('fault-tab-current-note').textContent = asset.conditionNote;
-    document.getElementById('fault-tab-last-pm').textContent = asset.lastPmDate || 'N/A';
-    document.getElementById('fault-tab-next-pm').textContent = asset.nextPmDue || 'N/A';
-
-    // Tab 2: SOP
-    const sop = asset.sop || {};
-    const noGlovesBanner = document.getElementById('sop-no-gloves-banner');
-    if (noGlovesBanner) {
-      noGlovesBanner.classList.toggle('hidden', !sop.noGlovesWarning);
-    }
-
-    const renderList = (id, arr) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.innerHTML = (arr || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('');
-    };
-
-    renderList('sop-ppe-list', sop.ppe);
-    renderList('sop-hazards-list', sop.hazards);
-    renderList('sop-before-list', sop.beforeUse);
-    renderList('sop-during-list', sop.duringUse);
-    renderList('sop-after-list', sop.afterUse);
-
-    const emergEl = document.getElementById('sop-emergency-text');
-    if (emergEl) emergEl.textContent = sop.emergencyProtocol || '';
-
-    // Tab 3: LOTO
-    const loto = asset.loto || {};
-    document.getElementById('loto-authorized').textContent =
-      loto.authorizedPersonnel || 'Sr. Instructional Lab Supervisor (Max Wright) & SRAs';
-    document.getElementById('loto-notify').textContent =
-      loto.notificationMethod || 'Max Wright - Teams / Text Message';
-    document.getElementById('loto-normal-shutdown').textContent = loto.normalShutdown || '';
-    document.getElementById('loto-stored-energy').textContent = loto.storedEnergyRelief || '';
-    document.getElementById('loto-verification').textContent = loto.zeroEnergyVerification || '';
-
-    const energyListEl = document.getElementById('loto-energy-sources-list');
-    if (energyListEl) {
-      energyListEl.innerHTML = (loto.energySources || [])
-        .map(
-          (src, idx) => `
-          <div class="p-3 rounded-lg bg-shopCard border border-slate-700 space-y-1">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <span class="font-mono text-xs font-extrabold text-amber-300">
-                ENERGY SOURCE #${idx + 1}: ${escapeHtml(src.type)}
-              </span>
-              <span class="px-2 py-0.5 rounded bg-red-500/20 border border-red-500/40 font-mono text-xs font-bold text-red-300">
-                Magnitude: ${escapeHtml(src.magnitude)}
-              </span>
-            </div>
-            <div class="text-xs text-slate-300">
-              <strong class="text-slate-100">Isolation Device Location:</strong> ${escapeHtml(src.isolationLocation)}
-            </div>
-            <div class="text-xs text-emerald-300">
-              <strong class="text-white">Lockout Procedure:</strong> ${escapeHtml(src.isolationProcedure)}
-            </div>
-          </div>
-        `
-        )
-        .join('');
-    }
-
-    // Tab 4: Monthly PM Checklist & Quantitative Metrics
-    const pm = asset.monthlyPm || { checklist: [], metrics: [] };
-    const checklistContainer = document.getElementById('pm-checklist-container');
-    if (checklistContainer) {
-      checklistContainer.innerHTML = (pm.checklist || [])
-        .map(
-          (task, i) => `
-          <label class="flex items-start gap-3 p-2.5 rounded-xl bg-shopBg border border-slate-800 hover:border-slate-600 cursor-pointer">
-            <input type="checkbox" name="pm_task" value="${escapeHtml(task)}" checked class="mt-0.5 w-4 h-4 accent-emerald-500 rounded" id="pm-task-${i}" />
-            <span class="text-xs sm:text-sm text-slate-200">${escapeHtml(task)}</span>
-          </label>
-        `
-        )
-        .join('');
-    }
-
-    const metricsContainer = document.getElementById('pm-metrics-container');
-    if (metricsContainer) {
-      metricsContainer.innerHTML = (pm.metrics || [])
-        .map(
-          (m) => `
-          <div class="p-2.5 rounded-xl bg-shopBg border border-slate-800">
-            <label class="block text-[11px] font-mono text-slate-400 mb-1">${escapeHtml(m.label)}</label>
-            <input
-              type="text"
-              data-metric-key="${escapeHtml(m.key)}"
-              data-metric-unit="${escapeHtml(m.unit || '')}"
-              value="${escapeHtml(m.placeholder || '')}"
-              placeholder="${escapeHtml(m.placeholder || '')}"
-              class="w-full bg-shopCard border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-mono text-white"
-            />
-          </div>
-        `
-        )
-        .join('');
-    }
-
-    switchModalTab(targetTab, false);
-    modalEl.classList.remove('hidden');
-
-    if (updateHistoryUrl) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('asset', asset.id);
-      url.searchParams.set('tab', targetTab);
-      window.history.pushState({}, '', url.toString());
-    }
-  }
-
-  function switchModalTab(tabName, updateUrl = true) {
-    state.activeModalTab = tabName;
-
-    document.querySelectorAll('[data-hub-tab]').forEach((btn) => {
-      btn.classList.toggle('active', btn.getAttribute('data-hub-tab') === tabName);
-    });
-
-    const panels = {
-      fault: document.getElementById('hub-panel-fault'),
-      sop: document.getElementById('hub-panel-sop'),
-      loto: document.getElementById('hub-panel-loto'),
-      pm: document.getElementById('hub-panel-pm')
-    };
-
-    Object.entries(panels).forEach(([key, panel]) => {
-      if (panel) panel.classList.toggle('hidden', key !== tabName);
-    });
-
-    if (updateUrl && state.activeAssetId) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('asset', state.activeAssetId);
-      url.searchParams.set('tab', tabName);
-      window.history.replaceState({}, '', url.toString());
-    }
-  }
-
-  function closeAssetHubModal() {
-    const modalEl = document.getElementById('asset-hub-modal');
-    if (modalEl) modalEl.classList.add('hidden');
-    state.activeAssetId = null;
-
-    const url = new URL(window.location.href);
-    url.searchParams.delete('asset');
-    url.searchParams.delete('id');
-    url.searchParams.delete('tab');
-    window.history.pushState({}, '', url.toString());
-  }
-
-  /**
-   * Switch top-level portal view ('dashboard' | 'history' | 'qr')
-   */
-  function switchPortalView(viewName, updateUrl = true) {
-    state.currentView = viewName;
-
-    const views = {
-      dashboard: document.getElementById('view-dashboard'),
-      history: document.getElementById('view-history'),
-      qr: document.getElementById('view-qr')
-    };
-
-    Object.entries(views).forEach(([k, el]) => {
-      if (el) el.classList.toggle('hidden', k !== viewName);
-    });
-
-    document.querySelectorAll('[data-view]').forEach((btn) => {
-      btn.classList.toggle('active', btn.getAttribute('data-view') === viewName);
-    });
-
-    if (viewName === 'qr' && window.ShopQrGenerator) {
-      window.ShopQrGenerator.renderQrDecalSheet(state.assets);
-    } else if (viewName === 'history') {
-      renderHistoryTable();
-    } else {
-      renderExecutiveKpis();
-      renderEquipmentGrid();
-    }
-
-    if (updateUrl) {
-      const url = new URL(window.location.href);
-      if (viewName === 'dashboard') {
-        url.searchParams.delete('view');
-      } else {
-        url.searchParams.set('view', viewName);
-      }
-      window.history.pushState({}, '', url.toString());
-    }
-  }
-
-  /**
-   * Build pre-filled GitHub Issue URL for Fault or Monthly PM
-   */
-  function buildGitHubIssueUrl(templateFile, title, paramsObj) {
-    const repo =
-      (localStorage.getItem(STORAGE_KEYS.GITHUB_REPO) || DEFAULT_GITHUB_REPO).trim() ||
-      DEFAULT_GITHUB_REPO;
-    const url = new URL(`https://github.com/${repo}/issues/new`);
-    url.searchParams.set('template', templateFile);
-    url.searchParams.set('title', title);
-    Object.entries(paramsObj).forEach(([k, v]) => {
-      if (v !== undefined && v !== null && String(v).trim() !== '') {
-        url.searchParams.set(k, String(v));
-      }
-    });
-    return url.toString();
+    return `<span class="status-badge status-badge-operational">🟢 ${escapeHtml(customLabel || 'OPERATIONAL')}</span>`;
   }
 
   function showToast(message) {
@@ -687,8 +88,8 @@
 
     const toast = document.createElement('div');
     toast.className =
-      'p-3.5 rounded-xl bg-slate-900 border-l-4 border-emerald-500 border border-slate-700 text-white text-xs sm:text-sm font-bold shadow-2xl flex items-center gap-2.5';
-    toast.innerHTML = `<span>✅</span><span>${escapeHtml(message)}</span>`;
+      'pointer-events-auto bg-slate-900 border border-emerald-500/60 text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-bold flex items-center gap-2.5';
+    toast.innerHTML = `<span class="text-emerald-400 text-base">✓</span><span>${escapeHtml(message)}</span>`;
     container.appendChild(toast);
 
     setTimeout(() => {
@@ -698,559 +99,1115 @@
     }, 4200);
   }
 
-  /**
-   * Export full Equipment & PM Matrix to CSV
-   */
-  function exportEquipmentMatrixCsv() {
-    const rows = [
-      [
-        'Asset ID',
-        'OSU Equipment ID',
-        'Machine Name',
-        'Shop Zone',
-        'Status',
-        'PM Status',
-        'Last PM Date',
-        'Next PM Due',
-        'Last PM Technician',
-        'No Gloves Required',
-        'Condition Note'
-      ]
-    ];
-
-    for (const a of state.assets) {
-      rows.push([
-        a.id,
-        a.osuEquipmentId,
-        a.name,
-        a.zone,
-        a.status,
-        getEffectiveAssetBucket(a),
-        a.lastPmDate,
-        a.nextPmDue,
-        a.lastPmTech,
-        a.sop && a.sop.noGlovesWarning ? 'YES - NO GLOVES' : 'Standard PPE',
-        a.conditionNote
-      ]);
-    }
-
-    downloadCsv(rows, `car-shop-pm-matrix-${new Date().toISOString().slice(0, 10)}.csv`);
-    showToast('Exported 930 Kinnear Rd Equipment & PM Matrix to CSV');
+  function getConfiguredGithubRepo() {
+    const saved = localStorage.getItem(STORAGE_KEYS.GITHUB_REPO);
+    return saved && saved.trim() ? saved.trim() : DEFAULT_GITHUB_REPO;
   }
 
-  function exportHistoryCsv() {
-    const rows = [
-      ['Event ID', 'Timestamp', 'Type', 'Asset ID', 'Asset Name', 'Team/Role', 'Technician/Reporter', 'Status After', 'Notes']
-    ];
-    for (const h of state.history) {
-      rows.push([
-        h.id,
-        h.timestamp,
-        h.type,
-        h.assetId,
-        h.assetName,
-        h.teamOrRole,
-        h.technician,
-        h.statusAfter,
-        h.notes
-      ]);
-    }
-    downloadCsv(rows, `car-shop-pm-history-${new Date().toISOString().slice(0, 10)}.csv`);
-    showToast('Exported Historical PM & Condition Ledger to CSV');
-  }
-
-  function downloadCsv(rows, filename) {
-    const csv = rows
-      .map((r) =>
-        r
-          .map((cell) => `"${String(cell === null || cell === undefined ? '' : cell).replace(/"/g, '""')}"`)
-          .join(',')
-      )
-      .join('\r\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  function downloadJsonFile(obj, filename) {
-    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  function getConfiguredTeamsWebhook() {
+    const saved = localStorage.getItem(STORAGE_KEYS.TEAMS_WEBHOOK);
+    return saved && saved.trim() ? saved.trim() : '';
   }
 
   /**
-   * Handle URL routing (?asset=MAC-01&tab=sop or ?id=MAC-01 or ?view=qr)
+   * Load equipment_master.json and pm_history.json and merge client localStorage overrides
    */
-  function handleRouteFromUrl() {
-    const params = new URLSearchParams(window.location.search);
-    const viewParam = (params.get('view') || '').toLowerCase();
-    const assetParam = params.get('asset') || params.get('id');
-    const tabParam = (params.get('tab') || 'fault').toLowerCase();
+  async function loadPortalData() {
+    const [masterResp, historyResp] = await Promise.all([
+      fetch(`data/equipment_master.json?t=${Date.now()}`, { cache: 'no-store' }),
+      fetch(`data/pm_history.json?t=${Date.now()}`, { cache: 'no-store' })
+    ]);
 
-    if (viewParam === 'qr') {
-      switchPortalView('qr', false);
-    } else if (viewParam === 'history') {
-      switchPortalView('history', false);
-    } else {
-      switchPortalView('dashboard', false);
+    if (!masterResp.ok) {
+      throw new Error(`Failed to load data/equipment_master.json (${masterResp.status})`);
     }
 
-    if (assetParam) {
-      const target = findAssetById(assetParam);
-      if (target) {
-        openAssetHubModal(target.id, tabParam, false);
-      }
-    }
-  }
+    const masterData = await masterResp.json();
+    const baseHistory = historyResp.ok ? await historyResp.json() : [];
 
-  /**
-   * Bind DOM events
-   */
-  function bindEvents() {
-    // Top navigation
-    document.querySelectorAll('[data-view]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        switchPortalView(btn.getAttribute('data-view'), true);
-      });
+    state.metadata = masterData.metadata || {};
+    const rawAssets = Array.isArray(masterData.assets) ? masterData.assets : [];
+
+    // Apply local overrides if present
+    let overrides = {};
+    try {
+      overrides = JSON.parse(localStorage.getItem(STORAGE_KEYS.ASSET_OVERRIDES) || '{}') || {};
+    } catch (e) {
+      overrides = {};
+    }
+
+    state.assets = rawAssets.map((asset) => {
+      const ov = overrides[asset.id];
+      if (!ov) return asset;
+      return Object.assign({}, asset, ov);
     });
 
-    const homeLink = document.getElementById('brand-home-link');
-    if (homeLink) {
-      homeLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        closeAssetHubModal();
-        switchPortalView('dashboard', true);
-      });
+    let localHistory = [];
+    try {
+      localHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY_LOG) || '[]') || [];
+    } catch (e) {
+      localHistory = [];
     }
+
+    // Merge localHistory + baseHistory deduplicated by id
+    const seenIds = new Set();
+    const mergedHistory = [];
+    [...localHistory, ...baseHistory].forEach((entry) => {
+      if (entry && entry.id && !seenIds.has(entry.id)) {
+        seenIds.add(entry.id);
+        mergedHistory.push(entry);
+      }
+    });
+
+    state.history = mergedHistory;
+  }
+
+  function saveAssetOverride(assetId, patch) {
+    let overrides = {};
+    try {
+      overrides = JSON.parse(localStorage.getItem(STORAGE_KEYS.ASSET_OVERRIDES) || '{}') || {};
+    } catch (e) {
+      overrides = {};
+    }
+    overrides[assetId] = Object.assign({}, overrides[assetId] || {}, patch);
+    localStorage.setItem(STORAGE_KEYS.ASSET_OVERRIDES, JSON.stringify(overrides));
+
+    const idx = state.assets.findIndex((a) => a.id === assetId);
+    if (idx !== -1) {
+      state.assets[idx] = Object.assign({}, state.assets[idx], patch);
+    }
+  }
+
+  function prependHistoryEntry(entry) {
+    let localHistory = [];
+    try {
+      localHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY_LOG) || '[]') || [];
+    } catch (e) {
+      localHistory = [];
+    }
+    localHistory.unshift(entry);
+    localStorage.setItem(STORAGE_KEYS.HISTORY_LOG, JSON.stringify(localHistory));
+    state.history.unshift(entry);
+  }
+
+  /**
+   * Dispatch optional Microsoft Teams Alert Message via configured Incoming Webhook
+   */
+  async function dispatchTeamsAlert(title, asset, statusLabel, reporter, team, notes) {
+    const webhookUrl = getConfiguredTeamsWebhook();
+    if (!webhookUrl) return false;
+
+    const payload = {
+      type: 'message',
+      summary: `${title}: ${asset.id} — ${asset.name}`,
+      sections: [
+        {
+          activityTitle: `${title}: ${asset.id} — ${asset.name}`,
+          activitySubtitle: 'Student Projects Laboratory (930 Kinnear Rd)',
+          facts: [
+            { name: 'Facility:', value: 'Student Projects Laboratory (930 Kinnear Rd)' },
+            { name: 'Asset ID / Tag:', value: `${asset.id} (Tag: ${asset.equipmentTag || 'N/A'})` },
+            { name: 'Zone:', value: asset.zone },
+            { name: 'Status:', value: statusLabel },
+            { name: 'Team / Role:', value: team },
+            { name: 'Submitted By:', value: reporter }
+          ],
+          text: notes || 'No additional notes.'
+        }
+      ]
+    };
+
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return true;
+    } catch (err) {
+      console.warn('Teams webhook dispatch warning:', err);
+      return false;
+    }
+  }
+
+  /**
+   * Update KPI Executive Banner metrics
+   */
+  function renderExecutiveKpis() {
+    const total = state.assets.length || 1;
+    let countOperational = 0;
+    let countDueSoon = 0;
+    let countOverdue = 0;
+    let countDown = 0;
+    let countPmCompliant = 0;
+
+    state.assets.forEach((asset) => {
+      const bucket = getEffectiveAssetBucket(asset);
+      if (bucket === 'OPERATIONAL') countOperational++;
+      else if (bucket === 'PM_DUE_SOON') countDueSoon++;
+      else if (bucket === 'PM_OVERDUE') countOverdue++;
+      else if (bucket === 'DOWN') countDown++;
+
+      if (bucket !== 'PM_OVERDUE') {
+        countPmCompliant++;
+      }
+    });
+
+    const pmCompliancePct = Math.round((countPmCompliant / total) * 100);
+    const readinessPct = Math.round(((total - countDown) / total) * 100);
+
+    const elPmCompliance = document.getElementById('kpi-pm-compliance');
+    const elPmSub = document.getElementById('kpi-pm-count-sub');
+    const elPmBar = document.getElementById('kpi-pm-bar');
+    const elReadinessPct = document.getElementById('kpi-readiness-pct');
+    const elOp = document.getElementById('kpi-count-operational');
+    const elDue = document.getElementById('kpi-count-due-soon');
+    const elOverdue = document.getElementById('kpi-count-overdue');
+    const elDown = document.getElementById('kpi-count-down');
+    const elAllCount = document.getElementById('count-all-assets');
+
+    if (elPmCompliance) elPmCompliance.textContent = `${pmCompliancePct}%`;
+    if (elPmSub) elPmSub.textContent = `(${countPmCompliant} / ${state.assets.length} Compliant)`;
+    if (elPmBar) elPmBar.style.width = `${pmCompliancePct}%`;
+    if (elReadinessPct) elReadinessPct.textContent = `${readinessPct}%`;
+    if (elOp) elOp.textContent = String(countOperational);
+    if (elDue) elDue.textContent = String(countDueSoon);
+    if (elOverdue) elOverdue.textContent = String(countOverdue);
+    if (elDown) elDown.textContent = String(countDown);
+    if (elAllCount) elAllCount.textContent = String(state.assets.length);
+  }
+
+  /**
+   * Render Equipment Matrix Grid
+   */
+  function renderEquipmentGrid() {
+    const gridEl = document.getElementById('equipment-grid');
+    const emptyEl = document.getElementById('empty-filter-state');
+    if (!gridEl) return;
+
+    const searchQuery = (state.filters.search || '').trim().toLowerCase();
+    const zoneFilter = state.filters.zone || 'ALL';
+    const statusFilter = state.filters.status || 'ALL';
+
+    const filtered = state.assets.filter((asset) => {
+      const bucket = getEffectiveAssetBucket(asset);
+      if (zoneFilter !== 'ALL' && asset.zoneCode !== zoneFilter) {
+        return false;
+      }
+      if (statusFilter !== 'ALL' && bucket !== statusFilter) {
+        return false;
+      }
+      if (searchQuery) {
+        const haystack = [
+          asset.id,
+          asset.name,
+          asset.equipmentTag,
+          asset.zone,
+          asset.conditionNote,
+          ...(asset.sop && (asset.sop.ppe || asset.sop.requiredPpe) ? (asset.sop.ppe || asset.sop.requiredPpe) : [])
+        ]
+          .join(' ')
+          .toLowerCase();
+        if (!haystack.includes(searchQuery)) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    gridEl.innerHTML = '';
+
+    if (filtered.length === 0) {
+      if (emptyEl) emptyEl.classList.remove('hidden');
+      return;
+    }
+    if (emptyEl) emptyEl.classList.add('hidden');
+
+    filtered.forEach((asset) => {
+      const bucket = getEffectiveAssetBucket(asset);
+      let tileStateClass = 'tile-operational';
+      if (bucket === 'DOWN' || bucket === 'PM_OVERDUE') tileStateClass = 'tile-down';
+      else if (bucket === 'PM_DUE_SOON') tileStateClass = 'tile-due';
+
+      const noGlovesBadge =
+        asset.sop && asset.sop.noGlovesWarning
+          ? `<span class="px-2 py-0.5 rounded bg-red-950/90 border border-red-500/60 text-[10px] font-mono font-bold text-red-300">🚫 NO GLOVES</span>`
+          : '';
+
+      const energySummary =
+        asset.loto && Array.isArray(asset.loto.energySources)
+          ? asset.loto.energySources.map((e) => e.type).join(' + ')
+          : 'Electrical';
+
+      const tile = document.createElement('article');
+      tile.className = `asset-tile ${tileStateClass}`;
+      tile.setAttribute('data-asset-id', asset.id);
+
+      tile.innerHTML = `
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-md bg-crimson text-white font-mono text-xs font-extrabold tracking-wider">${escapeHtml(asset.id)}</span>
+              <span class="text-[11px] font-mono text-slate-400">TAG: ${escapeHtml(asset.equipmentTag || 'N/A')}</span>
+            </div>
+            ${getStatusBadgeMarkup(bucket)}
+          </div>
+
+          <h3 class="text-base font-extrabold text-white leading-snug mb-1">${escapeHtml(asset.name)}</h3>
+          <p class="text-xs font-medium text-slate-400 mb-3">${escapeHtml(asset.zone)}</p>
+
+          <div class="flex flex-wrap items-center gap-1.5 mb-3">
+            ${noGlovesBadge}
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] font-mono text-slate-300">⚡ LOTO: ${escapeHtml(energySummary)}</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] font-mono text-emerald-300">📅 Next PM: ${escapeHtml(asset.nextPmDue || 'TBD')}</span>
+          </div>
+
+          <div class="bg-slate-950/80 border border-slate-800/90 rounded-lg p-2.5 mb-3.5">
+            <div class="text-[10px] font-mono uppercase text-slate-400 mb-0.5">Latest Condition / PM Note</div>
+            <p class="text-xs text-slate-200 line-clamp-2">${escapeHtml(asset.conditionNote || 'No active faults reported.')}</p>
+            <div class="mt-1.5 flex items-center justify-between text-[10px] font-mono text-slate-400">
+              <span>Last PM: ${escapeHtml(asset.lastPmDate || 'N/A')}</span>
+              <span>Tech: ${escapeHtml(asset.lastPmTech || 'M. Wright')}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-slate-800/80">
+          <div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-1.5">Unified QR Asset Hub Tabs:</div>
+          <div class="grid grid-cols-4 gap-1.5">
+            <button type="button" class="tile-tab-btn" data-open-asset="${escapeHtml(asset.id)}" data-open-tab="fault">🚨 Fault</button>
+            <button type="button" class="tile-tab-btn" data-open-asset="${escapeHtml(asset.id)}" data-open-tab="sop">🦺 SOP</button>
+            <button type="button" class="tile-tab-btn" data-open-asset="${escapeHtml(asset.id)}" data-open-tab="loto">🔒 LOTO</button>
+            <button type="button" class="tile-tab-btn" data-open-asset="${escapeHtml(asset.id)}" data-open-tab="pm">🛠️ PM Log</button>
+          </div>
+        </div>
+      `;
+
+      gridEl.appendChild(tile);
+    });
+
+    // Attach click handlers to open modal at requested tab
+    gridEl.querySelectorAll('[data-open-asset]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const assetId = btn.getAttribute('data-open-asset');
+        const tab = btn.getAttribute('data-open-tab') || 'fault';
+        openAssetHubModal(assetId, tab, true);
+      });
+    });
+  }
+
+  /**
+   * Render Historical PM & Condition Log Table
+   */
+  function renderHistoryTable() {
+    const tbody = document.getElementById('history-table-body');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    state.history.forEach((entry) => {
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-900/50 transition';
+
+      const dateStr = (entry.timestamp || '').replace('T', ' ').replace('Z', ' UTC');
+      const isPm = entry.type === 'MONTHLY_PM';
+      const typePill = isPm
+        ? `<span class="px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-mono text-[10px] font-bold">MONTHLY PM</span>`
+        : `<span class="px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono text-[10px] font-bold">${escapeHtml(entry.type || 'FAULT')}</span>`;
+
+      const metricsEntries = entry.metrics ? Object.entries(entry.metrics) : [];
+      const metricsHtml =
+        metricsEntries.length > 0
+          ? metricsEntries
+              .map(([k, v]) => `<span class="inline-block mr-1.5 mb-1 px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 font-mono text-[10px] text-slate-300">${escapeHtml(k)}: <strong>${escapeHtml(v)}</strong></span>`)
+              .join('')
+          : '<span class="text-slate-500 font-mono text-[11px]">—</span>';
+
+      const bucket = (entry.statusAfter || '').includes('DOWN')
+        ? 'DOWN'
+        : (entry.statusAfter || '').includes('DEGRADED') || (entry.statusAfter || '').includes('DUE')
+        ? 'PM_DUE_SOON'
+        : 'OPERATIONAL';
+
+      tr.innerHTML = `
+        <td class="px-4 py-3 font-mono text-xs text-slate-300 whitespace-nowrap">${escapeHtml(dateStr)}</td>
+        <td class="px-4 py-3 whitespace-nowrap">${typePill}</td>
+        <td class="px-4 py-3">
+          <div class="font-mono font-bold text-white text-xs">${escapeHtml(entry.assetId)}</div>
+          <div class="text-[11px] text-slate-400">${escapeHtml(entry.assetName || '')}</div>
+        </td>
+        <td class="px-4 py-3">
+          <div class="text-xs font-semibold text-slate-200">${escapeHtml(entry.technician || '')}</div>
+          <div class="text-[11px] text-slate-400">${escapeHtml(entry.teamOrRole || '')}</div>
+        </td>
+        <td class="px-4 py-3 whitespace-nowrap">${getStatusBadgeMarkup(bucket, entry.statusAfter)}</td>
+        <td class="px-4 py-3">${metricsHtml}</td>
+        <td class="px-4 py-3 text-xs text-slate-300 max-w-md">${escapeHtml(entry.notes || '')}</td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  /**
+   * Populate the 4-Tab Unified Asset Hub Modal for a given asset
+   */
+  function openAssetHubModal(assetId, initialTab, pushUrl) {
+    const asset = state.assets.find((a) => a.id.toUpperCase() === String(assetId || '').toUpperCase());
+    if (!asset) return;
+
+    state.activeAssetId = asset.id;
+    state.activeModalTab = initialTab || 'fault';
+
+    const modalEl = document.getElementById('asset-hub-modal');
+    if (!modalEl) return;
+
+    const bucket = getEffectiveAssetBucket(asset);
+
+    // Header fields
+    const elId = document.getElementById('modal-asset-id');
+    const elTagId = document.getElementById('modal-equipment-tag');
+    const elZone = document.getElementById('modal-asset-zone');
+    const elStatusPill = document.getElementById('modal-asset-status-pill');
+    const elName = document.getElementById('modal-asset-name');
+    const elConditionNote = document.getElementById('modal-asset-condition-note');
+    const elLastPm = document.getElementById('modal-asset-last-pm');
+    const elNextPm = document.getElementById('modal-asset-next-pm');
+    const elPmTech = document.getElementById('modal-asset-pm-tech');
+
+    if (elId) elId.textContent = asset.id;
+    if (elTagId) elTagId.textContent = `TAG: ${asset.equipmentTag || 'N/A'}`;
+    if (elZone) elZone.textContent = asset.zone;
+    if (elStatusPill) elStatusPill.innerHTML = getStatusBadgeMarkup(bucket);
+    if (elName) elName.textContent = asset.name;
+    if (elConditionNote) elConditionNote.textContent = asset.conditionNote || 'Operational.';
+    if (elLastPm) elLastPm.textContent = `Last PM: ${asset.lastPmDate || 'N/A'}`;
+    if (elNextPm) elNextPm.textContent = `Next Due: ${asset.nextPmDue || 'N/A'}`;
+    if (elPmTech) elPmTech.textContent = `Tech: ${asset.lastPmTech || 'M. Wright'}`;
+
+    // Populate Tab 2: SOP
+    const sop = asset.sop || {};
+    const noGlovesBanner = document.getElementById('sop-no-gloves-banner');
+    if (noGlovesBanner) {
+      if (sop.noGlovesWarning) {
+        noGlovesBanner.classList.remove('hidden');
+      } else {
+        noGlovesBanner.classList.add('hidden');
+      }
+    }
+
+    const ppeContainer = document.getElementById('sop-ppe-badges');
+    if (ppeContainer) {
+      const ppeItems = sop.ppe || sop.requiredPpe || [];
+      ppeContainer.innerHTML = ppeItems
+        .map(
+          (item) =>
+            `<span class="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs font-bold text-slate-100 flex items-center gap-1.5"><span>🦺</span><span>${escapeHtml(item)}</span></span>`
+        )
+        .join('');
+    }
+
+    const hazardsList = document.getElementById('sop-hazards-list');
+    if (hazardsList) {
+      hazardsList.innerHTML = (sop.hazards || [])
+        .map(
+          (h) =>
+            `<li class="flex items-start gap-2"><span class="text-amber-400 font-bold">•</span><span>${escapeHtml(h)}</span></li>`
+        )
+        .join('');
+    }
+
+    const fillStepList = (elIdStr, items, bulletColor) => {
+      const listEl = document.getElementById(elIdStr);
+      if (!listEl) return;
+      listEl.innerHTML = (items || [])
+        .map(
+          (step, idx) =>
+            `<li class="flex items-start gap-2"><span class="${bulletColor} font-mono font-bold text-xs">${idx + 1}.</span><span>${escapeHtml(step)}</span></li>`
+        )
+        .join('');
+    };
+
+    fillStepList('sop-before-list', sop.beforeUse, 'text-sky-400');
+    fillStepList('sop-during-list', sop.duringUse, 'text-amber-400');
+    fillStepList('sop-after-list', sop.afterUse, 'text-emerald-400');
+
+    const emergencyEl = document.getElementById('sop-emergency-text');
+    if (emergencyEl) {
+      emergencyEl.textContent =
+        sop.emergencyProtocol ||
+        'Depress emergency stop immediately and notify Max Wright via Microsoft Teams or Text Message.';
+    }
+
+    // Populate Tab 3: LOTO
+    const loto = asset.loto || {};
+    const lotoAuthEl = document.getElementById('loto-authorized');
+    const lotoNotifyEl = document.getElementById('loto-notify');
+    const lotoShutdownEl = document.getElementById('loto-normal-shutdown');
+    const lotoReliefEl = document.getElementById('loto-stored-energy');
+    const lotoVerifyEl = document.getElementById('loto-verification');
+    const lotoSourcesContainer = document.getElementById('loto-energy-sources');
+
+    if (lotoAuthEl) {
+      lotoAuthEl.textContent =
+        loto.authorizedPersonnel ||
+        'Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)';
+    }
+    if (lotoNotifyEl) {
+      lotoNotifyEl.textContent = loto.notificationMethod || 'Max Wright - Teams / Text Message';
+    }
+    if (lotoShutdownEl) {
+      lotoShutdownEl.textContent = loto.normalShutdown || '';
+    }
+    if (lotoReliefEl) {
+      lotoReliefEl.textContent = loto.storedEnergyRelief || '';
+    }
+    if (lotoVerifyEl) {
+      lotoVerifyEl.textContent = loto.zeroEnergyVerification || '';
+    }
+
+    if (lotoSourcesContainer) {
+      lotoSourcesContainer.innerHTML = (loto.energySources || [])
+        .map(
+          (src, idx) => `
+          <div class="bg-slate-900/80 border border-red-500/30 rounded-xl p-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <span class="px-2.5 py-0.5 rounded bg-red-500/20 border border-red-500/40 font-mono text-xs font-extrabold text-red-300">
+                ENERGY SOURCE #${idx + 1}: ${escapeHtml(src.type)}
+              </span>
+              <span class="font-mono text-xs font-bold text-amber-300">Magnitude: ${escapeHtml(src.magnitude)}</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs mt-2">
+              <div class="bg-slate-950/70 border border-slate-800 rounded-lg p-2.5">
+                <div class="font-mono text-[10px] uppercase text-slate-400 mb-0.5">Isolation Device Location</div>
+                <div class="text-slate-100 font-medium">${escapeHtml(src.isolationLocation)}</div>
+              </div>
+              <div class="bg-slate-950/70 border border-slate-800 rounded-lg p-2.5">
+                <div class="font-mono text-[10px] uppercase text-slate-400 mb-0.5">Lockout Application Procedure</div>
+                <div class="text-slate-100 font-medium">${escapeHtml(src.isolationProcedure)}</div>
+              </div>
+            </div>
+          </div>
+        `
+        )
+        .join('');
+    }
+
+    // Populate Tab 4: Monthly PM Checklist & Quantitative Metrics
+    const pm = asset.monthlyPm || {};
+    const freqBadge = document.getElementById('pm-frequency-badge');
+    if (freqBadge) {
+      freqBadge.textContent = `${pm.frequency || 'Monthly'} • Target: March 2027`;
+    }
+
+    const checklistContainer = document.getElementById('pm-checklist-items');
+    if (checklistContainer) {
+      checklistContainer.innerHTML = (pm.checklist || [])
+        .map(
+          (item, idx) => `
+          <label class="flex items-start gap-3 p-3 rounded-lg bg-slate-950/80 border border-slate-800 hover:border-slate-700 cursor-pointer transition">
+            <input type="checkbox" class="pm-check-item mt-0.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500" data-check-label="${escapeHtml(item)}" checked />
+            <span class="text-xs text-slate-200 leading-relaxed"><strong class="font-mono text-emerald-400 mr-1">#${idx + 1}</strong> ${escapeHtml(item)}</span>
+          </label>
+        `
+        )
+        .join('');
+    }
+
+    const metricsContainer = document.getElementById('pm-quantitative-fields');
+    if (metricsContainer) {
+      const qMetrics = pm.metrics || pm.quantitativeMetrics || [];
+      if (qMetrics.length === 0) {
+        metricsContainer.innerHTML =
+          '<p class="text-xs text-slate-400 col-span-3">No numerical wear fields required for this asset.</p>';
+      } else {
+        metricsContainer.innerHTML = qMetrics
+          .map(
+            (m) => `
+            <div class="bg-slate-950/80 border border-slate-800 rounded-lg p-3">
+              <label class="block text-[11px] font-bold text-slate-200 mb-1">
+                ${escapeHtml(m.label)} <span class="font-mono text-amber-400">(${escapeHtml(m.unit || '')})</span>
+              </label>
+              <input
+                type="text"
+                class="pm-metric-input w-full bg-slate-900 border border-slate-700 rounded-md px-2.5 py-1.5 text-xs font-mono text-white focus:outline-none focus:border-amber-500"
+                data-metric-key="${escapeHtml(m.key)}"
+                data-metric-unit="${escapeHtml(m.unit || '')}"
+                placeholder="${escapeHtml(m.placeholder || '')}"
+                value="${escapeHtml(m.placeholder || '')}"
+              />
+              <div class="text-[10px] font-mono text-slate-400 mt-1">Target Spec: ${escapeHtml(m.targetRange || m.placeholder || 'Standard')}</div>
+            </div>
+          `
+          )
+          .join('');
+      }
+    }
+
+    switchModalTab(state.activeModalTab, pushUrl);
+    modalEl.classList.remove('hidden');
+  }
+
+  function switchModalTab(tabName, updateUrl) {
+    const validTabs = ['fault', 'sop', 'loto', 'pm'];
+    const normalized = validTabs.includes(tabName) ? tabName : 'fault';
+    state.activeModalTab = normalized;
+
+    document.querySelectorAll('.modal-tab-btn').forEach((btn) => {
+      const t = btn.getAttribute('data-modal-tab');
+      btn.classList.toggle('active', t === normalized);
+    });
+
+    validTabs.forEach((t) => {
+      const panel = document.getElementById(`modal-tab-${t}`);
+      if (panel) {
+        panel.classList.toggle('hidden', t !== normalized);
+      }
+    });
+
+    if (updateUrl && state.activeAssetId && window.history && window.history.replaceState) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('asset', state.activeAssetId);
+      url.searchParams.set('tab', normalized);
+      window.history.replaceState({}, '', url.toString());
+    }
+  }
+
+  function closeAssetHubModal() {
+    const modalEl = document.getElementById('asset-hub-modal');
+    if (modalEl) modalEl.classList.add('hidden');
+    state.activeAssetId = null;
+
+    if (window.history && window.history.replaceState) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('asset');
+      url.searchParams.delete('tab');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }
+
+  /**
+   * Build pre-filled GitHub Issue URL for Fault Report or Monthly PM Log
+   */
+  function buildGithubIssueUrl(templateFile, paramsObj) {
+    const repo = getConfiguredGithubRepo();
+    const searchParams = new URLSearchParams();
+    searchParams.set('template', templateFile);
+    Object.entries(paramsObj).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && String(v).trim() !== '') {
+        searchParams.set(k, String(v));
+      }
+    });
+    return `https://github.com/${repo}/issues/new?${searchParams.toString()}`;
+  }
+
+  /**
+   * Handle Fault Report Submission (Local + Optional GitHub Issue Window)
+   */
+  async function handleFaultSubmission(openGithubIssue) {
+    const asset = state.assets.find((a) => a.id === state.activeAssetId);
+    if (!asset) return;
+
+    const checkedRadio = document.querySelector('input[name="fault-severity"]:checked');
+    const severityVal = checkedRadio ? checkedRadio.value : 'DOWN';
+    const teamSelect = document.getElementById('fault-team-select');
+    const reporterInput = document.getElementById('fault-reporter-input');
+    const descInput = document.getElementById('fault-description-input');
+
+    const team = teamSelect ? teamSelect.value : 'Formula Buckeyes';
+    const reporter = (reporterInput && reporterInput.value.trim()) || 'Shop Floor User';
+    const description =
+      (descInput && descInput.value.trim()) ||
+      `Status updated to ${severityVal} via Unified QR Hub.`;
+
+    const nowIso = new Date().toISOString();
+    saveAssetOverride(asset.id, {
+      status: severityVal,
+      conditionNote: description
+    });
+
+    const entry = {
+      id: `FLT-${Date.now()}-${asset.id.replace('-', '')}`,
+      timestamp: nowIso,
+      type: severityVal === 'OPERATIONAL' ? 'FAULT_RESOLVED' : 'FAULT_REPORT',
+      assetId: asset.id,
+      assetName: asset.name,
+      teamOrRole: team,
+      technician: reporter,
+      statusAfter: severityVal,
+      pmStatusAfter: asset.pmStatus || 'COMPLIANT',
+      metrics: {},
+      completedItemsCount: 0,
+      totalItemsCount: 0,
+      notes: description
+    };
+
+    prependHistoryEntry(entry);
+    renderExecutiveKpis();
+    renderEquipmentGrid();
+    renderHistoryTable();
+    openAssetHubModal(asset.id, 'fault', false);
+
+    await dispatchTeamsAlert('Machine Condition Alert', asset, severityVal, reporter, team, description);
+
+    if (openGithubIssue) {
+      const severityDropdownText =
+        severityVal === 'DOWN'
+          ? 'DOWN - LOCKED OUT (Red Tag / Do Not Operate)'
+          : severityVal === 'DEGRADED'
+          ? 'DEGRADED / CAUTION (Yellow Tag / Needs Tooling or Minor Attention)'
+          : 'OPERATIONAL (Cleared / Returned to Service)';
+
+      const issueUrl = buildGithubIssueUrl('unscheduled_downtime_fault.yml', {
+        title: `[FAULT] ${asset.id} (${asset.name}) — ${severityVal}`,
+        asset_id: asset.id,
+        student_team: team,
+        severity_status: severityDropdownText,
+        reporter: reporter,
+        fault_description: description
+      });
+
+      window.open(issueUrl, '_blank', 'noopener');
+      showToast(`Updated ${asset.id} (${severityVal}) & opened GitHub Fault Ticket`);
+    } else {
+      showToast(`Status updated for ${asset.id}: ${severityVal}`);
+    }
+  }
+
+  /**
+   * Handle Monthly PM Checklist Submission (Local + Optional GitHub Issue Window)
+   */
+  async function handlePmSubmission(openGithubIssue) {
+    const asset = state.assets.find((a) => a.id === state.activeAssetId);
+    if (!asset) return;
+
+    const techInput = document.getElementById('pm-tech-input');
+    const postStatusSelect = document.getElementById('pm-post-status-select');
+    const notesInput = document.getElementById('pm-notes-input');
+
+    const technician = (techInput && techInput.value.trim()) || 'Max Wright (MW)';
+    const postStatus = postStatusSelect ? postStatusSelect.value : 'OPERATIONAL';
+    const notes =
+      (notesInput && notesInput.value.trim()) ||
+      `Completed standardized monthly PM checklist for ${asset.id}.`;
+
+    const checkedBoxes = Array.from(document.querySelectorAll('#pm-checklist-items .pm-check-item'));
+    const completedLines = checkedBoxes.map((cb) => {
+      const lbl = cb.getAttribute('data-check-label') || '';
+      return `- [${cb.checked ? 'x' : ' '}] ${lbl}`;
+    });
+    const completedCount = checkedBoxes.filter((cb) => cb.checked).length;
+
+    const metricInputs = Array.from(document.querySelectorAll('#pm-quantitative-fields .pm-metric-input'));
+    const metricsObj = {};
+    const metricsLines = [];
+    metricInputs.forEach((inp) => {
+      const key = inp.getAttribute('data-metric-key');
+      const unit = inp.getAttribute('data-metric-unit') || '';
+      const val = (inp.value || '').trim();
+      if (key && val) {
+        metricsObj[key] = unit && !val.includes(unit) ? `${val} ${unit}` : val;
+        metricsLines.push(`${key}: ${metricsObj[key]}`);
+      }
+    });
+
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const nextDue = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+    saveAssetOverride(asset.id, {
+      status: postStatus === 'DOWN' ? 'DOWN' : postStatus === 'PM_DUE_SOON' ? 'DEGRADED' : 'OPERATIONAL',
+      pmStatus: postStatus === 'OPERATIONAL' ? 'COMPLIANT' : 'ATTENTION',
+      lastPmDate: todayStr,
+      nextPmDue: nextDue,
+      lastPmTech: technician,
+      conditionNote: notes
+    });
+
+    const entry = {
+      id: `PM-${Date.now()}-${asset.id.replace('-', '')}`,
+      timestamp: now.toISOString(),
+      type: 'MONTHLY_PM',
+      assetId: asset.id,
+      assetName: asset.name,
+      teamOrRole: 'Shop Staff / SRA',
+      technician: technician,
+      statusAfter: postStatus,
+      pmStatusAfter: postStatus === 'OPERATIONAL' ? 'COMPLIANT' : 'ATTENTION',
+      metrics: metricsObj,
+      completedItemsCount: completedCount,
+      totalItemsCount: checkedBoxes.length,
+      notes: notes
+    };
+
+    prependHistoryEntry(entry);
+    renderExecutiveKpis();
+    renderEquipmentGrid();
+    renderHistoryTable();
+    openAssetHubModal(asset.id, 'pm', false);
+
+    await dispatchTeamsAlert('Monthly PM Logged', asset, postStatus, technician, 'Shop Staff / SRA', notes);
+
+    if (openGithubIssue) {
+      const issueUrl = buildGithubIssueUrl('monthly_pm_log.yml', {
+        title: `[PM-LOG] ${asset.id} (${asset.name}) — ${todayStr}`,
+        asset_id: asset.id,
+        post_pm_status: postStatus === 'PM_DUE_SOON' ? 'PM DUE SOON' : postStatus === 'DOWN' ? 'DOWN - LOCKED OUT' : 'OPERATIONAL',
+        technician: technician,
+        checklist_summary: completedLines.join('\n'),
+        quantitative_metrics: metricsLines.join('\n'),
+        pm_notes: notes
+      });
+      window.open(issueUrl, '_blank', 'noopener');
+      showToast(`Monthly PM logged for ${asset.id} & opened GitHub PM Issue`);
+    } else {
+      showToast(`Monthly PM recorded for ${asset.id} (Next due: ${nextDue})`);
+    }
+  }
+
+  /**
+   * Switch Top-Level Portal View ('dashboard' | 'history' | 'qr')
+   */
+  function switchPortalView(viewName, updateUrl) {
+    const validViews = ['dashboard', 'history', 'qr'];
+    const target = validViews.includes(viewName) ? viewName : 'dashboard';
+    state.currentView = target;
+
+    const elDash = document.getElementById('view-dashboard');
+    const elHist = document.getElementById('view-history');
+    const elQr = document.getElementById('view-qr');
+
+    if (elDash) elDash.classList.toggle('hidden', target !== 'dashboard');
+    if (elHist) elHist.classList.toggle('hidden', target !== 'history');
+    if (elQr) elQr.classList.toggle('hidden', target !== 'qr');
+
+    const navDash = document.getElementById('nav-btn-dashboard');
+    const navHist = document.getElementById('nav-btn-history');
+    const navQr = document.getElementById('nav-btn-qr');
+
+    if (navDash) navDash.classList.toggle('active', target === 'dashboard');
+    if (navHist) navHist.classList.toggle('active', target === 'history');
+    if (navQr) navQr.classList.toggle('active', target === 'qr');
+
+    if (target === 'qr' && window.ShopQrGenerator) {
+      window.ShopQrGenerator.renderQrDecalSheet(state.assets);
+    }
+
+    if (updateUrl && window.history && window.history.replaceState) {
+      const url = new URL(window.location.href);
+      if (target === 'dashboard') {
+        url.searchParams.delete('view');
+      } else {
+        url.searchParams.set('view', target);
+      }
+      window.history.replaceState({}, '', url.toString());
+    }
+  }
+
+  /**
+   * Export PM & Condition History to CSV
+   */
+  function exportHistoryCsv() {
+    const headers = [
+      'RecordID',
+      'TimestampUTC',
+      'Type',
+      'AssetID',
+      'AssetName',
+      'TeamOrRole',
+      'TechnicianOrReporter',
+      'StatusAfter',
+      'PMStatusAfter',
+      'CompletedChecklistItems',
+      'TotalChecklistItems',
+      'QuantitativeMetrics',
+      'Notes'
+    ];
+
+    const escapeCsv = (val) => {
+      const s = val === null || val === undefined ? '' : String(val);
+      return `"${s.replace(/"/g, '""')}"`;
+    };
+
+    const rows = state.history.map((h) => [
+      h.id,
+      h.timestamp,
+      h.type,
+      h.assetId,
+      h.assetName,
+      h.teamOrRole,
+      h.technician,
+      h.statusAfter,
+      h.pmStatusAfter,
+      h.completedItemsCount,
+      h.totalItemsCount,
+      JSON.stringify(h.metrics || {}),
+      h.notes
+    ]);
+
+    const csvContent =
+      headers.map(escapeCsv).join(',') +
+      '\n' +
+      rows.map((r) => r.map(escapeCsv).join(',')).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `student_projects_shop_pm_history_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    showToast('Exported PM & Condition History CSV');
+  }
+
+  function exportMasterJson() {
+    const payload = {
+      metadata: Object.assign({}, state.metadata, {
+        lastUpdated: new Date().toISOString()
+      }),
+      assets: state.assets
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: 'application/json;charset=utf-8;'
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'equipment_master.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    showToast('Downloaded updated equipment_master.json');
+  }
+
+  /**
+   * Bind all UI event listeners
+   */
+  function bindEvents() {
+    // Top view navigation
+    const navDash = document.getElementById('nav-btn-dashboard');
+    const navHist = document.getElementById('nav-btn-history');
+    const navQr = document.getElementById('nav-btn-qr');
+
+    if (navDash) navDash.addEventListener('click', () => switchPortalView('dashboard', true));
+    if (navHist) navHist.addEventListener('click', () => switchPortalView('history', true));
+    if (navQr) navQr.addEventListener('click', () => switchPortalView('qr', true));
 
     // Search input
-    const searchInput = document.getElementById('search-input');
-    const clearSearchBtn = document.getElementById('btn-clear-search');
+    const searchInput = document.getElementById('asset-search-input');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
-        state.filters.search = e.target.value;
-        if (clearSearchBtn) clearSearchBtn.classList.toggle('hidden', !state.filters.search);
-        renderEquipmentGrid();
-      });
-    }
-    if (clearSearchBtn) {
-      clearSearchBtn.addEventListener('click', () => {
-        state.filters.search = '';
-        if (searchInput) searchInput.value = '';
-        clearSearchBtn.classList.add('hidden');
+        state.filters.search = e.target.value || '';
         renderEquipmentGrid();
       });
     }
 
-    // Status Filter Pills
+    // Status filter pills
     document.querySelectorAll('.status-filter-pill').forEach((btn) => {
       btn.addEventListener('click', () => {
         state.filters.status = btn.getAttribute('data-status') || 'ALL';
-        document.querySelectorAll('.status-filter-pill').forEach((el) => {
-          el.classList.toggle('active', el === btn);
+        document.querySelectorAll('.status-filter-pill').forEach((b) => {
+          b.classList.toggle('active', b === btn);
         });
         renderEquipmentGrid();
       });
     });
 
-    // KPI mini status pills
+    // Quick KPI mini-pill filters
     document.querySelectorAll('[data-status-quick]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        const st = btn.getAttribute('data-status-quick') || 'ALL';
-        state.filters.status = st;
-        document.querySelectorAll('.status-filter-pill').forEach((el) => {
-          el.classList.toggle('active', el.getAttribute('data-status') === st);
+        const targetStatus = btn.getAttribute('data-status-quick') || 'ALL';
+        state.filters.status = state.filters.status === targetStatus ? 'ALL' : targetStatus;
+        document.querySelectorAll('.status-filter-pill').forEach((b) => {
+          b.classList.toggle('active', b.getAttribute('data-status') === state.filters.status);
         });
+        switchPortalView('dashboard', true);
         renderEquipmentGrid();
       });
     });
 
-    // Zone Filter Pills
+    // Zone filter pills
     document.querySelectorAll('.zone-filter-pill').forEach((btn) => {
       btn.addEventListener('click', () => {
         state.filters.zone = btn.getAttribute('data-zone') || 'ALL';
-        document.querySelectorAll('.zone-filter-pill').forEach((el) => {
-          el.classList.toggle('active', el === btn);
+        document.querySelectorAll('.zone-filter-pill').forEach((b) => {
+          b.classList.toggle('active', b === btn);
         });
         renderEquipmentGrid();
       });
     });
 
     // Reset filters
-    const resetFiltersBtn = document.getElementById('btn-reset-filters');
-    if (resetFiltersBtn) {
-      resetFiltersBtn.addEventListener('click', () => {
+    const resetBtn = document.getElementById('btn-reset-filters');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
         state.filters = { search: '', zone: 'ALL', status: 'ALL' };
         if (searchInput) searchInput.value = '';
-        if (clearSearchBtn) clearSearchBtn.classList.add('hidden');
-        document.querySelectorAll('.status-filter-pill').forEach((el) => {
-          el.classList.toggle('active', el.getAttribute('data-status') === 'ALL');
+        document.querySelectorAll('.status-filter-pill').forEach((b) => {
+          b.classList.toggle('active', b.getAttribute('data-status') === 'ALL');
         });
-        document.querySelectorAll('.zone-filter-pill').forEach((el) => {
-          el.classList.toggle('active', el.getAttribute('data-zone') === 'ALL');
+        document.querySelectorAll('.zone-filter-pill').forEach((b) => {
+          b.classList.toggle('active', b.getAttribute('data-zone') === 'ALL');
         });
         renderEquipmentGrid();
       });
     }
 
-    // Delegated click for opening Asset Hub Modal from cards or history table
-    document.addEventListener('click', (e) => {
-      const tabTrigger = e.target.closest('[data-open-asset]');
-      if (tabTrigger) {
-        e.stopPropagation();
-        const assetId = tabTrigger.getAttribute('data-open-asset');
-        const tab = tabTrigger.getAttribute('data-open-tab') || 'fault';
-        openAssetHubModal(assetId, tab, true);
-        return;
-      }
-
-      const cardEl = e.target.closest('[data-card-asset]');
-      if (cardEl) {
-        const assetId = cardEl.getAttribute('data-card-asset');
-        openAssetHubModal(assetId, 'fault', true);
-      }
-    });
-
-    // Modal Tab Switching
-    document.querySelectorAll('[data-hub-tab]').forEach((btn) => {
+    // Modal tab buttons
+    document.querySelectorAll('.modal-tab-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
-        switchModalTab(btn.getAttribute('data-hub-tab'), true);
+        const tab = btn.getAttribute('data-modal-tab') || 'fault';
+        switchModalTab(tab, true);
       });
     });
 
-    // Close Asset Modal
-    const closeAssetBtn = document.getElementById('btn-close-asset-modal');
-    const assetModal = document.getElementById('asset-hub-modal');
-    if (closeAssetBtn) closeAssetBtn.addEventListener('click', closeAssetHubModal);
-    if (assetModal) {
-      assetModal.addEventListener('click', (e) => {
-        if (e.target === assetModal) closeAssetHubModal();
-      });
-    }
+    // Close modal buttons
+    const closeBtn = document.getElementById('btn-close-asset-modal');
+    const backdrop = document.getElementById('asset-hub-modal-backdrop');
+    if (closeBtn) closeBtn.addEventListener('click', closeAssetHubModal);
+    if (backdrop) backdrop.addEventListener('click', closeAssetHubModal);
 
-    // Copy Asset Deep-Link
-    const copyLinkBtn = document.getElementById('btn-copy-asset-link');
-    if (copyLinkBtn) {
-      copyLinkBtn.addEventListener('click', () => {
-        const url = window.location.href;
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(url);
-        }
-        showToast(`Copied deep link for ${state.activeAssetId} (${state.activeModalTab.toUpperCase()} tab)`);
-      });
-    }
-
-    // Tab 1: Fault Report Submission (Local + GitHub Issue)
+    // Fault report form submissions
     const faultForm = document.getElementById('fault-report-form');
-    const btnFaultGithub = document.getElementById('btn-fault-github-issue');
-
-    function processFaultSubmission(openGithubIssue) {
-      const errEl = document.getElementById('fault-form-error');
-      if (errEl) errEl.classList.add('hidden');
-
-      const asset = findAssetById(state.activeAssetId);
-      if (!asset) return;
-
-      const team = document.getElementById('fault-team-select').value;
-      const severity = document.getElementById('fault-severity-select').value;
-      const reporter = document.getElementById('fault-reporter-input').value.trim();
-      const desc = document.getElementById('fault-desc-input').value.trim();
-
-      if (!team || !severity || !reporter || !desc) {
-        if (errEl) {
-          errEl.textContent = 'Please complete Student Team, Severity, Reporter Name/Email, and Fault Description.';
-          errEl.classList.remove('hidden');
-        }
-        return;
-      }
-
-      saveAssetOverride(asset.id, {
-        status: severity,
-        conditionNote: `[${team}] ${desc} (Reported by ${reporter})`
-      });
-
-      const entry = {
-        id: `FLT-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${asset.id.replace('-', '')}`,
-        timestamp: new Date().toISOString(),
-        type: 'FAULT_REPORT',
-        assetId: asset.id,
-        assetName: asset.name,
-        teamOrRole: team,
-        technician: reporter,
-        statusAfter: severity,
-        pmStatusAfter: asset.pmStatus || 'COMPLIANT',
-        metrics: {},
-        notes: desc
-      };
-      prependHistoryEntry(entry);
-
-      renderExecutiveKpis();
-      renderEquipmentGrid();
-      openAssetHubModal(asset.id, 'fault', false);
-      document.getElementById('fault-desc-input').value = '';
-
-      showToast(`Condition updated for ${asset.id} (${severity})`);
-
-      if (openGithubIssue) {
-        const issueUrl = buildGitHubIssueUrl(
-          'unscheduled_downtime_fault.yml',
-          `[FAULT] ${asset.id}: ${asset.name} — ${severity}`,
-          {
-            asset_id: asset.id,
-            student_team: team,
-            severity_status:
-              severity === 'DOWN - LOCKED OUT'
-                ? 'DOWN - LOCKED OUT (Red Tag / Do Not Operate)'
-                : severity === 'DEGRADED'
-                ? 'DEGRADED / CAUTION (Yellow Tag / Needs Tooling or Minor Attention)'
-                : 'OPERATIONAL (Cleared / Returned to Service)',
-            reporter,
-            fault_description: desc
-          }
-        );
-        window.open(issueUrl, '_blank', 'noopener');
-      }
-    }
-
     if (faultForm) {
       faultForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        processFaultSubmission(false);
+        handleFaultSubmission(true);
       });
     }
-    if (btnFaultGithub) {
-      btnFaultGithub.addEventListener('click', () => {
-        processFaultSubmission(true);
-      });
-    }
-
-    // Tab 4: Monthly PM Submission
-    const btnCheckAllPm = document.getElementById('btn-check-all-pm');
-    if (btnCheckAllPm) {
-      btnCheckAllPm.addEventListener('click', () => {
-        document.querySelectorAll('#pm-checklist-container input[type="checkbox"]').forEach((cb) => {
-          cb.checked = true;
-        });
+    const faultLocalBtn = document.getElementById('btn-fault-local-save');
+    if (faultLocalBtn) {
+      faultLocalBtn.addEventListener('click', () => {
+        handleFaultSubmission(false);
       });
     }
 
+    // Monthly PM form submissions
     const pmForm = document.getElementById('monthly-pm-form');
-    const btnPmGithub = document.getElementById('btn-pm-github-issue');
-    const btnPmJson = document.getElementById('btn-pm-download-json');
-
-    function collectAndSavePm(mode) {
-      const errEl = document.getElementById('pm-form-error');
-      if (errEl) errEl.classList.add('hidden');
-
-      const asset = findAssetById(state.activeAssetId);
-      if (!asset) return;
-
-      const tech = document.getElementById('pm-tech-input').value.trim();
-      const postStatus = document.getElementById('pm-status-select').value;
-      const notes = document.getElementById('pm-notes-input').value.trim();
-      const checkedBoxes = [
-        ...document.querySelectorAll('#pm-checklist-container input[type="checkbox"]:checked')
-      ];
-
-      if (!tech || !notes || checkedBoxes.length === 0) {
-        if (errEl) {
-          errEl.textContent =
-            'Please check completed PM tasks, enter Technician Name/Initials, and provide PM Notes.';
-          errEl.classList.remove('hidden');
-        }
-        return;
-      }
-
-      const metricsObj = {};
-      document.querySelectorAll('#pm-metrics-container input[data-metric-key]').forEach((inp) => {
-        const key = inp.getAttribute('data-metric-key');
-        const unit = inp.getAttribute('data-metric-unit');
-        const val = inp.value.trim();
-        if (key && val) {
-          metricsObj[key] = unit && !val.includes(unit) ? `${val} ${unit}` : val;
-        }
-      });
-
-      const now = new Date();
-      const todayIso = now.toISOString().slice(0, 10);
-      const nextDueIso = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .slice(0, 10);
-
-      saveAssetOverride(asset.id, {
-        status: postStatus === 'PM_DUE_SOON' ? 'DEGRADED' : postStatus,
-        pmStatus: postStatus === 'OPERATIONAL' ? 'COMPLIANT' : 'DUE_SOON',
-        lastPmDate: todayIso,
-        nextPmDue: nextDueIso,
-        lastPmTech: tech,
-        conditionNote: notes
-      });
-
-      const pmRecord = {
-        id: `PM-${todayIso.replace(/-/g, '')}-${asset.id.replace('-', '')}`,
-        timestamp: now.toISOString(),
-        type: 'MONTHLY_PM',
-        assetId: asset.id,
-        assetName: asset.name,
-        teamOrRole: 'Shop Staff / SRA',
-        technician: tech,
-        statusAfter: postStatus,
-        pmStatusAfter: 'COMPLIANT',
-        metrics: metricsObj,
-        completedItemsCount: checkedBoxes.length,
-        totalItemsCount: (asset.monthlyPm && asset.monthlyPm.checklist || []).length,
-        notes
-      };
-
-      prependHistoryEntry(pmRecord);
-      renderExecutiveKpis();
-      renderEquipmentGrid();
-      openAssetHubModal(asset.id, 'pm', false);
-
-      showToast(`Logged Monthly PM for ${asset.id} — Next Due: ${nextDueIso}`);
-
-      if (mode === 'json') {
-        downloadJsonFile(pmRecord, `${pmRecord.id}.json`);
-      } else if (mode === 'github') {
-        const checklistMd = checkedBoxes.map((cb) => `- [x] ${cb.value}`).join('\n');
-        const metricsMd = Object.entries(metricsObj)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join('\n');
-        const issueUrl = buildGitHubIssueUrl(
-          'monthly_pm_log.yml',
-          `[PM-LOG] ${asset.id}: ${asset.name} (${todayIso})`,
-          {
-            asset_id: asset.id,
-            post_pm_status: postStatus === 'PM_DUE_SOON' ? 'PM DUE SOON' : postStatus,
-            technician: tech,
-            checklist_summary: checklistMd,
-            quantitative_metrics: metricsMd,
-            pm_notes: notes
-          }
-        );
-        window.open(issueUrl, '_blank', 'noopener');
-      }
-    }
-
     if (pmForm) {
       pmForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        collectAndSavePm('local');
+        handlePmSubmission(true);
       });
     }
-    if (btnPmGithub) {
-      btnPmGithub.addEventListener('click', () => collectAndSavePm('github'));
-    }
-    if (btnPmJson) {
-      btnPmJson.addEventListener('click', () => collectAndSavePm('json'));
+    const pmLocalBtn = document.getElementById('btn-pm-local-save');
+    if (pmLocalBtn) {
+      pmLocalBtn.addEventListener('click', () => {
+        handlePmSubmission(false);
+      });
     }
 
-    // QR Decal Controls
-    const btnUpdateQrUrl = document.getElementById('btn-update-qr-url');
+    // CSV & JSON export buttons
+    const csvBtn = document.getElementById('btn-export-csv');
+    const jsonBtn = document.getElementById('btn-export-json');
+    if (csvBtn) csvBtn.addEventListener('click', exportHistoryCsv);
+    if (jsonBtn) jsonBtn.addEventListener('click', exportMasterJson);
+
+    // QR Sheet controls
+    const regenQrBtn = document.getElementById('btn-regenerate-qr');
     const qrBaseInput = document.getElementById('qr-base-url-input');
-    const btnPrintDecals = document.getElementById('btn-print-decals');
+    const printQrBtn = document.getElementById('btn-print-qr-sheet');
 
-    if (btnUpdateQrUrl) {
-      btnUpdateQrUrl.addEventListener('click', () => {
-        if (window.ShopQrGenerator && qrBaseInput) {
+    if (regenQrBtn && qrBaseInput) {
+      regenQrBtn.addEventListener('click', () => {
+        if (window.ShopQrGenerator) {
           window.ShopQrGenerator.saveBaseUrlOverride(qrBaseInput.value);
-          window.ShopQrGenerator.renderQrDecalSheet(state.assets);
+          window.ShopQrGenerator.renderQrDecalSheet(state.assets, qrBaseInput.value);
           showToast(`Regenerated all ${state.assets.length} 2"×3" QR Machine Decals`);
         }
       });
     }
-    if (btnPrintDecals) {
-      btnPrintDecals.addEventListener('click', () => window.print());
-    }
-
-    // Export Buttons
-    const btnExportCsv = document.getElementById('btn-export-csv');
-    const btnExportHistCsv = document.getElementById('btn-export-history-csv');
-    const btnExportHistJson = document.getElementById('btn-export-history-json');
-    const btnExportMasterJson = document.getElementById('btn-export-master-json');
-
-    if (btnExportCsv) btnExportCsv.addEventListener('click', exportEquipmentMatrixCsv);
-    if (btnExportHistCsv) btnExportHistCsv.addEventListener('click', exportHistoryCsv);
-    if (btnExportHistJson) {
-      btnExportHistJson.addEventListener('click', () =>
-        downloadJsonFile(state.history, 'pm_history.json')
-      );
-    }
-    if (btnExportMasterJson) {
-      btnExportMasterJson.addEventListener('click', () =>
-        downloadJsonFile(
-          { metadata: state.metadata, assets: state.assets },
-          'equipment_master.json'
-        )
-      );
+    if (printQrBtn) {
+      printQrBtn.addEventListener('click', () => {
+        window.print();
+      });
     }
 
     // Settings Modal
-    const btnOpenSettings = document.getElementById('btn-open-settings');
-    const btnCloseSettings = document.getElementById('btn-close-settings');
+    const settingsBtn = document.getElementById('nav-btn-settings');
     const settingsModal = document.getElementById('settings-modal');
-    const btnSaveSettings = document.getElementById('btn-save-settings');
-    const btnResetPortal = document.getElementById('btn-reset-portal');
+    const closeSettingsBtn = document.getElementById('btn-close-settings');
+    const settingsBackdrop = document.getElementById('settings-modal-backdrop');
+    const settingsForm = document.getElementById('portal-settings-form');
+    const clearOverridesBtn = document.getElementById('btn-clear-local-overrides');
 
-    if (btnOpenSettings && settingsModal) {
-      btnOpenSettings.addEventListener('click', () => {
-        document.getElementById('config-github-repo').value =
-          localStorage.getItem(STORAGE_KEYS.GITHUB_REPO) || DEFAULT_GITHUB_REPO;
-        document.getElementById('config-teams-webhook').value =
-          localStorage.getItem(STORAGE_KEYS.TEAMS_WEBHOOK) || '';
+    if (settingsBtn && settingsModal) {
+      settingsBtn.addEventListener('click', () => {
+        const repoInp = document.getElementById('settings-github-repo');
+        const webhookInp = document.getElementById('settings-teams-webhook');
+        if (repoInp) repoInp.value = getConfiguredGithubRepo();
+        if (webhookInp) webhookInp.value = getConfiguredTeamsWebhook();
         settingsModal.classList.remove('hidden');
       });
     }
-    if (btnCloseSettings && settingsModal) {
-      btnCloseSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));
+
+    if (closeSettingsBtn && settingsModal) {
+      closeSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
     }
-    if (btnSaveSettings && settingsModal) {
-      btnSaveSettings.addEventListener('click', () => {
-        localStorage.setItem(
-          STORAGE_KEYS.GITHUB_REPO,
-          document.getElementById('config-github-repo').value.trim() || DEFAULT_GITHUB_REPO
-        );
-        localStorage.setItem(
-          STORAGE_KEYS.TEAMS_WEBHOOK,
-          document.getElementById('config-teams-webhook').value.trim()
-        );
-        settingsModal.classList.add('hidden');
-        showToast('Saved Portal Sync & Repository Configuration');
+    if (settingsBackdrop && settingsModal) {
+      settingsBackdrop.addEventListener('click', () => settingsModal.classList.add('hidden'));
+    }
+
+    if (settingsForm) {
+      settingsForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const repoInp = document.getElementById('settings-github-repo');
+        const webhookInp = document.getElementById('settings-teams-webhook');
+        if (repoInp) localStorage.setItem(STORAGE_KEYS.GITHUB_REPO, repoInp.value.trim());
+        if (webhookInp) localStorage.setItem(STORAGE_KEYS.TEAMS_WEBHOOK, webhookInp.value.trim());
+        if (settingsModal) settingsModal.classList.add('hidden');
+        showToast('Saved GitHub & Teams integration settings');
       });
     }
-    if (btnResetPortal) {
-      btnResetPortal.addEventListener('click', async () => {
+
+    if (clearOverridesBtn) {
+      clearOverridesBtn.addEventListener('click', async () => {
         localStorage.removeItem(STORAGE_KEYS.ASSET_OVERRIDES);
         localStorage.removeItem(STORAGE_KEYS.HISTORY_LOG);
         await loadPortalData();
         renderExecutiveKpis();
         renderEquipmentGrid();
+        renderHistoryTable();
         if (settingsModal) settingsModal.classList.add('hidden');
         showToast(`Reset all ${state.assets.length} assets to baseline equipment_master.json state`);
       });
     }
+  }
 
-    window.addEventListener('popstate', handleRouteFromUrl);
+  /**
+   * Parse URL query parameters (?asset=MAC-01&tab=sop or ?view=qr)
+   */
+  function handleInitialDeepLink() {
+    const params = new URLSearchParams(window.location.search);
+    const viewParam = (params.get('view') || '').toLowerCase();
+    const assetParam = (params.get('asset') || params.get('id') || '').toUpperCase();
+    const tabParam = (params.get('tab') || 'fault').toLowerCase();
+
+    if (viewParam === 'qr' || viewParam === 'history') {
+      switchPortalView(viewParam, false);
+    } else {
+      switchPortalView('dashboard', false);
+    }
+
+    if (assetParam) {
+      openAssetHubModal(assetParam, tabParam, false);
+    }
   }
 
   async function init() {
-    await loadPortalData();
-    renderExecutiveKpis();
-    renderEquipmentGrid();
-    bindEvents();
-    handleRouteFromUrl();
+    try {
+      await loadPortalData();
+      renderExecutiveKpis();
+      renderEquipmentGrid();
+      renderHistoryTable();
+      bindEvents();
+      handleInitialDeepLink();
+    } catch (err) {
+      console.error('Portal initialization error:', err);
+    }
   }
 
   if (document.readyState === 'loading') {
