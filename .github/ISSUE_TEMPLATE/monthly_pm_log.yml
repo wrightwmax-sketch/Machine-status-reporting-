@@ -62,7 +62,7 @@ body:
     id: pm_notes
     attributes:
       label: "Inspection Notes, Parts Replaced, or Follow-Up Actions"
-      description: "Summary of condition findings or follow-up maintenance required before March 2027 milestone"
+      description: "Summary of condition findings or follow-up maintenance required"
       placeholder: "Ways lubricated, gibs snug, drawbar threads clean."
     validations:
       required: true

@@ -525,45 +525,62 @@
     if (elNextPm) elNextPm.textContent = `Next Due: ${asset.nextPmDue || 'N/A'}`;
     if (elPmTech) elPmTech.textContent = `Tech: ${asset.lastPmTech || 'M. Wright'}`;
 
-    // Populate Google Drive PDF Viewer for Tab 2 (SOP) & Tab 3 (LOTO)
-    const bindDriveViewer = (prefix, rawDriveUrl, docTitle, docRev) => {
+    // Populate Native Repository-Hosted PDF Viewer (<object> + <iframe> + Fallback + Drive Mirror)
+    const isBridgeportMill = ['MAC-01', 'MAC-02', 'MAC-03'].includes(asset.id);
+    const resolvedSopPdfPath = isBridgeportMill
+      ? 'docs/sop/MAC-01-SOP.pdf'
+      : asset.sop_pdf_path || `docs/sop/${asset.id}-SOP.pdf`;
+    const resolvedLotoPdfPath = isBridgeportMill
+      ? 'docs/loto/MAC-01-LOTO.pdf'
+      : asset.loto_pdf_path || `docs/loto/${asset.id}-LOTO.pdf`;
+
+    const bindNativePdfViewer = (prefix, localPdfPath, rawDriveUrl, docTitle, docRev) => {
       const urls = transformGoogleDriveUrl(rawDriveUrl);
+      const pathBadgeEl = document.getElementById(`${prefix}-local-path-badge`);
       const titleEl = document.getElementById(`${prefix}-doc-title`);
       const revEl = document.getElementById(`${prefix}-doc-rev`);
-      const openBtn = document.getElementById(`${prefix}-open-drive-btn`);
+      const fullscreenBtn = document.getElementById(`${prefix}-fullscreen-btn`);
       const dlBtn = document.getElementById(`${prefix}-download-pdf-btn`);
-      const urlInput = document.getElementById(`${prefix}-drive-url-input`);
-      const captionEl = document.getElementById(`${prefix}-embed-url-caption`);
-      const spinnerEl = document.getElementById(`${prefix}-iframe-spinner`);
-      const iframeEl = document.getElementById(`${prefix}-drive-iframe`);
+      const openDriveBtn = document.getElementById(`${prefix}-open-drive-btn`);
+      const objectEl = document.getElementById(`${prefix}-pdf-object`);
+      const iframeEl = document.getElementById(`${prefix}-pdf-iframe`);
+      const fallbackLinkEl = document.getElementById(`${prefix}-pdf-fallback-link`);
 
+      if (pathBadgeEl) pathBadgeEl.textContent = localPdfPath;
       if (titleEl) titleEl.textContent = docTitle;
       if (revEl) revEl.textContent = docRev;
-      if (openBtn) openBtn.href = urls.viewUrl;
-      if (dlBtn) dlBtn.href = urls.downloadUrl;
-      if (urlInput) urlInput.value = rawDriveUrl || urls.viewUrl;
-      if (captionEl) captionEl.textContent = `Embed URL: ${urls.previewUrl}`;
-      if (spinnerEl) spinnerEl.classList.remove('hidden');
-      if (iframeEl) {
-        iframeEl.onload = () => {
-          if (spinnerEl) spinnerEl.classList.add('hidden');
-        };
-        iframeEl.src = urls.previewUrl;
+      if (fullscreenBtn) fullscreenBtn.href = localPdfPath;
+      if (dlBtn) {
+        dlBtn.href = localPdfPath;
+        dlBtn.setAttribute('download', localPdfPath.split('/').pop() || `${prefix}.pdf`);
       }
+      if (openDriveBtn) {
+        if (rawDriveUrl) {
+          openDriveBtn.href = urls.viewUrl;
+          openDriveBtn.classList.remove('hidden');
+        } else {
+          openDriveBtn.classList.add('hidden');
+        }
+      }
+      if (objectEl) objectEl.setAttribute('data', localPdfPath);
+      if (iframeEl) iframeEl.setAttribute('src', localPdfPath);
+      if (fallbackLinkEl) fallbackLinkEl.setAttribute('href', localPdfPath);
     };
 
-    bindDriveViewer(
+    bindNativePdfViewer(
       'sop',
-      asset.sop_drive_url || `https://drive.google.com/file/d/1SPL_SOP_${asset.id.replace('-', '')}/view`,
+      resolvedSopPdfPath,
+      asset.sop_drive_url,
       asset.sop_doc_title || `Standard Operating Procedure (SOP) — ${asset.id}: ${asset.name}`,
-      asset.sop_revision_date || 'Rev. 2026-10 (March 2027 Standard)'
+      asset.sop_revision_date || 'Rev. 2026-10 • Official Shop Standard'
     );
 
-    bindDriveViewer(
+    bindNativePdfViewer(
       'loto',
-      asset.loto_drive_url || `https://drive.google.com/file/d/1SPL_LOTO_${asset.id.replace('-', '')}/view`,
+      resolvedLotoPdfPath,
+      asset.loto_drive_url,
       asset.loto_doc_title || `Lockout / Tagout (LOTO) Procedure — ${asset.id}: ${asset.name}`,
-      asset.loto_revision_date || 'Rev. 2026-10 (March 2027 Standard)'
+      asset.loto_revision_date || 'Rev. 2026-10 • Official Shop Standard'
     );
 
     // Populate Tab 2: SOP
@@ -678,7 +695,7 @@
     const pm = asset.monthlyPm || {};
     const freqBadge = document.getElementById('pm-frequency-badge');
     if (freqBadge) {
-      freqBadge.textContent = `${pm.frequency || 'Monthly'} • Target: March 2027`;
+      freqBadge.textContent = `${pm.frequency || 'Monthly'} (30-Day Interval)`;
     }
 
     const checklistContainer = document.getElementById('pm-checklist-items');

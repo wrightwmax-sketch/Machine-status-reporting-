@@ -1,0 +1,94 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 3897 >>
+stream
+0.73 0.05 0.18 rg
+36 716 540 46 re f
+1 1 1 rg
+BT /F2 13 Tf 48 742 Td (STUDENT PROJECTS LABORATORY - LOCKOUT / TAGOUT [LOTO] PROCEDURE) Tj ET
+BT /F2 10 Tf 48 726 Td (ENERGY ISOLATION SPECIFICATION | ASSET: WLD-05 | TAG: THERM-BM-MF) Tj ET
+0.95 0.96 0.98 rg
+36 660 540 50 re f
+0.06 0.09 0.16 rg
+BT /F2 11.5 Tf 46 694 Td (Thermal Processing Suite: Blue M Industrial Oven & Muffle Furnace) Tj ET
+BT /F2 8.8 Tf 46 680 Td (Authorized LOTO Personnel: Sr. Instructional Lab Supervisor \(Max Wright\) & Student Research Assistants \(SRAs\)) Tj ET
+BT /F1 8.8 Tf 46 667 Td (Notification Channel: Max Wright - Teams / Text Message | Zone: Zone 3: Welding & Thermal Processing \(WLD\)) Tj ET
+0.12 0.25 0.45 rg
+36 625 540 19 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 630 Td (STEP 1 - NORMAL MACHINE SHUTDOWN PROCEDURE) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 9 Tf 46 612 Td (Blue M Oven: Lower setpoint to 167 deg F \(75 deg C\) and allow circulation fan to run until cooled) Tj ET
+BT /F1 9 Tf 46 599.5 Td (below 167 deg F \(turning off above 167 deg F seizes circulation motor bearings!\), then toggle power) Tj ET
+BT /F1 9 Tf 46 587.0 Td (switch OFF \(Front lower center\). Muffle Furnace: Press RUN key to stop heating program,) Tj ET
+BT /F1 9 Tf 46 574.5 Td (toggle main power switch OFF.) Tj ET
+0.73 0.05 0.18 rg
+36 536.0 540 19 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 541.0 Td (STEP 2 - HAZARDOUS ENERGY SOURCES, MAGNITUDES & ISOLATION POINTS) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 9 Tf 46 523.0 Td (Source #1: Electrical \(Blue M Oven\) \(240V AC\)) Tj ET
+BT /F1 9 Tf 46 507.5 Td (   Isolation Location: Wall switch box disconnect adjacent to Blue M Oven.) Tj ET
+BT /F1 9 Tf 46 492.0 Td (   Lockout Procedure: Pull wall switch box lever down to OFF & apply LOTO lock; verify) Tj ET
+BT /F1 9 Tf 46 479.5 Td (chamber light does not illuminate.) Tj ET
+BT /F1 9 Tf 46 464.0 Td (Source #2: Thermal \(Blue M Oven\) \(Up to 650 deg F \(343 deg C\)\)) Tj ET
+BT /F1 9 Tf 46 448.5 Td (   Isolation Location: Internal stainless steel heating chamber.) Tj ET
+BT /F1 9 Tf 46 433.0 Td (   Lockout Procedure: Allow chamber to cool below 100 deg F / ambient before performing any) Tj ET
+BT /F1 9 Tf 46 420.5 Td (internal maintenance.) Tj ET
+BT /F1 9 Tf 46 405.0 Td (Source #3: Electrical \(Muffle Furnace\) \(120V AC\)) Tj ET
+BT /F1 9 Tf 46 389.5 Td (   Isolation Location: 120V power cord & wall receptacle.) Tj ET
+BT /F1 9 Tf 46 374.0 Td (   Lockout Procedure: Unplug power cord and secure male plug inside Rotating Electrical Plug) Tj ET
+BT /F1 9 Tf 46 361.5 Td (Lockout box; verify digital display is dark.) Tj ET
+BT /F1 9 Tf 46 346.0 Td (Source #4: Thermal \(Muffle Furnace\) \(Up to 1,250 deg C \(2,282 deg F\)\)) Tj ET
+BT /F1 9 Tf 46 330.5 Td (   Isolation Location: Refractory ceramic furnace chamber.) Tj ET
+BT /F1 9 Tf 46 315.0 Td (   Lockout Procedure: Keep door closed until internal temp is < 200 deg C, then crack door) Tj ET
+BT /F1 9 Tf 46 302.5 Td (slightly to reach ambient room temperature before servicing.) Tj ET
+0.71 0.33 0.04 rg
+36 264.0 540 19 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 269.0 Td (STEP 3 - STORED / RESIDUAL ENERGY DISSIPATION) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 9 Tf 46 251.0 Td (Blue M Oven: Mandatory fan-on cooldown < 167 deg F \(75 deg C\) then cool to < 100 deg F. Muffle Furnace:) Tj ET
+BT /F1 9 Tf 46 238.5 Td (Closed-door cooldown < 200 deg C to prevent refractory thermal shock, then cool to ambient.) Tj ET
+0.04 0.47 0.34 rg
+36 200.0 540 19 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 205.0 Td (STEP 4 - ZERO-ENERGY VERIFICATION \('TRY' STEP\)) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 9 Tf 46 187.0 Td (Verify Blue M chamber light and Muffle Furnace controller stay completely dark and chamber) Tj ET
+BT /F1 9 Tf 46 174.5 Td (thermometer reads ambient \(<100 deg F\).) Tj ET
+0.94 0.95 0.97 rg
+36 36 540 32 re f
+0.08 0.10 0.15 rg
+BT /F2 8.5 Tf 44 50 Td (STUDENT PROJECTS MACHINE SHOP - 930 KINNEAR RD |VERIFY ZERO ENERGY BEFORE SERVICING) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+4344
+%%EOF

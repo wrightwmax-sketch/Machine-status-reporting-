@@ -1,0 +1,85 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 2897 >>
+stream
+0.73 0.05 0.18 rg
+36 716 540 46 re f
+1 1 1 rg
+BT /F2 13 Tf 48 742 Td (STUDENT PROJECTS LABORATORY - LOCKOUT / TAGOUT [LOTO] PROCEDURE) Tj ET
+BT /F2 10 Tf 48 726 Td (ENERGY ISOLATION SPECIFICATION | ASSET: WLD-01 | TAG: TIG-275-01) Tj ET
+0.95 0.96 0.98 rg
+36 660 540 50 re f
+0.06 0.09 0.16 rg
+BT /F2 11.5 Tf 46 694 Td (Lincoln Precision TIG 275 Welder #1) Tj ET
+BT /F2 8.8 Tf 46 680 Td (Authorized LOTO Personnel: Sr. Instructional Lab Supervisor \(Max Wright\) & Student Research Assistants \(SRAs\)) Tj ET
+BT /F1 8.8 Tf 46 667 Td (Notification Channel: Max Wright - Teams / Text Message | Zone: Zone 3: Welding & Thermal Processing \(WLD\)) Tj ET
+0.12 0.25 0.45 rg
+36 625 540 19 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 630 Td (STEP 1 - NORMAL MACHINE SHUTDOWN PROCEDURE) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 9 Tf 46 612 Td (Extinguish arc, allow post-flow timer to cool tungsten, toggle main power switch OFF \(Front) Tj ET
+BT /F1 9 Tf 46 599.5 Td (Panel Upper Right\).) Tj ET
+0.73 0.05 0.18 rg
+36 561.0 540 19 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 566.0 Td (STEP 2 - HAZARDOUS ENERGY SOURCES, MAGNITUDES & ISOLATION POINTS) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 9 Tf 46 548.0 Td (Source #1: Electrical \(240V AC \(High-Capacitance Inverter/Transformer\)\)) Tj ET
+BT /F1 9 Tf 46 532.5 Td (   Isolation Location: Wall switch box disconnect behind welder.) Tj ET
+BT /F1 9 Tf 46 517.0 Td (   Lockout Procedure: Pull wall switch box lever down to OFF & install LOTO lock; WAIT AT) Tj ET
+BT /F1 9 Tf 46 504.5 Td (LEAST 5 MINUTES for internal capacitors to dissipate.) Tj ET
+BT /F1 9 Tf 46 489.0 Td (Source #2: Pneumatic \(Shielding Gas\) \(2,500 PSI Compressed Argon Cylinder\)) Tj ET
+BT /F1 9 Tf 46 473.5 Td (   Isolation Location: Argon cylinder top valve & regulator assembly.) Tj ET
+BT /F1 9 Tf 46 458.0 Td (   Lockout Procedure: Turn cylinder top valve clockwise until all yellow \(no red showing\),) Tj ET
+BT /F1 9 Tf 46 445.5 Td (remove gas line from regulator, depress foot pedal to purge solenoids/lines, and verify both) Tj ET
+BT /F1 9 Tf 46 433.0 Td (regulator gauges read 0 PSI.) Tj ET
+0.71 0.33 0.04 rg
+36 394.5 540 19 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 399.5 Td (STEP 3 - STORED / RESIDUAL ENERGY DISSIPATION) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 9 Tf 46 381.5 Td (Wait >= 5 minutes for capacitor bleed; depress foot pedal with gas disconnected to purge) Tj ET
+BT /F1 9 Tf 46 369.0 Td (trapped Argon pressure.) Tj ET
+0.04 0.47 0.34 rg
+36 330.5 540 19 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 335.5 Td (STEP 4 - ZERO-ENERGY VERIFICATION \('TRY' STEP\)) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 9 Tf 46 317.5 Td (Verify display is dark and cooling fan does not engage when power switch is toggled; confirm) Tj ET
+BT /F1 9 Tf 46 305.0 Td (both regulator gauges read 0 PSI.) Tj ET
+0.94 0.95 0.97 rg
+36 36 540 32 re f
+0.08 0.10 0.15 rg
+BT /F2 8.5 Tf 44 50 Td (STUDENT PROJECTS MACHINE SHOP - 930 KINNEAR RD |VERIFY ZERO ENERGY BEFORE SERVICING) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+3344
+%%EOF

@@ -1,0 +1,85 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 2903 >>
+stream
+0.73 0.05 0.18 rg
+36 716 540 46 re f
+1 1 1 rg
+BT /F2 13 Tf 48 742 Td (STUDENT PROJECTS LABORATORY - LOCKOUT / TAGOUT [LOTO] PROCEDURE) Tj ET
+BT /F2 10 Tf 48 726 Td (ENERGY ISOLATION SPECIFICATION | ASSET: FAB-03 | TAG: 01166873) Tj ET
+0.95 0.96 0.98 rg
+36 660 540 50 re f
+0.06 0.09 0.16 rg
+BT /F2 11.5 Tf 46 694 Td (Tennsmith HBU48-16 Hand Brake & Industrial Metal Shear) Tj ET
+BT /F2 8.8 Tf 46 680 Td (Authorized LOTO Personnel: Sr. Instructional Lab Supervisor \(Max Wright\) & Student Research Assistants \(SRAs\)) Tj ET
+BT /F1 8.8 Tf 46 667 Td (Notification Channel: Max Wright - Teams / Text Message | Zone: Zone 5: Fabrication, Sheet Metal & Abrasive Finishing \(FAB\)) Tj ET
+0.12 0.25 0.45 rg
+36 625 540 19 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 630 Td (STEP 1 - NORMAL MACHINE SHUTDOWN PROCEDURE) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 9 Tf 46 612 Td (Shear \(ID: 01166873\): Push red power button \(Right front face\). Tennsmith Brake: Lower) Tj ET
+BT /F1 9 Tf 46 599.5 Td (bending leaf and release clamping handle.) Tj ET
+0.73 0.05 0.18 rg
+36 561.0 540 19 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 566.0 Td (STEP 2 - HAZARDOUS ENERGY SOURCES, MAGNITUDES & ISOLATION POINTS) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 9 Tf 46 548.0 Td (Source #1: Mechanical \(Tennsmith HBU48-16 Hand Brake\) \(300 Ft-Lbs Counterweight & Clamping) Tj ET
+BT /F1 9 Tf 46 535.5 Td (Leaf\)) Tj ET
+BT /F1 9 Tf 46 520.0 Td (   Isolation Location: Handle / counterweight linkage & upper clamping jaws.) Tj ET
+BT /F1 9 Tf 46 504.5 Td (   Lockout Procedure: Apply Chain and LOTO Lock around handle/counterweight area to prevent) Tj ET
+BT /F1 9 Tf 46 492.0 Td (motion; place spacer stock beneath clamp jaws to relieve stored mechanical energy.) Tj ET
+BT /F1 9 Tf 46 476.5 Td (Source #2: Electrical \(Industrial Shear - ID: 01166873\) \(240V AC\)) Tj ET
+BT /F1 9 Tf 46 461.0 Td (   Isolation Location: Right-side electrical switch box.) Tj ET
+BT /F1 9 Tf 46 445.5 Td (   Lockout Procedure: Turn right-side electrical switch box lever to OFF and install LOTO) Tj ET
+BT /F1 9 Tf 46 433.0 Td (lock; press black power button to verify zero energy.) Tj ET
+0.71 0.33 0.04 rg
+36 394.5 540 19 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 399.5 Td (STEP 3 - STORED / RESIDUAL ENERGY DISSIPATION) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 9 Tf 46 381.5 Td (Place spacer stock beneath Tennsmith brake clamping jaws; wait for Shear mechanism to come) Tj ET
+BT /F1 9 Tf 46 369.0 Td (to rest.) Tj ET
+0.04 0.47 0.34 rg
+36 330.5 540 19 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 335.5 Td (STEP 4 - ZERO-ENERGY VERIFICATION \('TRY' STEP\)) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 9 Tf 46 317.5 Td (Press black power button on Shear to verify zero electrical energy; verify Tennsmith chain) Tj ET
+BT /F1 9 Tf 46 305.0 Td (lock prevents leaf motion.) Tj ET
+0.94 0.95 0.97 rg
+36 36 540 32 re f
+0.08 0.10 0.15 rg
+BT /F2 8.5 Tf 44 50 Td (STUDENT PROJECTS MACHINE SHOP - 930 KINNEAR RD |VERIFY ZERO ENERGY BEFORE SERVICING) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+3350
+%%EOF
