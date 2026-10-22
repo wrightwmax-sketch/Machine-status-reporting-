@@ -450,18 +450,28 @@
   }
 
   /**
-   * Transform standard Google Drive sharing links (https://drive.google.com/file/d/DOC_ID/view)
-   * into responsive embed preview URLs (https://drive.google.com/file/d/DOC_ID/preview),
-   * full view URLs, and direct PDF download/print URLs.
+   * Transform standard Google Drive sharing or folder links into responsive embed preview URLs,
+   * full view URLs, and direct download URLs.
    */
   function transformGoogleDriveUrl(rawUrl) {
     const clean = String(rawUrl || '').trim();
     if (!clean) {
       return {
         docId: '',
-        viewUrl: 'https://drive.google.com/',
-        previewUrl: 'about:blank',
-        downloadUrl: 'https://drive.google.com/'
+        viewUrl: 'https://drive.google.com/drive/u/0/folders/1dak3rYNFcNR9rRcwcjyfqcOymIxjqfNr',
+        previewUrl: 'https://drive.google.com/embeddedfolderview?id=1dak3rYNFcNR9rRcwcjyfqcOymIxjqfNr#list',
+        downloadUrl: 'https://drive.google.com/drive/u/0/folders/1dak3rYNFcNR9rRcwcjyfqcOymIxjqfNr'
+      };
+    }
+
+    const folderMatch = clean.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+    if (folderMatch && folderMatch[1]) {
+      const folderId = folderMatch[1];
+      return {
+        docId: folderId,
+        viewUrl: `https://drive.google.com/drive/u/0/folders/${folderId}`,
+        previewUrl: `https://drive.google.com/embeddedfolderview?id=${folderId}#list`,
+        downloadUrl: `https://drive.google.com/drive/u/0/folders/${folderId}`
       };
     }
 
@@ -525,17 +535,15 @@
     if (elNextPm) elNextPm.textContent = `Next Due: ${asset.nextPmDue || 'N/A'}`;
     if (elPmTech) elPmTech.textContent = `Tech: ${asset.lastPmTech || 'M. Wright'}`;
 
-    // Populate Native Repository-Hosted PDF Viewer (<object> + <iframe> + Fallback + Drive Mirror)
-    const isBridgeportMill = ['MAC-01', 'MAC-02', 'MAC-03'].includes(asset.id);
-    const resolvedSopPdfPath = isBridgeportMill
-      ? 'docs/sop/MAC-01-SOP.pdf'
-      : asset.sop_pdf_path || `docs/sop/${asset.id}-SOP.pdf`;
-    const resolvedLotoPdfPath = isBridgeportMill
-      ? 'docs/loto/MAC-01-LOTO.pdf'
-      : asset.loto_pdf_path || `docs/loto/${asset.id}-LOTO.pdf`;
+    // Populate Official Document Viewer for SOP & LOTO (uses official Google Drive LOTO folder or configured PDF path)
+    const officialLotoFolderUrl = 'https://drive.google.com/drive/u/0/folders/1dak3rYNFcNR9rRcwcjyfqcOymIxjqfNr';
 
-    const bindNativePdfViewer = (prefix, localPdfPath, rawDriveUrl, docTitle, docRev) => {
-      const urls = transformGoogleDriveUrl(rawDriveUrl);
+    const bindDocumentViewer = (prefix, localPdfPath, rawDriveUrl, docTitle, docRev) => {
+      const urls = transformGoogleDriveUrl(rawDriveUrl || officialLotoFolderUrl);
+      const effectiveTargetUrl = localPdfPath || urls.previewUrl;
+      const effectiveOpenUrl = localPdfPath || urls.viewUrl;
+      const effectiveDownloadUrl = localPdfPath || urls.downloadUrl;
+
       const pathBadgeEl = document.getElementById(`${prefix}-local-path-badge`);
       const titleEl = document.getElementById(`${prefix}-doc-title`);
       const revEl = document.getElementById(`${prefix}-doc-rev`);
@@ -546,39 +554,39 @@
       const iframeEl = document.getElementById(`${prefix}-pdf-iframe`);
       const fallbackLinkEl = document.getElementById(`${prefix}-pdf-fallback-link`);
 
-      if (pathBadgeEl) pathBadgeEl.textContent = localPdfPath;
+      if (pathBadgeEl) pathBadgeEl.textContent = localPdfPath || urls.viewUrl;
       if (titleEl) titleEl.textContent = docTitle;
       if (revEl) revEl.textContent = docRev;
-      if (fullscreenBtn) fullscreenBtn.href = localPdfPath;
+      if (fullscreenBtn) fullscreenBtn.href = effectiveOpenUrl;
       if (dlBtn) {
-        dlBtn.href = localPdfPath;
-        dlBtn.setAttribute('download', localPdfPath.split('/').pop() || `${prefix}.pdf`);
-      }
-      if (openDriveBtn) {
-        if (rawDriveUrl) {
-          openDriveBtn.href = urls.viewUrl;
-          openDriveBtn.classList.remove('hidden');
+        dlBtn.href = effectiveDownloadUrl;
+        if (localPdfPath) {
+          dlBtn.setAttribute('download', localPdfPath.split('/').pop() || `${prefix}.pdf`);
         } else {
-          openDriveBtn.classList.add('hidden');
+          dlBtn.removeAttribute('download');
         }
       }
-      if (objectEl) objectEl.setAttribute('data', localPdfPath);
-      if (iframeEl) iframeEl.setAttribute('src', localPdfPath);
-      if (fallbackLinkEl) fallbackLinkEl.setAttribute('href', localPdfPath);
+      if (openDriveBtn) {
+        openDriveBtn.href = urls.viewUrl;
+        openDriveBtn.classList.remove('hidden');
+      }
+      if (objectEl) objectEl.setAttribute('data', effectiveTargetUrl);
+      if (iframeEl) iframeEl.setAttribute('src', effectiveTargetUrl);
+      if (fallbackLinkEl) fallbackLinkEl.setAttribute('href', effectiveOpenUrl);
     };
 
-    bindNativePdfViewer(
+    bindDocumentViewer(
       'sop',
-      resolvedSopPdfPath,
-      asset.sop_drive_url,
+      asset.sop_pdf_path || '',
+      asset.sop_drive_url || officialLotoFolderUrl,
       asset.sop_doc_title || `Standard Operating Procedure (SOP) — ${asset.id}: ${asset.name}`,
       asset.sop_revision_date || 'Rev. 2026-10 • Official Shop Standard'
     );
 
-    bindNativePdfViewer(
+    bindDocumentViewer(
       'loto',
-      resolvedLotoPdfPath,
-      asset.loto_drive_url,
+      asset.loto_pdf_path || '',
+      asset.loto_drive_url || officialLotoFolderUrl,
       asset.loto_doc_title || `Lockout / Tagout (LOTO) Procedure — ${asset.id}: ${asset.name}`,
       asset.loto_revision_date || 'Rev. 2026-10 • Official Shop Standard'
     );
