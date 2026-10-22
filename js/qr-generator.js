@@ -1,12 +1,13 @@
 /**
  * Student Projects Laboratory (930 Kinnear Rd)
- * Printable 2" x 3" 3-in-1 QR Machine Decal Sheet Generator (js/qr-generator.js)
+ * Avery 8395 (2-1/3" x 3-3/8", 8-up) Industrial QR Machine Decal Generator (js/qr-generator.js)
  */
 
 (function (window) {
   'use strict';
 
-  const STORAGE_KEY_QR_BASE = 'spl_shop_portal_qr_base_url_v2';
+  const DEFAULT_PRODUCTION_BASE_URL = 'https://wrightwmax-sketch.github.io/Machine-status-reporting-/';
+  const LABELS_PER_AVERY_8395_SHEET = 8;
 
   function escapeHtml(str) {
     if (str === null || str === undefined) return '';
@@ -65,82 +66,95 @@
    * Resolve base URL for QR code target links
    */
   function getPortalBaseUrl() {
-    const saved = localStorage.getItem(STORAGE_KEY_QR_BASE);
-    if (saved && saved.trim()) {
-      return saved.trim().replace(/\?.*$/, '').replace(/qr-sheets\.html$/i, '');
-    }
     const loc = window.location;
-    let path = loc.pathname || '/';
-    path = path.replace(/qr-sheets\.html$/i, '').replace(/index\.html$/i, '');
-    if (!path.endsWith('/')) {
-      path += '/';
+    if (loc && loc.hostname && loc.hostname.endsWith('github.io')) {
+      let path = loc.pathname || '/';
+      path = path.replace(/qr-sheets\.html$/i, '').replace(/index\.html$/i, '');
+      if (!path.endsWith('/')) {
+        path += '/';
+      }
+      return `${loc.origin}${path}`;
     }
-    return `${loc.origin}${path}`;
-  }
-
-  function saveBaseUrlOverride(url) {
-    if (!url || !url.trim()) {
-      localStorage.removeItem(STORAGE_KEY_QR_BASE);
-      return;
-    }
-    localStorage.setItem(STORAGE_KEY_QR_BASE, url.trim());
+    return DEFAULT_PRODUCTION_BASE_URL;
   }
 
   /**
-   * Render 2" x 3" industrial QR decals for all shop assets into #qr-decal-grid
+   * Render Avery 8395 (8-up: 2 cols x 4 rows, 3-3/8" wide x 2-1/3" tall) QR decal sheets into #qr-decal-grid
    */
-  function renderQrDecalSheet(assets, customBaseUrl) {
+  function renderQrDecalSheet(assets) {
     const gridEl = document.getElementById('qr-decal-grid');
     if (!gridEl) return;
 
-    const baseUrl = (customBaseUrl && customBaseUrl.trim())
-      ? customBaseUrl.trim().replace(/\?.*$/, '').replace(/qr-sheets\.html$/i, '')
-      : getPortalBaseUrl();
-
-    const baseInput = document.getElementById('qr-base-url-input');
-    if (baseInput && !baseInput.value) {
-      baseInput.value = baseUrl;
-    }
+    const list = Array.isArray(assets) ? assets : [];
+    const baseUrl = getPortalBaseUrl();
 
     const countEl = document.getElementById('qr-decal-total-count');
     if (countEl) {
-      countEl.textContent = String((assets || []).length);
+      countEl.textContent = String(list.length);
     }
 
     gridEl.innerHTML = '';
 
-    (assets || []).forEach((asset) => {
-      const separator = baseUrl.includes('?') ? '&' : '?';
-      const targetUrl = `${baseUrl}${separator}asset=${encodeURIComponent(asset.id)}`;
-      const qrBoxId = `qr-decal-box-${asset.id.replace(/[^a-zA-Z0-9_-]/g, '')}`;
-      const tagLabel = asset.equipmentTag || 'N/A';
+    const totalSheets = Math.max(1, Math.ceil(list.length / LABELS_PER_AVERY_8395_SHEET));
+    const qrTasks = [];
 
-      const tile = document.createElement('article');
-      tile.className = 'qr-decal-tile';
-      tile.setAttribute('data-asset-id', asset.id);
-      tile.setAttribute('data-zone-code', asset.zoneCode || '');
+    for (let sheetIdx = 0; sheetIdx < totalSheets; sheetIdx++) {
+      const sliceStart = sheetIdx * LABELS_PER_AVERY_8395_SHEET;
+      const sheetAssets = list.slice(sliceStart, sliceStart + LABELS_PER_AVERY_8395_SHEET);
 
-      tile.innerHTML = `
-        <div class="qr-decal-banner">
-          <span>STUDENT PROJECTS LAB • 930 KINNEAR RD</span>
-          <span>${escapeHtml(asset.zoneCode || 'SHOP')}</span>
-        </div>
-        <div class="qr-decal-body">
-          <div id="${qrBoxId}" class="qr-decal-code-box" aria-label="QR Code for ${escapeHtml(asset.id)}"></div>
-          <div class="qr-decal-info">
-            <div class="qr-decal-asset-id">${escapeHtml(asset.id)}</div>
-            <div class="qr-decal-tag-id">TAG: ${escapeHtml(tagLabel)}</div>
-            <div class="qr-decal-name">${escapeHtml(asset.name)}</div>
-            <div class="qr-decal-zone">${escapeHtml(asset.zone)}</div>
-          </div>
-        </div>
-        <div class="qr-decal-footer">
-          SCAN FOR: 1. SOP &amp; PPE | 2. LOTO Procedure | 3. Report Fault / Log PM
-        </div>
+      const sheetWrapper = document.createElement('div');
+      sheetWrapper.className = 'avery-8395-sheet-wrapper';
+
+      const sheetCaption = document.createElement('div');
+      sheetCaption.className = 'avery-8395-sheet-caption no-print';
+      sheetCaption.innerHTML = `
+        <span>📄 <strong>Avery 8395 Sheet ${sheetIdx + 1} of ${totalSheets}</strong> (2-1/3&quot; &times; 3-3/8&quot; Adhesive Name Badge Labels • 2 Columns &times; 4 Rows)</span>
+        <span>Labels ${sliceStart + 1}&ndash;${sliceStart + sheetAssets.length} of ${list.length}</span>
       `;
+      sheetWrapper.appendChild(sheetCaption);
 
-      gridEl.appendChild(tile);
+      const sheetEl = document.createElement('div');
+      sheetEl.className = 'avery-8395-sheet';
 
+      sheetAssets.forEach((asset) => {
+        const separator = baseUrl.includes('?') ? '&' : '?';
+        const targetUrl = `${baseUrl}${separator}asset=${encodeURIComponent(asset.id)}`;
+        const qrBoxId = `qr-decal-box-${asset.id.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+        const tagLabel = asset.equipmentTag || 'N/A';
+
+        const tile = document.createElement('article');
+        tile.className = 'qr-decal-tile';
+        tile.setAttribute('data-asset-id', asset.id);
+        tile.setAttribute('data-zone-code', asset.zoneCode || '');
+
+        tile.innerHTML = `
+          <div class="qr-decal-banner">
+            <span>STUDENT PROJECTS LAB • 930 KINNEAR RD</span>
+            <span>${escapeHtml(asset.zoneCode || 'SHOP')}</span>
+          </div>
+          <div class="qr-decal-body">
+            <div id="${qrBoxId}" class="qr-decal-code-box" aria-label="QR Code for ${escapeHtml(asset.id)}"></div>
+            <div class="qr-decal-info">
+              <div class="qr-decal-asset-id">${escapeHtml(asset.id)}</div>
+              <div class="qr-decal-tag-id">TAG: ${escapeHtml(tagLabel)}</div>
+              <div class="qr-decal-name">${escapeHtml(asset.name)}</div>
+              <div class="qr-decal-zone">${escapeHtml(asset.zone)}</div>
+            </div>
+          </div>
+          <div class="qr-decal-footer">
+            SCAN FOR: 1. SOP &amp; PPE | 2. LOTO Procedure | 3. Report Fault / Log PM
+          </div>
+        `;
+
+        sheetEl.appendChild(tile);
+        qrTasks.push({ qrBoxId, targetUrl });
+      });
+
+      sheetWrapper.appendChild(sheetEl);
+      gridEl.appendChild(sheetWrapper);
+    }
+
+    qrTasks.forEach(({ qrBoxId, targetUrl }) => {
       const qrContainer = document.getElementById(qrBoxId);
       if (!qrContainer) return;
 
@@ -148,17 +162,17 @@
         try {
           new window.QRCode(qrContainer, {
             text: targetUrl,
-            width: 96,
-            height: 96,
+            width: 112,
+            height: 112,
             colorDark: '#0f172a',
             colorLight: '#ffffff',
             correctLevel: window.QRCode.CorrectLevel ? window.QRCode.CorrectLevel.M : 0
           });
         } catch (err) {
-          qrContainer.innerHTML = createFallbackQrSvg(targetUrl, 96);
+          qrContainer.innerHTML = createFallbackQrSvg(targetUrl, 112);
         }
       } else {
-        qrContainer.innerHTML = createFallbackQrSvg(targetUrl, 96);
+        qrContainer.innerHTML = createFallbackQrSvg(targetUrl, 112);
       }
     });
   }
@@ -183,27 +197,14 @@
       console.error('Failed to load equipment_master.json on qr-sheets.html:', err);
     }
 
-    const baseInput = document.getElementById('qr-base-url-input');
-    if (baseInput) {
-      baseInput.value = getPortalBaseUrl();
-    }
-
     const applyFilterAndRender = () => {
       const filtered = activeZone === 'ALL'
         ? allAssets
         : allAssets.filter((a) => a.zoneCode === activeZone);
-      renderQrDecalSheet(filtered, baseInput ? baseInput.value : undefined);
+      renderQrDecalSheet(filtered);
     };
 
     applyFilterAndRender();
-
-    const regenBtn = document.getElementById('btn-regenerate-qr');
-    if (regenBtn && baseInput) {
-      regenBtn.addEventListener('click', () => {
-        saveBaseUrlOverride(baseInput.value);
-        applyFilterAndRender();
-      });
-    }
 
     const printBtn = document.getElementById('btn-print-qr-sheet');
     if (printBtn) {
@@ -231,7 +232,6 @@
 
   window.ShopQrGenerator = {
     getPortalBaseUrl,
-    saveBaseUrlOverride,
     renderQrDecalSheet
   };
 })(window);

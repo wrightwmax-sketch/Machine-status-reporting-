@@ -1236,19 +1236,7 @@
     if (jsonBtn) jsonBtn.addEventListener('click', exportMasterJson);
 
     // QR Sheet controls
-    const regenQrBtn = document.getElementById('btn-regenerate-qr');
-    const qrBaseInput = document.getElementById('qr-base-url-input');
     const printQrBtn = document.getElementById('btn-print-qr-sheet');
-
-    if (regenQrBtn && qrBaseInput) {
-      regenQrBtn.addEventListener('click', () => {
-        if (window.ShopQrGenerator) {
-          window.ShopQrGenerator.saveBaseUrlOverride(qrBaseInput.value);
-          window.ShopQrGenerator.renderQrDecalSheet(state.assets, qrBaseInput.value);
-          showToast(`Regenerated all ${state.assets.length} 2"×3" QR Machine Decals`);
-        }
-      });
-    }
     if (printQrBtn) {
       printQrBtn.addEventListener('click', () => {
         window.print();
