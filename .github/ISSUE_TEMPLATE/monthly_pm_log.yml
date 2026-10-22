@@ -1,0 +1,68 @@
+name: "🛠️ Monthly Preventative Maintenance (PM) Log"
+description: "Submit a completed monthly preventative maintenance checklist and quantitative wear metrics for a 930 Kinnear Rd shop asset."
+title: "[PM-LOG] "
+labels: ["monthly-pm", "shop-portal-sync"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### CAR Student Projects Shop (930 Kinnear Rd) — Monthly PM Submission
+        This issue is automatically parsed by the `process_shop_submission.yml` workflow to update `data/equipment_master.json` and append to `data/pm_history.json`.
+
+  - type: input
+    id: asset_id
+    attributes:
+      label: "Asset ID"
+      description: "Exact Asset ID (e.g., MAC-01, CNC-02, WLD-01, SAW-02, FAB-01, FAC-01)"
+      placeholder: "MAC-01"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: post_pm_status
+    attributes:
+      label: "Post-PM Operational Status"
+      description: "Machine operational status following maintenance completion"
+      options:
+        - "OPERATIONAL"
+        - "PM DUE SOON"
+        - "DOWN - LOCKED OUT"
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: technician
+    attributes:
+      label: "Technician / SRA Name & Initials"
+      description: "Authorized Lab Supervisor or SRA performing the monthly PM"
+      placeholder: "Max Wright (MW)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: checklist_summary
+    attributes:
+      label: "Completed PM Checklist Items"
+      description: "Checked items from the asset's standardized Monthly PM matrix"
+      placeholder: "- [x] Fill one-shot lubricator (Mobil Vactra No. 2)\n- [x] Measure & log X/Y leadscrew backlash"
+    validations:
+      required: true
+
+  - type: textarea
+    id: quantitative_metrics
+    attributes:
+      label: "Quantitative Wear & Calibration Metrics (JSON or Key: Value)"
+      description: "Logged numerical readings (e.g., Coolant Brix %, X/Y Backlash 0.000\", Tool Rest Gap, Regulator PSI)"
+      placeholder: "x_backlash: 0.002 in\ny_backlash: 0.002 in\nway_lube_level: 100 %"
+    validations:
+      required: false
+
+  - type: textarea
+    id: pm_notes
+    attributes:
+      label: "Maintenance Notes, Parts Replaced, or Follow-Up Actions"
+      description: "Document any consumables replaced, adjustments made, or parts ordered"
+      placeholder: "Ways oiled, T-slots stoned, gib play within spec."
+    validations:
+      required: true

@@ -1,57 +1,28 @@
 /**
- * Student Projects Building — Machine Fault & Status Reporting System
+ * CAR Student Projects Shop (930 Kinnear Rd)
+ * Operations, Safety (SOP/LOTO) & Preventative Maintenance (PM) Portal
+ * Main Application Controller (js/app.js)
  */
 
 (function () {
   'use strict';
 
-  // LocalStorage Keys
   const STORAGE_KEYS = {
-    STATUS_OVERRIDES: 'spl_machine_status_overrides_v1',
-    FAULT_LOG: 'spl_fault_history_log_v1',
-    TEAMS_WEBHOOK: 'spl_teams_webhook_url',
-    SYNC_ENDPOINT: 'spl_sync_api_url',
-    GITHUB_TOKEN: 'spl_github_token',
-    QR_BASE_URL: 'spl_qr_base_url'
+    ASSET_OVERRIDES: 'car_shop_portal_asset_overrides_v2',
+    HISTORY_LOG: 'car_shop_portal_history_log_v2',
+    GITHUB_REPO: 'car_shop_portal_github_repo_v2',
+    TEAMS_WEBHOOK: 'car_shop_portal_teams_webhook_v2'
   };
 
-  // Fallback master registry of the 24 SPL workstations
-  const FALLBACK_MACHINES = [
-    { id: 'FAC-01', name: 'General Shop & Paint Booth', zone: 'Facility & Infrastructure', sourceSheet: 'General ' },
-    { id: 'FAC-02', name: 'Shop Compressed Air System', zone: 'Facility & Infrastructure', sourceSheet: 'Air system ' },
-    { id: 'MAC-01', name: 'Manual Mill #1 (Bridgeport)', zone: 'Manual Machining', sourceSheet: 'Manual Mill ' },
-    { id: 'MAC-02', name: 'Manual Mill #2 (Bridgeport)', zone: 'Manual Machining', sourceSheet: 'Manual Mill ' },
-    { id: 'MAC-03', name: 'Manual Mill #3 (Bridgeport)', zone: 'Manual Machining', sourceSheet: 'Manual Mill ' },
-    { id: 'MAC-04', name: 'Manual Lathe', zone: 'Manual Machining', sourceSheet: 'Manual Lathe' },
-    { id: 'CNC-01', name: 'CNC Mill', zone: 'CNC Machining', sourceSheet: 'CNC Mill ' },
-    { id: 'CNC-02', name: 'Haas CNC Vertical Machining Center', zone: 'CNC Machining', sourceSheet: 'HAAS mill CNC ' },
-    { id: 'CNC-03', name: 'CNC Lathe', zone: 'CNC Machining', sourceSheet: 'CNC Lathe ' },
-    { id: 'SAW-01', name: 'Vertical Bandsaw', zone: 'Cutting & Saws', sourceSheet: 'Vertical Bandsaw ' },
-    { id: 'SAW-02', name: 'Horizontal Bandsaw', zone: 'Cutting & Saws', sourceSheet: 'Horizontal Bandsaw ' },
-    { id: 'SAW-03', name: 'Abrasive Chop Saw', zone: 'Cutting & Saws', sourceSheet: 'Chop Saw ' },
-    { id: 'SAW-04', name: '10" Compound Miter Saw', zone: 'Cutting & Saws', sourceSheet: 'Miter saw ' },
-    { id: 'FAB-01', name: '6" x 48" Belt Sander', zone: 'Abrasive & Finishing', sourceSheet: 'Belt Sander ' },
-    { id: 'FAB-02', name: 'Tube & Pipe Notcher', zone: 'Fabrication & Prep', sourceSheet: 'Tube Notcher ' },
-    { id: 'FAB-03', name: 'Bench Grinders', zone: 'Abrasive & Finishing', sourceSheet: 'Bench Grinders' },
-    { id: 'FAB-04', name: 'Media Blast Cabinet (Sand Blaster)', zone: 'Abrasive & Finishing', sourceSheet: 'Sand Blaster ' },
-    { id: 'WLD-01', name: 'TIG Welder #1', zone: 'Welding & Thermal', sourceSheet: 'TIG Welder' },
-    { id: 'WLD-02', name: 'TIG Welder #2', zone: 'Welding & Thermal', sourceSheet: 'TIG Welder' },
-    { id: 'WLD-03', name: 'MIG Welder Station', zone: 'Welding & Thermal', sourceSheet: 'MIG Welder' },
-    { id: 'WLD-04', name: 'CNC Plasma Table', zone: 'Welding & Thermal', sourceSheet: 'Plazma Table ' },
-    { id: 'WLD-05', name: 'Hand Plasma Cutter', zone: 'Welding & Thermal', sourceSheet: 'Hand Plasma ' },
-    { id: 'WJT-01', name: 'WAZER Desktop Waterjet', zone: 'Waterjet Cutting', sourceSheet: 'Wazer Water Jet ' },
-    { id: 'GEN-01', name: 'Briggs & Stratton 6500W Generator', zone: 'Mobile Power / Support', sourceSheet: 'Brigs Gen 6500 watt' },
-    { id: 'GEN-02', name: 'Briggs & Stratton 5500W Generator', zone: 'Mobile Power / Support', sourceSheet: 'Biggs 5500 gen ' }
-  ];
+  const DEFAULT_GITHUB_REPO = 'wrightwmax-sketch/Machine-status-reporting-';
 
-  // Application State
   const state = {
-    machines: [],
-    baseStatuses: {},
-    statuses: {},
-    currentView: 'board', // 'board' | 'updater' | 'qr'
-    selectedMachineId: 'MAC-01',
-    lockedViaQr: false,
+    metadata: {},
+    assets: [],
+    history: [],
+    currentView: 'dashboard', // 'dashboard' | 'history' | 'qr'
+    activeAssetId: null,
+    activeModalTab: 'fault', // 'fault' | 'sop' | 'loto' | 'pm'
     filters: {
       search: '',
       zone: 'ALL',
@@ -59,57 +30,6 @@
     }
   };
 
-  // Status Metadata Helpers
-  const STATUS_META = {
-    OPERATIONAL: {
-      label: 'OPERATIONAL',
-      emoji: '🟢',
-      pillText: '🟢 OPERATIONAL',
-      pillClass: 'status-pill-operational',
-      cardClass: 'card-status-operational',
-      bannerClass: 'status-banner-operational',
-      hex: '#10b981',
-      adaptiveColor: 'Good'
-    },
-    DEGRADED: {
-      label: 'DEGRADED',
-      emoji: '🟡',
-      pillText: '🟡 DEGRADED',
-      pillClass: 'status-pill-degraded',
-      cardClass: 'card-status-degraded',
-      bannerClass: 'status-banner-degraded',
-      hex: '#f59e0b',
-      adaptiveColor: 'Warning'
-    },
-    DOWN: {
-      label: 'DOWN',
-      emoji: '🔴',
-      pillText: '🔴 DOWN',
-      pillClass: 'status-pill-down',
-      cardClass: 'card-status-down',
-      bannerClass: 'status-banner-down',
-      hex: '#ef4444',
-      adaptiveColor: 'Attention'
-    }
-  };
-
-  /**
-   * Default status entry factory
-   */
-  function createDefaultStatusEntry(timestamp) {
-    return {
-      status: 'OPERATIONAL',
-      category: 'Cleared / Ready',
-      team: 'Shop Staff',
-      reporter: 'System Init',
-      notes: 'Machine operational and cleared for student use.',
-      updatedAt: timestamp || '2026-10-20T12:00:00.000Z'
-    };
-  }
-
-  /**
-   * Escape HTML special characters to prevent XSS
-   */
   function escapeHtml(str) {
     if (str === null || str === undefined) return '';
     return String(str)
@@ -121,219 +41,249 @@
   }
 
   /**
-   * Format ISO timestamp into human-friendly relative time
+   * Determine effective operational/PM bucket for an asset
+   * Returns one of: 'OPERATIONAL' | 'PM_DUE_SOON' | 'PM_OVERDUE' | 'DOWN'
    */
-  function formatRelativeTime(isoString) {
-    if (!isoString) return 'Scheduled Ready';
-    const date = new Date(isoString);
-    if (isNaN(date.getTime())) return isoString;
+  function getEffectiveAssetBucket(asset) {
+    const rawStatus = (asset.status || 'OPERATIONAL').toUpperCase();
+    if (rawStatus.includes('DOWN')) {
+      return 'DOWN';
+    }
 
-    const now = new Date();
-    const diffSeconds = Math.floor((now - date) / 1000);
+    if (asset.nextPmDue) {
+      const dueDate = new Date(asset.nextPmDue + 'T23:59:59');
+      const now = new Date();
+      const diffDays = (dueDate - now) / (1000 * 60 * 60 * 24);
+      if (diffDays < 0 || (asset.pmStatus || '').toUpperCase() === 'OVERDUE') {
+        return 'PM_OVERDUE';
+      }
+      if (diffDays <= 7 || rawStatus.includes('DEGRADED') || rawStatus.includes('DUE')) {
+        return 'PM_DUE_SOON';
+      }
+    }
 
-    if (diffSeconds < 5) return 'Just now';
-    if (diffSeconds < 60) return `${diffSeconds}s ago`;
-    const diffMinutes = Math.floor(diffSeconds / 60);
-    if (diffMinutes < 60) return `${diffMinutes}m ago`;
-    const diffHours = Math.floor(diffMinutes / 60);
-    if (diffHours < 24) return `${diffHours}h ago`;
-    const diffDays = Math.floor(diffHours / 24);
-    if (diffDays < 30) return `${diffDays}d ago`;
+    if (rawStatus.includes('DEGRADED') || rawStatus.includes('DUE')) {
+      return 'PM_DUE_SOON';
+    }
 
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
+    return 'OPERATIONAL';
+  }
+
+  function getStatusMeta(bucket, rawStatus) {
+    switch (bucket) {
+      case 'DOWN':
+        return {
+          label: '🔴 DOWN - LOCKED OUT',
+          badgeClass: 'status-badge status-down',
+          borderTopClass: 'border-t-4 border-t-red-500'
+        };
+      case 'PM_OVERDUE':
+        return {
+          label: '🟠 PM OVERDUE',
+          badgeClass: 'status-badge status-overdue',
+          borderTopClass: 'border-t-4 border-t-orange-500'
+        };
+      case 'PM_DUE_SOON':
+        return {
+          label:
+            rawStatus && rawStatus.toUpperCase().includes('DEGRADED')
+              ? '🟡 DEGRADED / CAUTION'
+              : '🟡 PM DUE SOON',
+          badgeClass: 'status-badge status-due-soon',
+          borderTopClass: 'border-t-4 border-t-amber-500'
+        };
+      default:
+        return {
+          label: '🟢 OPERATIONAL',
+          badgeClass: 'status-badge status-operational',
+          borderTopClass: 'border-t-4 border-t-emerald-500'
+        };
+    }
   }
 
   /**
-   * Load machines.json and status.json, then merge localStorage overrides
+   * Load equipment_master.json & pm_history.json and merge localStorage overrides
    */
-  async function loadInitialData() {
-    let machinesData = FALLBACK_MACHINES;
-    let statusData = {};
-
+  async function loadPortalData() {
     try {
-      const machinesRes = await fetch('data/machines.json', { cache: 'no-store' });
-      if (machinesRes.ok) {
-        machinesData = await machinesRes.json();
+      const masterRes = await fetch('data/equipment_master.json', { cache: 'no-store' });
+      if (masterRes.ok) {
+        const masterJson = await masterRes.json();
+        state.metadata = masterJson.metadata || {};
+        state.assets = Array.isArray(masterJson.assets) ? masterJson.assets : [];
       }
     } catch (err) {
-      console.warn('Using fallback machines registry:', err);
+      console.warn('Error loading equipment_master.json:', err);
     }
 
+    let baseHistory = [];
     try {
-      const statusRes = await fetch('data/status.json', { cache: 'no-store' });
-      if (statusRes.ok) {
-        statusData = await statusRes.json();
+      const histRes = await fetch('data/pm_history.json', { cache: 'no-store' });
+      if (histRes.ok) {
+        baseHistory = await histRes.json();
       }
     } catch (err) {
-      console.warn('Using default status ledger:', err);
+      console.warn('Error loading pm_history.json:', err);
     }
 
-    state.machines = machinesData;
-
-    // Ensure all 24 machines have a base status entry
-    const mergedBase = {};
-    for (const machine of state.machines) {
-      mergedBase[machine.id] = statusData[machine.id] || createDefaultStatusEntry();
-    }
-    state.baseStatuses = mergedBase;
-
-    syncStatusesWithLocalStorage();
-  }
-
-  /**
-   * Merge localStorage status overrides on top of data/status.json
-   */
-  function syncStatusesWithLocalStorage() {
+    // Apply local asset overrides
     let overrides = {};
     try {
-      const raw = localStorage.getItem(STORAGE_KEYS.STATUS_OVERRIDES);
-      if (raw) {
-        overrides = JSON.parse(raw);
-      }
-    } catch (err) {
-      console.warn('Failed to parse localStorage overrides:', err);
-    }
-
-    const merged = {};
-    for (const machine of state.machines) {
-      merged[machine.id] = Object.assign(
-        {},
-        createDefaultStatusEntry(),
-        state.baseStatuses[machine.id] || {},
-        overrides[machine.id] || {}
-      );
-    }
-    state.statuses = merged;
-  }
-
-  /**
-   * Save a machine status update to localStorage and fault log
-   */
-  function saveMachineStatusOverride(machineId, statusPayload) {
-    let overrides = {};
-    try {
-      const raw = localStorage.getItem(STORAGE_KEYS.STATUS_OVERRIDES);
+      const raw = localStorage.getItem(STORAGE_KEYS.ASSET_OVERRIDES);
       if (raw) overrides = JSON.parse(raw);
     } catch (e) {
       overrides = {};
     }
 
-    overrides[machineId] = statusPayload;
-    localStorage.setItem(STORAGE_KEYS.STATUS_OVERRIDES, JSON.stringify(overrides));
-    state.statuses[machineId] = statusPayload;
-
-    // Append to historical fault log for CSV exports
-    let history = [];
-    try {
-      const rawHistory = localStorage.getItem(STORAGE_KEYS.FAULT_LOG);
-      if (rawHistory) history = JSON.parse(rawHistory);
-    } catch (e) {
-      history = [];
-    }
-
-    const machine = getMachineById(machineId);
-    history.unshift({
-      machineId,
-      machineName: machine ? machine.name : machineId,
-      zone: machine ? machine.zone : '',
-      ...statusPayload
+    state.assets = state.assets.map((asset) => {
+      if (overrides[asset.id]) {
+        return Object.assign({}, asset, overrides[asset.id]);
+      }
+      return asset;
     });
-    localStorage.setItem(STORAGE_KEYS.FAULT_LOG, JSON.stringify(history.slice(0, 500)));
-  }
 
-  /**
-   * Lookup machine object by ID (case-insensitive)
-   */
-  function getMachineById(id) {
-    if (!id) return null;
-    const target = String(id).trim().toUpperCase();
-    return state.machines.find((m) => m.id.toUpperCase() === target) || null;
-  }
-
-  /**
-   * Populate the machine selector dropdown in View 2
-   */
-  function populateMachineSelector() {
-    const selectEl = document.getElementById('machine-select');
-    if (!selectEl) return;
-
-    selectEl.innerHTML = state.machines
-      .map(
-        (m) =>
-          `<option value="${escapeHtml(m.id)}">${escapeHtml(m.id)} — ${escapeHtml(m.name)}</option>`
-      )
-      .join('');
-  }
-
-  /**
-   * Render KPI Summary Ribbon counters
-   */
-  function renderKpiRibbon() {
-    let operationalCount = 0;
-    let degradedCount = 0;
-    let downCount = 0;
-
-    for (const machine of state.machines) {
-      const st = (state.statuses[machine.id] && state.statuses[machine.id].status) || 'OPERATIONAL';
-      if (st === 'DOWN') downCount++;
-      else if (st === 'DEGRADED') degradedCount++;
-      else operationalCount++;
+    // Merge local history entries
+    let localHistory = [];
+    try {
+      const rawHist = localStorage.getItem(STORAGE_KEYS.HISTORY_LOG);
+      if (rawHist) localHistory = JSON.parse(rawHist);
+    } catch (e) {
+      localHistory = [];
     }
 
-    const totalEl = document.getElementById('kpi-total');
-    const opEl = document.getElementById('kpi-operational');
-    const degEl = document.getElementById('kpi-degraded');
-    const downEl = document.getElementById('kpi-down');
+    const seenIds = new Set(localHistory.map((h) => h.id));
+    state.history = [
+      ...localHistory,
+      ...baseHistory.filter((h) => !seenIds.has(h.id))
+    ];
+  }
 
-    if (totalEl) totalEl.textContent = String(state.machines.length);
-    if (opEl) opEl.textContent = String(operationalCount);
-    if (degEl) degEl.textContent = String(degradedCount);
-    if (downEl) downEl.textContent = String(downCount);
+  function findAssetById(assetId) {
+    if (!assetId) return null;
+    const clean = String(assetId).trim().toUpperCase();
+    return state.assets.find((a) => a.id.toUpperCase() === clean) || null;
+  }
+
+  function saveAssetOverride(assetId, patch) {
+    let overrides = {};
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.ASSET_OVERRIDES);
+      if (raw) overrides = JSON.parse(raw);
+    } catch (e) {
+      overrides = {};
+    }
+
+    overrides[assetId] = Object.assign({}, overrides[assetId] || {}, patch);
+    localStorage.setItem(STORAGE_KEYS.ASSET_OVERRIDES, JSON.stringify(overrides));
+
+    state.assets = state.assets.map((asset) =>
+      asset.id === assetId ? Object.assign({}, asset, patch) : asset
+    );
+  }
+
+  function prependHistoryEntry(entry) {
+    let localHistory = [];
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.HISTORY_LOG);
+      if (raw) localHistory = JSON.parse(raw);
+    } catch (e) {
+      localHistory = [];
+    }
+
+    localHistory.unshift(entry);
+    localStorage.setItem(STORAGE_KEYS.HISTORY_LOG, JSON.stringify(localHistory.slice(0, 300)));
+    state.history.unshift(entry);
   }
 
   /**
-   * Render View 1 Bento Equipment Grid
+   * Render Executive KPI & March 2027 Milestone Banner
+   */
+  function renderExecutiveKpis() {
+    const total = state.assets.length || 1;
+    let operationalCount = 0;
+    let dueSoonCount = 0;
+    let overdueCount = 0;
+    let downCount = 0;
+    let pmCompliantCount = 0;
+
+    for (const asset of state.assets) {
+      const bucket = getEffectiveAssetBucket(asset);
+      if (bucket === 'DOWN') downCount++;
+      else if (bucket === 'PM_OVERDUE') overdueCount++;
+      else if (bucket === 'PM_DUE_SOON') dueSoonCount++;
+      else operationalCount++;
+
+      if (bucket !== 'PM_OVERDUE') {
+        pmCompliantCount++;
+      }
+    }
+
+    const pmCompliancePct = Math.round((pmCompliantCount / total) * 100);
+    const readinessPct = Math.round(((total - downCount) / total) * 100);
+
+    const pmPctEl = document.getElementById('kpi-pm-compliance');
+    const pmSubEl = document.getElementById('kpi-pm-count-sub');
+    const readyPctEl = document.getElementById('kpi-readiness-pct');
+    const cOpEl = document.getElementById('kpi-count-operational');
+    const cDueEl = document.getElementById('kpi-count-due-soon');
+    const cOverEl = document.getElementById('kpi-count-overdue');
+    const cDownEl = document.getElementById('kpi-count-down');
+    const allCountEl = document.getElementById('count-all-assets');
+
+    if (pmPctEl) pmPctEl.textContent = `${pmCompliancePct}%`;
+    if (pmSubEl) pmSubEl.textContent = `(${pmCompliantCount} / ${state.assets.length} Compliant)`;
+    if (readyPctEl) readyPctEl.textContent = `${readinessPct}%`;
+    if (cOpEl) cOpEl.textContent = String(operationalCount);
+    if (cDueEl) cDueEl.textContent = String(dueSoonCount);
+    if (cOverEl) cOverEl.textContent = String(overdueCount);
+    if (cDownEl) cDownEl.textContent = String(downCount);
+    if (allCountEl) allCountEl.textContent = String(state.assets.length);
+  }
+
+  /**
+   * Render Equipment & PM Matrix Grid
    */
   function renderEquipmentGrid() {
     const gridEl = document.getElementById('equipment-grid');
     const emptyEl = document.getElementById('empty-grid-state');
     if (!gridEl) return;
 
-    const searchQuery = state.filters.search.trim().toLowerCase();
+    const q = state.filters.search.trim().toLowerCase();
     const zoneFilter = state.filters.zone;
     const statusFilter = state.filters.status;
 
-    const filtered = state.machines.filter((machine) => {
-      const stObj = state.statuses[machine.id] || createDefaultStatusEntry();
+    const filtered = state.assets.filter((asset) => {
+      const bucket = getEffectiveAssetBucket(asset);
 
-      if (zoneFilter !== 'ALL' && machine.zone !== zoneFilter) {
+      if (zoneFilter !== 'ALL' && asset.zoneCode !== zoneFilter) {
         return false;
       }
 
-      if (statusFilter !== 'ALL' && stObj.status !== statusFilter) {
+      if (statusFilter !== 'ALL' && bucket !== statusFilter) {
         return false;
       }
 
-      if (searchQuery) {
+      if (q) {
+        const energyText = (asset.loto && asset.loto.energySources || [])
+          .map((e) => `${e.type} ${e.magnitude} ${e.isolationLocation}`)
+          .join(' ');
+        const sopText = asset.sop
+          ? [...(asset.sop.ppe || []), ...(asset.sop.beforeUse || [])].join(' ')
+          : '';
         const haystack = [
-          machine.id,
-          machine.name,
-          machine.zone,
-          stObj.status,
-          stObj.category,
-          stObj.notes,
-          stObj.team,
-          stObj.reporter
+          asset.id,
+          asset.name,
+          asset.osuEquipmentId,
+          asset.zone,
+          asset.status,
+          asset.conditionNote,
+          energyText,
+          sopText
         ]
           .join(' ')
           .toLowerCase();
-        if (!haystack.includes(searchQuery)) {
-          return false;
-        }
+
+        if (!haystack.includes(q)) return false;
       }
 
       return true;
@@ -348,36 +298,100 @@
     if (emptyEl) emptyEl.classList.add('hidden');
 
     gridEl.innerHTML = filtered
-      .map((machine) => {
-        const stObj = state.statuses[machine.id] || createDefaultStatusEntry();
-        const meta = STATUS_META[stObj.status] || STATUS_META.OPERATIONAL;
-        const relTime = formatRelativeTime(stObj.updatedAt);
+      .map((asset) => {
+        const bucket = getEffectiveAssetBucket(asset);
+        const meta = getStatusMeta(bucket, asset.status);
+        const noGlovesBadge =
+          asset.sop && asset.sop.noGlovesWarning
+            ? `<span class="px-2 py-0.5 rounded bg-red-500/20 border border-red-500/50 text-red-300 font-mono text-[10px] font-bold">🚫 NO GLOVES</span>`
+            : '';
+
+        const primaryEnergy =
+          asset.loto && asset.loto.energySources && asset.loto.energySources[0]
+            ? `${asset.loto.energySources[0].type}: ${asset.loto.energySources[0].magnitude}`
+            : 'LOTO Spec Ready';
 
         return `
           <article
-            class="machine-card ${meta.cardClass}"
+            class="bg-shopCard border border-slate-800 hover:border-slate-600 rounded-2xl p-4 shadow-xl flex flex-col justify-between gap-3.5 transition-all hover:-translate-y-0.5 cursor-pointer ${meta.borderTopClass}"
             role="listitem"
-            tabindex="0"
-            data-machine-id="${escapeHtml(machine.id)}"
-            aria-label="${escapeHtml(machine.id)} ${escapeHtml(machine.name)} — Status ${escapeHtml(meta.label)}"
+            data-card-asset="${escapeHtml(asset.id)}"
           >
-            <div>
-              <div class="card-top-bar">
-                <span class="asset-badge">${escapeHtml(machine.id)}</span>
-                <span class="status-pill ${meta.pillClass}">${meta.pillText}</span>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <div class="flex items-center gap-1.5">
+                  <span class="px-2.5 py-0.5 rounded-md bg-slate-800 border border-slate-600 text-white font-mono font-extrabold text-xs">
+                    ${escapeHtml(asset.id)}
+                  </span>
+                  <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[11px]">
+                    ID: ${escapeHtml(asset.osuEquipmentId)}
+                  </span>
+                </div>
+                <span class="${meta.badgeClass}">${meta.label}</span>
               </div>
-              <h3 class="card-machine-title">${escapeHtml(machine.name)}</h3>
-              <div class="card-machine-zone">${escapeHtml(machine.zone)}</div>
+
+              <div>
+                <h3 class="text-base font-extrabold text-white leading-snug">${escapeHtml(asset.name)}</h3>
+                <div class="text-[11px] font-mono text-slate-400 mt-0.5">${escapeHtml(asset.zone)}</div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-1.5">
+                ${noGlovesBadge}
+                <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-300 font-mono text-[10px]">
+                  ⚡ ${escapeHtml(primaryEnergy)}
+                </span>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-shopBg border border-slate-800/90 text-xs text-slate-200 space-y-1">
+                <div class="text-[10px] font-mono uppercase text-slate-400 flex items-center justify-between">
+                  <span>Latest Condition / PM Note</span>
+                  <span class="text-emerald-400">Tech: ${escapeHtml(asset.lastPmTech || 'M. Wright')}</span>
+                </div>
+                <p class="leading-relaxed text-slate-200">${escapeHtml(asset.conditionNote)}</p>
+              </div>
             </div>
 
-            <div class="card-note-box">
-              <div class="card-category-tag">${escapeHtml(stObj.category || 'Cleared / Ready')}</div>
-              <p class="card-note-text">${escapeHtml(stObj.notes)}</p>
-            </div>
+            <div class="space-y-2.5 pt-2 border-t border-slate-800/80">
+              <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+                <span>Last PM: <strong class="text-slate-200">${escapeHtml(asset.lastPmDate)}</strong></span>
+                <span>Next Due: <strong class="text-emerald-400">${escapeHtml(asset.nextPmDue)}</strong></span>
+              </div>
 
-            <div class="card-footer-meta">
-              <span class="card-team-badge">${escapeHtml(stObj.team)} • ${escapeHtml(stObj.reporter)}</span>
-              <span class="card-time" title="${escapeHtml(stObj.updatedAt)}">${escapeHtml(relTime)}</span>
+              <!-- 4 Direct Tab Launch Buttons -->
+              <div class="grid grid-cols-4 gap-1.5">
+                <button
+                  type="button"
+                  data-open-asset="${escapeHtml(asset.id)}"
+                  data-open-tab="fault"
+                  class="py-1.5 px-1 rounded-lg bg-red-600/20 hover:bg-red-600 text-red-200 hover:text-white border border-red-500/40 font-mono font-bold text-[10px] transition text-center"
+                >
+                  🚨 Fault
+                </button>
+                <button
+                  type="button"
+                  data-open-asset="${escapeHtml(asset.id)}"
+                  data-open-tab="sop"
+                  class="py-1.5 px-1 rounded-lg bg-sky-600/20 hover:bg-sky-600 text-sky-200 hover:text-white border border-sky-500/40 font-mono font-bold text-[10px] transition text-center"
+                >
+                  🛡️ SOP
+                </button>
+                <button
+                  type="button"
+                  data-open-asset="${escapeHtml(asset.id)}"
+                  data-open-tab="loto"
+                  class="py-1.5 px-1 rounded-lg bg-amber-600/20 hover:bg-amber-600 text-amber-200 hover:text-white border border-amber-500/40 font-mono font-bold text-[10px] transition text-center"
+                >
+                  🔒 LOTO
+                </button>
+                <button
+                  type="button"
+                  data-open-asset="${escapeHtml(asset.id)}"
+                  data-open-tab="pm"
+                  class="py-1.5 px-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600 text-emerald-200 hover:text-white border border-emerald-500/40 font-mono font-bold text-[10px] transition text-center"
+                >
+                  📋 Log PM
+                </button>
+              </div>
             </div>
           </article>
         `;
@@ -386,328 +400,294 @@
   }
 
   /**
-   * Update the Current Status Banner in View 2 (Mobile Updater)
+   * Render Historical PM & Fault Log Table
    */
-  function renderUpdaterStatusBanner(machineId) {
-    const machine = getMachineById(machineId) || state.machines[0];
-    if (!machine) return;
+  function renderHistoryTable() {
+    const tbody = document.getElementById('history-table-body');
+    if (!tbody) return;
 
-    state.selectedMachineId = machine.id;
-    const stObj = state.statuses[machine.id] || createDefaultStatusEntry();
-    const meta = STATUS_META[stObj.status] || STATUS_META.OPERATIONAL;
+    tbody.innerHTML = state.history
+      .map((entry) => {
+        const isPm = entry.type === 'MONTHLY_PM';
+        const typeBadge = isPm
+          ? `<span class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono text-[10px] font-bold">MONTHLY PM</span>`
+          : `<span class="px-2 py-0.5 rounded bg-red-500/20 border border-red-500/40 text-red-300 font-mono text-[10px] font-bold">FAULT REPORT</span>`;
 
-    const selectEl = document.getElementById('machine-select');
-    if (selectEl && selectEl.value !== machine.id) {
-      selectEl.value = machine.id;
-    }
+        const metricsStr = entry.metrics
+          ? Object.entries(entry.metrics)
+              .map(([k, v]) => `${k}: ${v}`)
+              .join(' | ')
+          : '';
 
-    const lockBadge = document.getElementById('machine-lock-badge');
-    if (lockBadge) {
-      if (state.lockedViaQr) {
-        lockBadge.classList.remove('hidden');
-      } else {
-        lockBadge.classList.add('hidden');
-      }
-    }
-
-    const bannerEl = document.getElementById('current-status-banner');
-    if (bannerEl) {
-      bannerEl.className = `current-status-banner ${meta.bannerClass}`;
-    }
-
-    const idEl = document.getElementById('banner-asset-id');
-    const zoneEl = document.getElementById('banner-machine-zone');
-    const pillEl = document.getElementById('banner-status-pill');
-    const nameEl = document.getElementById('banner-machine-name');
-    const notesEl = document.getElementById('banner-notes');
-    const catEl = document.getElementById('banner-category');
-    const teamEl = document.getElementById('banner-team');
-    const updatedEl = document.getElementById('banner-updated');
-
-    if (idEl) idEl.textContent = machine.id;
-    if (zoneEl) zoneEl.textContent = machine.zone;
-    if (pillEl) {
-      pillEl.className = `status-pill ${meta.pillClass}`;
-      pillEl.textContent = meta.pillText;
-    }
-    if (nameEl) nameEl.textContent = machine.name;
-    if (notesEl) notesEl.textContent = stObj.notes;
-    if (catEl) catEl.textContent = `Category: ${stObj.category || 'Cleared / Ready'}`;
-    if (teamEl) teamEl.textContent = `Reported by: ${stObj.team} (${stObj.reporter})`;
-    if (updatedEl) updatedEl.textContent = `Updated: ${formatRelativeTime(stObj.updatedAt)}`;
-  }
-
-  /**
-   * Generate deterministic fallback SVG QR pattern if offline and CDN is unreachable
-   */
-  function createFallbackQrSvg(text) {
-    const size = 21;
-    let hash = 2166136261;
-    for (let i = 0; i < text.length; i++) {
-      hash ^= text.charCodeAt(i);
-      hash = Math.imul(hash, 16777619);
-    }
-
-    const isFinder = (r, c) =>
-      (r < 7 && c < 7) || (r < 7 && c >= size - 7) || (r >= size - 7 && c < 7);
-
-    const finderCell = (r, c, topR, leftC) => {
-      const dr = r - topR;
-      const dc = c - leftC;
-      if (dr === 0 || dr === 6 || dc === 0 || dc === 6) return true;
-      if (dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4) return true;
-      return false;
-    };
-
-    let rects = '';
-    for (let r = 0; r < size; r++) {
-      for (let c = 0; c < size; c++) {
-        let dark = false;
-        if (r < 7 && c < 7) dark = finderCell(r, c, 0, 0);
-        else if (r < 7 && c >= size - 7) dark = finderCell(r, c, 0, size - 7);
-        else if (r >= size - 7 && c < 7) dark = finderCell(r, c, size - 7, 0);
-        else if (!isFinder(r, c)) {
-          const seed = Math.imul(hash ^ (r * 31 + c * 17), 1597334677);
-          dark = (seed & 1) === 1;
-        }
-        if (dark) {
-          rects += `<rect x="${c}" y="${r}" width="1" height="1" fill="#000000" />`;
-        }
-      }
-    }
-
-    return `<svg viewBox="0 0 ${size} ${size}" width="160" height="160" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><rect width="${size}" height="${size}" fill="#ffffff"/>${rects}</svg>`;
-  }
-
-  /**
-   * Get effective base URL for QR Code deep-linking
-   */
-  function getEffectiveQrBaseUrl() {
-    const inputEl = document.getElementById('qr-base-url');
-    if (inputEl && inputEl.value.trim()) {
-      return inputEl.value.trim().replace(/\?.*$/, '');
-    }
-    const saved = localStorage.getItem(STORAGE_KEYS.QR_BASE_URL);
-    if (saved && saved.trim()) {
-      return saved.trim().replace(/\?.*$/, '');
-    }
-    return window.location.origin + window.location.pathname;
-  }
-
-  /**
-   * Render View 3: Printable QR Code Placards for all 24 workstations
-   */
-  function renderQrPlacards() {
-    const gridEl = document.getElementById('qr-placards-grid');
-    const baseInputEl = document.getElementById('qr-base-url');
-    if (!gridEl) return;
-
-    const baseUrl = getEffectiveQrBaseUrl();
-    if (baseInputEl && !baseInputEl.value) {
-      baseInputEl.value = baseUrl;
-    }
-
-    gridEl.innerHTML = state.machines
-      .map((machine) => {
-        const targetUrl = `${baseUrl}?id=${encodeURIComponent(machine.id)}`;
         return `
-          <div class="qr-placard" data-placard-id="${escapeHtml(machine.id)}">
-            <div class="placard-header">
-              STUDENT PROJECTS BUILDING — MACHINE STATUS
-            </div>
-            <div class="placard-body">
-              <div class="placard-asset-id">${escapeHtml(machine.id)}</div>
-              <div class="placard-machine-name">${escapeHtml(machine.name)}</div>
-              <div class="placard-zone">${escapeHtml(machine.zone)}</div>
-              <div class="placard-qr-box" id="qr-box-${escapeHtml(machine.id)}" data-qr-url="${escapeHtml(targetUrl)}"></div>
-            </div>
-            <div class="placard-footer">
-              SCAN TO LOG BROKEN TOOLING, FAULT, OR UPDATE MACHINE STATUS
-            </div>
-          </div>
+          <tr class="hover:bg-shopElevated/60 transition">
+            <td class="py-3 px-4 font-mono text-xs text-slate-400 whitespace-nowrap">${escapeHtml((entry.timestamp || '').slice(0, 16).replace('T', ' '))}</td>
+            <td class="py-3 px-4">${typeBadge}</td>
+            <td class="py-3 px-4">
+              <button type="button" data-open-asset="${escapeHtml(entry.assetId)}" data-open-tab="${isPm ? 'pm' : 'fault'}" class="font-mono font-bold text-white hover:text-red-400 underline">
+                ${escapeHtml(entry.assetId)}
+              </button>
+              <div class="text-xs text-slate-400">${escapeHtml(entry.assetName || '')}</div>
+            </td>
+            <td class="py-3 px-4 text-xs text-slate-300">${escapeHtml(entry.teamOrRole || '')}</td>
+            <td class="py-3 px-4 text-xs font-semibold text-white">${escapeHtml(entry.technician || '')}</td>
+            <td class="py-3 px-4 font-mono text-xs text-emerald-400">${escapeHtml(entry.statusAfter || '')}</td>
+            <td class="py-3 px-4 text-xs text-slate-200">
+              ${metricsStr ? `<div class="font-mono text-[11px] text-amber-300 mb-0.5">${escapeHtml(metricsStr)}</div>` : ''}
+              <div>${escapeHtml(entry.notes || '')}</div>
+            </td>
+          </tr>
         `;
       })
       .join('');
-
-    // Generate 160x160 QR code inside each placard
-    for (const machine of state.machines) {
-      const boxEl = document.getElementById(`qr-box-${machine.id}`);
-      if (!boxEl) continue;
-      const targetUrl = boxEl.getAttribute('data-qr-url');
-      boxEl.innerHTML = '';
-
-      if (typeof window.QRCode === 'function') {
-        try {
-          new window.QRCode(boxEl, {
-            text: targetUrl,
-            width: 160,
-            height: 160,
-            colorDark: '#000000',
-            colorLight: '#ffffff',
-            correctLevel: window.QRCode.CorrectLevel ? window.QRCode.CorrectLevel.M : 0
-          });
-        } catch (err) {
-          boxEl.innerHTML = createFallbackQrSvg(targetUrl);
-        }
-      } else {
-        boxEl.innerHTML = createFallbackQrSvg(targetUrl);
-      }
-    }
   }
 
   /**
-   * Build a valid Microsoft Teams Adaptive Card (v1.4) payload
+   * Open the Unified 4-Tab QR Asset Hub Modal for a given asset & tab
    */
-  function buildTeamsAdaptiveCardPayload(machine, statusEntry) {
-    const meta = STATUS_META[statusEntry.status] || STATUS_META.OPERATIONAL;
-    const baseUrl = getEffectiveQrBaseUrl();
-    const deepLinkUrl = `${baseUrl}?id=${encodeURIComponent(machine.id)}`;
-    const formattedTime = new Date(statusEntry.updatedAt).toLocaleString('en-US', {
-      dateStyle: 'medium',
-      timeStyle: 'short'
+  function openAssetHubModal(assetId, tabName = 'fault', updateHistoryUrl = true) {
+    const asset = findAssetById(assetId);
+    if (!asset) return;
+
+    state.activeAssetId = asset.id;
+    const validTabs = ['fault', 'sop', 'loto', 'pm'];
+    const targetTab = validTabs.includes((tabName || '').toLowerCase())
+      ? tabName.toLowerCase()
+      : 'fault';
+    state.activeModalTab = targetTab;
+
+    const modalEl = document.getElementById('asset-hub-modal');
+    if (!modalEl) return;
+
+    // Populate Modal Header
+    const bucket = getEffectiveAssetBucket(asset);
+    const meta = getStatusMeta(bucket, asset.status);
+
+    document.getElementById('modal-asset-id').textContent = asset.id;
+    document.getElementById('modal-osu-id').textContent = `OSU ID: ${asset.osuEquipmentId}`;
+    document.getElementById('modal-zone-badge').textContent = asset.zone;
+    document.getElementById('modal-asset-name').textContent = asset.name;
+
+    const pillEl = document.getElementById('modal-status-pill');
+    if (pillEl) {
+      pillEl.className = meta.badgeClass;
+      pillEl.textContent = meta.label;
+    }
+
+    // Tab 1: Report Condition / Fault summary
+    document.getElementById('fault-tab-current-note').textContent = asset.conditionNote;
+    document.getElementById('fault-tab-last-pm').textContent = asset.lastPmDate || 'N/A';
+    document.getElementById('fault-tab-next-pm').textContent = asset.nextPmDue || 'N/A';
+
+    // Tab 2: SOP
+    const sop = asset.sop || {};
+    const noGlovesBanner = document.getElementById('sop-no-gloves-banner');
+    if (noGlovesBanner) {
+      noGlovesBanner.classList.toggle('hidden', !sop.noGlovesWarning);
+    }
+
+    const renderList = (id, arr) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = (arr || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('');
+    };
+
+    renderList('sop-ppe-list', sop.ppe);
+    renderList('sop-hazards-list', sop.hazards);
+    renderList('sop-before-list', sop.beforeUse);
+    renderList('sop-during-list', sop.duringUse);
+    renderList('sop-after-list', sop.afterUse);
+
+    const emergEl = document.getElementById('sop-emergency-text');
+    if (emergEl) emergEl.textContent = sop.emergencyProtocol || '';
+
+    // Tab 3: LOTO
+    const loto = asset.loto || {};
+    document.getElementById('loto-authorized').textContent =
+      loto.authorizedPersonnel || 'Sr. Instructional Lab Supervisor (Max Wright) & SRAs';
+    document.getElementById('loto-notify').textContent =
+      loto.notificationMethod || 'Max Wright - Teams / Text Message';
+    document.getElementById('loto-normal-shutdown').textContent = loto.normalShutdown || '';
+    document.getElementById('loto-stored-energy').textContent = loto.storedEnergyRelief || '';
+    document.getElementById('loto-verification').textContent = loto.zeroEnergyVerification || '';
+
+    const energyListEl = document.getElementById('loto-energy-sources-list');
+    if (energyListEl) {
+      energyListEl.innerHTML = (loto.energySources || [])
+        .map(
+          (src, idx) => `
+          <div class="p-3 rounded-lg bg-shopCard border border-slate-700 space-y-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="font-mono text-xs font-extrabold text-amber-300">
+                ENERGY SOURCE #${idx + 1}: ${escapeHtml(src.type)}
+              </span>
+              <span class="px-2 py-0.5 rounded bg-red-500/20 border border-red-500/40 font-mono text-xs font-bold text-red-300">
+                Magnitude: ${escapeHtml(src.magnitude)}
+              </span>
+            </div>
+            <div class="text-xs text-slate-300">
+              <strong class="text-slate-100">Isolation Device Location:</strong> ${escapeHtml(src.isolationLocation)}
+            </div>
+            <div class="text-xs text-emerald-300">
+              <strong class="text-white">Lockout Procedure:</strong> ${escapeHtml(src.isolationProcedure)}
+            </div>
+          </div>
+        `
+        )
+        .join('');
+    }
+
+    // Tab 4: Monthly PM Checklist & Quantitative Metrics
+    const pm = asset.monthlyPm || { checklist: [], metrics: [] };
+    const checklistContainer = document.getElementById('pm-checklist-container');
+    if (checklistContainer) {
+      checklistContainer.innerHTML = (pm.checklist || [])
+        .map(
+          (task, i) => `
+          <label class="flex items-start gap-3 p-2.5 rounded-xl bg-shopBg border border-slate-800 hover:border-slate-600 cursor-pointer">
+            <input type="checkbox" name="pm_task" value="${escapeHtml(task)}" checked class="mt-0.5 w-4 h-4 accent-emerald-500 rounded" id="pm-task-${i}" />
+            <span class="text-xs sm:text-sm text-slate-200">${escapeHtml(task)}</span>
+          </label>
+        `
+        )
+        .join('');
+    }
+
+    const metricsContainer = document.getElementById('pm-metrics-container');
+    if (metricsContainer) {
+      metricsContainer.innerHTML = (pm.metrics || [])
+        .map(
+          (m) => `
+          <div class="p-2.5 rounded-xl bg-shopBg border border-slate-800">
+            <label class="block text-[11px] font-mono text-slate-400 mb-1">${escapeHtml(m.label)}</label>
+            <input
+              type="text"
+              data-metric-key="${escapeHtml(m.key)}"
+              data-metric-unit="${escapeHtml(m.unit || '')}"
+              value="${escapeHtml(m.placeholder || '')}"
+              placeholder="${escapeHtml(m.placeholder || '')}"
+              class="w-full bg-shopCard border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-mono text-white"
+            />
+          </div>
+        `
+        )
+        .join('');
+    }
+
+    switchModalTab(targetTab, false);
+    modalEl.classList.remove('hidden');
+
+    if (updateHistoryUrl) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('asset', asset.id);
+      url.searchParams.set('tab', targetTab);
+      window.history.pushState({}, '', url.toString());
+    }
+  }
+
+  function switchModalTab(tabName, updateUrl = true) {
+    state.activeModalTab = tabName;
+
+    document.querySelectorAll('[data-hub-tab]').forEach((btn) => {
+      btn.classList.toggle('active', btn.getAttribute('data-hub-tab') === tabName);
     });
 
-    return {
-      type: 'message',
-      attachments: [
-        {
-          contentType: 'application/vnd.microsoft.card.adaptive',
-          contentUrl: null,
-          content: {
-            $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
-            type: 'AdaptiveCard',
-            version: '1.4',
-            body: [
-              {
-                type: 'Container',
-                style: meta.adaptiveColor,
-                bleed: true,
-                items: [
-                  {
-                    type: 'TextBlock',
-                    text: 'STUDENT PROJECTS BUILDING — MACHINE ALERT',
-                    weight: 'Bolder',
-                    size: 'Small',
-                    isSubtle: true
-                  },
-                  {
-                    type: 'TextBlock',
-                    text: `${meta.emoji} [${machine.id}] ${machine.name} — ${meta.label}`,
-                    weight: 'Bolder',
-                    size: 'Large',
-                    wrap: true
-                  }
-                ]
-              },
-              {
-                type: 'FactSet',
-                facts: [
-                  { title: 'Asset ID:', value: machine.id },
-                  { title: 'Workstation:', value: machine.name },
-                  { title: 'Shop Zone:', value: machine.zone },
-                  { title: 'New Status:', value: `${meta.emoji} ${meta.label}` },
-                  { title: 'Fault Category:', value: statusEntry.category },
-                  { title: 'Student Team:', value: statusEntry.team },
-                  { title: 'Reported By:', value: statusEntry.reporter },
-                  { title: 'Timestamp:', value: formattedTime }
-                ]
-              },
-              {
-                type: 'TextBlock',
-                text: 'Fault Details / Notes:',
-                weight: 'Bolder',
-                spacing: 'Medium'
-              },
-              {
-                type: 'TextBlock',
-                text: statusEntry.notes,
-                wrap: true
-              }
-            ],
-            actions: [
-              {
-                type: 'Action.OpenUrl',
-                title: `Open ${machine.id} Status Updater`,
-                url: deepLinkUrl
-              }
-            ]
-          }
-        }
-      ]
+    const panels = {
+      fault: document.getElementById('hub-panel-fault'),
+      sop: document.getElementById('hub-panel-sop'),
+      loto: document.getElementById('hub-panel-loto'),
+      pm: document.getElementById('hub-panel-pm')
     };
-  }
 
-  /**
-   * Dispatch Adaptive Card to Microsoft Teams Incoming Webhook / Power Automate Workflow URL
-   * and optional Shared State API / GitHub repository_dispatch endpoint
-   */
-  async function dispatchExternalWebhooks(machine, statusEntry) {
-    const teamsWebhookUrl = (localStorage.getItem(STORAGE_KEYS.TEAMS_WEBHOOK) || '').trim();
-    const syncEndpointUrl = (localStorage.getItem(STORAGE_KEYS.SYNC_ENDPOINT) || '').trim();
-    const githubToken = (localStorage.getItem(STORAGE_KEYS.GITHUB_TOKEN) || '').trim();
+    Object.entries(panels).forEach(([key, panel]) => {
+      if (panel) panel.classList.toggle('hidden', key !== tabName);
+    });
 
-    const adaptiveCardPayload = buildTeamsAdaptiveCardPayload(machine, statusEntry);
-
-    // 1. Microsoft Teams Webhook dispatch
-    if (teamsWebhookUrl) {
-      try {
-        await fetch(teamsWebhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(adaptiveCardPayload),
-          mode: 'no-cors'
-        });
-      } catch (err) {
-        console.warn('Teams webhook dispatch warning:', err);
-      }
-    }
-
-    // 2. Optional Shared State / GitHub Actions repository_dispatch sync
-    if (syncEndpointUrl) {
-      try {
-        const headers = {
-          Accept: 'application/vnd.github+json',
-          'Content-Type': 'application/json'
-        };
-        if (githubToken) {
-          headers.Authorization = `Bearer ${githubToken}`;
-        }
-
-        const dispatchBody = syncEndpointUrl.includes('api.github.com')
-          ? {
-              event_type: 'update_machine_status',
-              client_payload: {
-                machineId: machine.id,
-                statusEntry,
-                allStatuses: state.statuses
-              }
-            }
-          : {
-              machineId: machine.id,
-              statusEntry,
-              allStatuses: state.statuses
-            };
-
-        await fetch(syncEndpointUrl, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(dispatchBody)
-        });
-      } catch (err) {
-        console.warn('Shared state sync warning:', err);
-      }
+    if (updateUrl && state.activeAssetId) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('asset', state.activeAssetId);
+      url.searchParams.set('tab', tabName);
+      window.history.replaceState({}, '', url.toString());
     }
   }
 
+  function closeAssetHubModal() {
+    const modalEl = document.getElementById('asset-hub-modal');
+    if (modalEl) modalEl.classList.add('hidden');
+    state.activeAssetId = null;
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete('asset');
+    url.searchParams.delete('id');
+    url.searchParams.delete('tab');
+    window.history.pushState({}, '', url.toString());
+  }
+
   /**
-   * Display a visual toast notification
+   * Switch top-level portal view ('dashboard' | 'history' | 'qr')
    */
+  function switchPortalView(viewName, updateUrl = true) {
+    state.currentView = viewName;
+
+    const views = {
+      dashboard: document.getElementById('view-dashboard'),
+      history: document.getElementById('view-history'),
+      qr: document.getElementById('view-qr')
+    };
+
+    Object.entries(views).forEach(([k, el]) => {
+      if (el) el.classList.toggle('hidden', k !== viewName);
+    });
+
+    document.querySelectorAll('[data-view]').forEach((btn) => {
+      btn.classList.toggle('active', btn.getAttribute('data-view') === viewName);
+    });
+
+    if (viewName === 'qr' && window.ShopQrGenerator) {
+      window.ShopQrGenerator.renderQrDecalSheet(state.assets);
+    } else if (viewName === 'history') {
+      renderHistoryTable();
+    } else {
+      renderExecutiveKpis();
+      renderEquipmentGrid();
+    }
+
+    if (updateUrl) {
+      const url = new URL(window.location.href);
+      if (viewName === 'dashboard') {
+        url.searchParams.delete('view');
+      } else {
+        url.searchParams.set('view', viewName);
+      }
+      window.history.pushState({}, '', url.toString());
+    }
+  }
+
+  /**
+   * Build pre-filled GitHub Issue URL for Fault or Monthly PM
+   */
+  function buildGitHubIssueUrl(templateFile, title, paramsObj) {
+    const repo =
+      (localStorage.getItem(STORAGE_KEYS.GITHUB_REPO) || DEFAULT_GITHUB_REPO).trim() ||
+      DEFAULT_GITHUB_REPO;
+    const url = new URL(`https://github.com/${repo}/issues/new`);
+    url.searchParams.set('template', templateFile);
+    url.searchParams.set('title', title);
+    Object.entries(paramsObj).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && String(v).trim() !== '') {
+        url.searchParams.set(k, String(v));
+      }
+    });
+    return url.toString();
+  }
+
   function showToast(message) {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
     const toast = document.createElement('div');
-    toast.className = 'toast';
+    toast.className =
+      'p-3.5 rounded-xl bg-slate-900 border-l-4 border-emerald-500 border border-slate-700 text-white text-xs sm:text-sm font-bold shadow-2xl flex items-center gap-2.5';
     toast.innerHTML = `<span>✅</span><span>${escapeHtml(message)}</span>`;
     container.appendChild(toast);
 
@@ -715,197 +695,144 @@
       toast.style.opacity = '0';
       toast.style.transition = 'opacity 0.25s ease';
       setTimeout(() => toast.remove(), 260);
-    }, 4500);
+    }, 4200);
   }
 
   /**
-   * Switch active application view ('board' | 'updater' | 'qr')
+   * Export full Equipment & PM Matrix to CSV
    */
-  function switchView(viewName, options = {}) {
-    state.currentView = viewName;
-
-    const boardSec = document.getElementById('view-board');
-    const updaterSec = document.getElementById('view-updater');
-    const qrSec = document.getElementById('view-qr');
-
-    const navBoard = document.getElementById('nav-board');
-    const navUpdater = document.getElementById('nav-updater');
-    const navQr = document.getElementById('nav-qr');
-
-    if (boardSec) boardSec.classList.toggle('hidden', viewName !== 'board');
-    if (updaterSec) updaterSec.classList.toggle('hidden', viewName !== 'updater');
-    if (qrSec) qrSec.classList.toggle('hidden', viewName !== 'qr');
-
-    if (navBoard) navBoard.classList.toggle('active', viewName === 'board');
-    if (navUpdater) navUpdater.classList.toggle('active', viewName === 'updater');
-    if (navQr) navQr.classList.toggle('active', viewName === 'qr');
-
-    if (viewName === 'board') {
-      renderKpiRibbon();
-      renderEquipmentGrid();
-      if (options.updateUrl) {
-        const url = new URL(window.location.href);
-        url.search = '';
-        window.history.pushState({}, '', url.toString());
-      }
-    } else if (viewName === 'updater') {
-      const targetId = options.machineId || state.selectedMachineId || 'MAC-01';
-      state.lockedViaQr = Boolean(options.lockedViaQr);
-      renderUpdaterStatusBanner(targetId);
-      if (options.updateUrl) {
-        const url = new URL(window.location.href);
-        url.search = `?id=${encodeURIComponent(targetId)}`;
-        window.history.pushState({}, '', url.toString());
-      }
-    } else if (viewName === 'qr') {
-      renderQrPlacards();
-      if (options.updateUrl) {
-        const url = new URL(window.location.href);
-        url.search = '?view=qr';
-        window.history.pushState({}, '', url.toString());
-      }
-    }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  /**
-   * Parse URL query parameters (?id= & ?view=) and route accordingly
-   */
-  function handleRouteFromUrl() {
-    const params = new URLSearchParams(window.location.search);
-    const idParam = params.get('id');
-    const viewParam = (params.get('view') || '').toLowerCase();
-
-    if (idParam) {
-      const matched = getMachineById(idParam);
-      if (matched) {
-        switchView('updater', {
-          machineId: matched.id,
-          lockedViaQr: true,
-          updateUrl: false
-        });
-        return;
-      }
-    }
-
-    if (viewParam === 'qr') {
-      switchView('qr', { updateUrl: false });
-      return;
-    }
-
-    if (viewParam === 'updater' || viewParam === 'update') {
-      switchView('updater', {
-        machineId: state.selectedMachineId,
-        lockedViaQr: false,
-        updateUrl: false
-      });
-      return;
-    }
-
-    switchView('board', { updateUrl: false });
-  }
-
-  /**
-   * Export current statuses and historical fault log to CSV
-   */
-  function exportFaultLogToCsv() {
+  function exportEquipmentMatrixCsv() {
     const rows = [
-      ['Asset ID', 'Machine Name', 'Shop Zone', 'Status', 'Category', 'Student Team', 'Reporter', 'Notes', 'Updated At']
+      [
+        'Asset ID',
+        'OSU Equipment ID',
+        'Machine Name',
+        'Shop Zone',
+        'Status',
+        'PM Status',
+        'Last PM Date',
+        'Next PM Due',
+        'Last PM Technician',
+        'No Gloves Required',
+        'Condition Note'
+      ]
     ];
 
-    for (const machine of state.machines) {
-      const st = state.statuses[machine.id] || createDefaultStatusEntry();
+    for (const a of state.assets) {
       rows.push([
-        machine.id,
-        machine.name,
-        machine.zone,
-        st.status,
-        st.category,
-        st.team,
-        st.reporter,
-        st.notes,
-        st.updatedAt
+        a.id,
+        a.osuEquipmentId,
+        a.name,
+        a.zone,
+        a.status,
+        getEffectiveAssetBucket(a),
+        a.lastPmDate,
+        a.nextPmDue,
+        a.lastPmTech,
+        a.sop && a.sop.noGlovesWarning ? 'YES - NO GLOVES' : 'Standard PPE',
+        a.conditionNote
       ]);
     }
 
-    const csvContent = rows
-      .map((row) =>
-        row
-          .map((cell) => {
-            const val = cell === null || cell === undefined ? '' : String(cell);
-            return `"${val.replace(/"/g, '""')}"`;
-          })
+    downloadCsv(rows, `car-shop-pm-matrix-${new Date().toISOString().slice(0, 10)}.csv`);
+    showToast('Exported 930 Kinnear Rd Equipment & PM Matrix to CSV');
+  }
+
+  function exportHistoryCsv() {
+    const rows = [
+      ['Event ID', 'Timestamp', 'Type', 'Asset ID', 'Asset Name', 'Team/Role', 'Technician/Reporter', 'Status After', 'Notes']
+    ];
+    for (const h of state.history) {
+      rows.push([
+        h.id,
+        h.timestamp,
+        h.type,
+        h.assetId,
+        h.assetName,
+        h.teamOrRole,
+        h.technician,
+        h.statusAfter,
+        h.notes
+      ]);
+    }
+    downloadCsv(rows, `car-shop-pm-history-${new Date().toISOString().slice(0, 10)}.csv`);
+    showToast('Exported Historical PM & Condition Ledger to CSV');
+  }
+
+  function downloadCsv(rows, filename) {
+    const csv = rows
+      .map((r) =>
+        r
+          .map((cell) => `"${String(cell === null || cell === undefined ? '' : cell).replace(/"/g, '""')}"`)
           .join(',')
       )
       .join('\r\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    const dateStamp = new Date().toISOString().slice(0, 10);
-    link.setAttribute('download', `spl-machine-status-${dateStamp}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
 
-    showToast(`Exported ${state.machines.length} Workstation Status Ledger to CSV`);
+  function downloadJsonFile(obj, filename) {
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   /**
-   * Reset all machines to OPERATIONAL
+   * Handle URL routing (?asset=MAC-01&tab=sop or ?id=MAC-01 or ?view=qr)
    */
-  function resetAllToOperational() {
-    localStorage.removeItem(STORAGE_KEYS.STATUS_OVERRIDES);
-    const nowIso = new Date().toISOString();
-    for (const machine of state.machines) {
-      state.baseStatuses[machine.id] = createDefaultStatusEntry(nowIso);
+  function handleRouteFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const viewParam = (params.get('view') || '').toLowerCase();
+    const assetParam = params.get('asset') || params.get('id');
+    const tabParam = (params.get('tab') || 'fault').toLowerCase();
+
+    if (viewParam === 'qr') {
+      switchPortalView('qr', false);
+    } else if (viewParam === 'history') {
+      switchPortalView('history', false);
+    } else {
+      switchPortalView('dashboard', false);
     }
-    syncStatusesWithLocalStorage();
-    renderKpiRibbon();
-    renderEquipmentGrid();
-    renderUpdaterStatusBanner(state.selectedMachineId);
-    showToast(`All ${state.machines.length} Machines Reset to OPERATIONAL`);
+
+    if (assetParam) {
+      const target = findAssetById(assetParam);
+      if (target) {
+        openAssetHubModal(target.id, tabParam, false);
+      }
+    }
   }
 
   /**
-   * Wire up DOM event listeners
+   * Bind DOM events
    */
   function bindEvents() {
-    // Header Navigation Buttons
-    const navBoard = document.getElementById('nav-board');
-    const navUpdater = document.getElementById('nav-updater');
-    const navQr = document.getElementById('nav-qr');
-    const brandHome = document.getElementById('brand-home-link');
-
-    if (navBoard) {
-      navBoard.addEventListener('click', () => switchView('board', { updateUrl: true }));
-    }
-    if (navUpdater) {
-      navUpdater.addEventListener('click', () =>
-        switchView('updater', {
-          machineId: state.selectedMachineId,
-          lockedViaQr: false,
-          updateUrl: true
-        })
-      );
-    }
-    if (navQr) {
-      navQr.addEventListener('click', () => switchView('qr', { updateUrl: true }));
-    }
-    if (brandHome) {
-      brandHome.addEventListener('click', (e) => {
-        e.preventDefault();
-        switchView('board', { updateUrl: true });
+    // Top navigation
+    document.querySelectorAll('[data-view]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        switchPortalView(btn.getAttribute('data-view'), true);
       });
-    }
+    });
 
-    // Back to board button in Updater view
-    const btnBack = document.getElementById('btn-back-to-board');
-    if (btnBack) {
-      btnBack.addEventListener('click', () => switchView('board', { updateUrl: true }));
+    const homeLink = document.getElementById('brand-home-link');
+    if (homeLink) {
+      homeLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeAssetHubModal();
+        switchPortalView('dashboard', true);
+      });
     }
 
     // Search input
@@ -914,9 +841,7 @@
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         state.filters.search = e.target.value;
-        if (clearSearchBtn) {
-          clearSearchBtn.classList.toggle('hidden', !state.filters.search);
-        }
+        if (clearSearchBtn) clearSearchBtn.classList.toggle('hidden', !state.filters.search);
         renderEquipmentGrid();
       });
     }
@@ -929,317 +854,400 @@
       });
     }
 
-    // Zone Filter Pills
-    const zoneBar = document.getElementById('zone-filter-bar');
-    if (zoneBar) {
-      zoneBar.addEventListener('click', (e) => {
-        const btn = e.target.closest('.zone-pill');
-        if (!btn) return;
-        const zone = btn.getAttribute('data-zone') || 'ALL';
-        state.filters.zone = zone;
-        zoneBar.querySelectorAll('.zone-pill').forEach((el) => {
+    // Status Filter Pills
+    document.querySelectorAll('.status-filter-pill').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.filters.status = btn.getAttribute('data-status') || 'ALL';
+        document.querySelectorAll('.status-filter-pill').forEach((el) => {
           el.classList.toggle('active', el === btn);
         });
         renderEquipmentGrid();
       });
-    }
-
-    // Status Filter Pills
-    const statusPills = document.querySelectorAll('.status-pill-filter');
-    statusPills.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const st = btn.getAttribute('data-status') || 'ALL';
-        state.filters.status = st;
-        statusPills.forEach((el) => el.classList.toggle('active', el === btn));
-        renderEquipmentGrid();
-      });
     });
 
-    // KPI Ribbon Cards also act as quick status filters
-    const kpiCards = document.querySelectorAll('.kpi-card');
-    kpiCards.forEach((card) => {
-      card.addEventListener('click', () => {
-        const targetStatus = card.getAttribute('data-status-filter') || 'ALL';
-        state.filters.status = targetStatus;
-        statusPills.forEach((el) => {
-          el.classList.toggle('active', el.getAttribute('data-status') === targetStatus);
+    // KPI mini status pills
+    document.querySelectorAll('[data-status-quick]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const st = btn.getAttribute('data-status-quick') || 'ALL';
+        state.filters.status = st;
+        document.querySelectorAll('.status-filter-pill').forEach((el) => {
+          el.classList.toggle('active', el.getAttribute('data-status') === st);
         });
         renderEquipmentGrid();
       });
     });
 
-    // Reset Filters button
+    // Zone Filter Pills
+    document.querySelectorAll('.zone-filter-pill').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.filters.zone = btn.getAttribute('data-zone') || 'ALL';
+        document.querySelectorAll('.zone-filter-pill').forEach((el) => {
+          el.classList.toggle('active', el === btn);
+        });
+        renderEquipmentGrid();
+      });
+    });
+
+    // Reset filters
     const resetFiltersBtn = document.getElementById('btn-reset-filters');
     if (resetFiltersBtn) {
       resetFiltersBtn.addEventListener('click', () => {
-        state.filters.search = '';
-        state.filters.zone = 'ALL';
-        state.filters.status = 'ALL';
+        state.filters = { search: '', zone: 'ALL', status: 'ALL' };
         if (searchInput) searchInput.value = '';
         if (clearSearchBtn) clearSearchBtn.classList.add('hidden');
-        if (zoneBar) {
-          zoneBar.querySelectorAll('.zone-pill').forEach((el) => {
-            el.classList.toggle('active', el.getAttribute('data-zone') === 'ALL');
-          });
-        }
-        statusPills.forEach((el) => {
+        document.querySelectorAll('.status-filter-pill').forEach((el) => {
           el.classList.toggle('active', el.getAttribute('data-status') === 'ALL');
+        });
+        document.querySelectorAll('.zone-filter-pill').forEach((el) => {
+          el.classList.toggle('active', el.getAttribute('data-zone') === 'ALL');
         });
         renderEquipmentGrid();
       });
     }
 
-    // Equipment Grid Card Click -> Open View 2 pre-selected to that machine
-    const gridEl = document.getElementById('equipment-grid');
-    if (gridEl) {
-      gridEl.addEventListener('click', (e) => {
-        const card = e.target.closest('.machine-card');
-        if (!card) return;
-        const machineId = card.getAttribute('data-machine-id');
-        if (machineId) {
-          switchView('updater', {
-            machineId,
-            lockedViaQr: true,
-            updateUrl: true
-          });
-        }
-      });
+    // Delegated click for opening Asset Hub Modal from cards or history table
+    document.addEventListener('click', (e) => {
+      const tabTrigger = e.target.closest('[data-open-asset]');
+      if (tabTrigger) {
+        e.stopPropagation();
+        const assetId = tabTrigger.getAttribute('data-open-asset');
+        const tab = tabTrigger.getAttribute('data-open-tab') || 'fault';
+        openAssetHubModal(assetId, tab, true);
+        return;
+      }
 
-      gridEl.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          const card = e.target.closest('.machine-card');
-          if (!card) return;
-          e.preventDefault();
-          const machineId = card.getAttribute('data-machine-id');
-          if (machineId) {
-            switchView('updater', {
-              machineId,
-              lockedViaQr: true,
-              updateUrl: true
-            });
-          }
-        }
-      });
-    }
+      const cardEl = e.target.closest('[data-card-asset]');
+      if (cardEl) {
+        const assetId = cardEl.getAttribute('data-card-asset');
+        openAssetHubModal(assetId, 'fault', true);
+      }
+    });
 
-    // Machine Selector Change in View 2
-    const machineSelect = document.getElementById('machine-select');
-    if (machineSelect) {
-      machineSelect.addEventListener('change', (e) => {
-        const newId = e.target.value;
-        state.lockedViaQr = false;
-        renderUpdaterStatusBanner(newId);
-        const url = new URL(window.location.href);
-        url.search = `?id=${encodeURIComponent(newId)}`;
-        window.history.replaceState({}, '', url.toString());
-      });
-    }
-
-    // Radio status change helper -> sync Fault Category default if helpful
-    const statusRadios = document.querySelectorAll('input[name="status"]');
-    const categorySelect = document.getElementById('fault-category');
-    statusRadios.forEach((radio) => {
-      radio.addEventListener('change', () => {
-        if (!categorySelect) return;
-        if (radio.value === 'OPERATIONAL' && radio.checked) {
-          categorySelect.value = 'Cleared Fault / Returned to Service';
-        } else if (
-          (radio.value === 'DOWN' || radio.value === 'DEGRADED') &&
-          radio.checked &&
-          categorySelect.value === 'Cleared Fault / Returned to Service'
-        ) {
-          categorySelect.value = 'Broken Tooling / Blade / Insert';
-        }
+    // Modal Tab Switching
+    document.querySelectorAll('[data-hub-tab]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        switchModalTab(btn.getAttribute('data-hub-tab'), true);
       });
     });
 
-    // Status Update Form Submission
-    const formEl = document.getElementById('status-update-form');
-    const errorEl = document.getElementById('form-error-msg');
-    if (formEl) {
-      formEl.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (errorEl) errorEl.classList.add('hidden');
+    // Close Asset Modal
+    const closeAssetBtn = document.getElementById('btn-close-asset-modal');
+    const assetModal = document.getElementById('asset-hub-modal');
+    if (closeAssetBtn) closeAssetBtn.addEventListener('click', closeAssetHubModal);
+    if (assetModal) {
+      assetModal.addEventListener('click', (e) => {
+        if (e.target === assetModal) closeAssetHubModal();
+      });
+    }
 
-        const machineId = machineSelect ? machineSelect.value : state.selectedMachineId;
-        const checkedRadio = formEl.querySelector('input[name="status"]:checked');
-        const statusVal = checkedRadio ? checkedRadio.value : '';
-        const categoryVal = categorySelect ? categorySelect.value : 'Broken Tooling / Blade / Insert';
-        const teamSelect = document.getElementById('student-team');
-        const teamVal = teamSelect ? teamSelect.value : '';
-        const reporterInput = document.getElementById('reporter-input');
-        const reporterVal = reporterInput ? reporterInput.value.trim() : '';
-        const notesInput = document.getElementById('fault-notes');
-        const notesVal = notesInput ? notesInput.value.trim() : '';
+    // Copy Asset Deep-Link
+    const copyLinkBtn = document.getElementById('btn-copy-asset-link');
+    if (copyLinkBtn) {
+      copyLinkBtn.addEventListener('click', () => {
+        const url = window.location.href;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url);
+        }
+        showToast(`Copied deep link for ${state.activeAssetId} (${state.activeModalTab.toUpperCase()} tab)`);
+      });
+    }
 
-        if (!machineId || !statusVal || !categoryVal || !teamVal || !reporterVal || !notesVal) {
-          if (errorEl) {
-            errorEl.textContent =
-              'Please complete all required fields (Machine Status, Fault Category, Student Team, Reporter Name/Email, and Fault Details).';
-            errorEl.classList.remove('hidden');
+    // Tab 1: Fault Report Submission (Local + GitHub Issue)
+    const faultForm = document.getElementById('fault-report-form');
+    const btnFaultGithub = document.getElementById('btn-fault-github-issue');
+
+    function processFaultSubmission(openGithubIssue) {
+      const errEl = document.getElementById('fault-form-error');
+      if (errEl) errEl.classList.add('hidden');
+
+      const asset = findAssetById(state.activeAssetId);
+      if (!asset) return;
+
+      const team = document.getElementById('fault-team-select').value;
+      const severity = document.getElementById('fault-severity-select').value;
+      const reporter = document.getElementById('fault-reporter-input').value.trim();
+      const desc = document.getElementById('fault-desc-input').value.trim();
+
+      if (!team || !severity || !reporter || !desc) {
+        if (errEl) {
+          errEl.textContent = 'Please complete Student Team, Severity, Reporter Name/Email, and Fault Description.';
+          errEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      saveAssetOverride(asset.id, {
+        status: severity,
+        conditionNote: `[${team}] ${desc} (Reported by ${reporter})`
+      });
+
+      const entry = {
+        id: `FLT-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${asset.id.replace('-', '')}`,
+        timestamp: new Date().toISOString(),
+        type: 'FAULT_REPORT',
+        assetId: asset.id,
+        assetName: asset.name,
+        teamOrRole: team,
+        technician: reporter,
+        statusAfter: severity,
+        pmStatusAfter: asset.pmStatus || 'COMPLIANT',
+        metrics: {},
+        notes: desc
+      };
+      prependHistoryEntry(entry);
+
+      renderExecutiveKpis();
+      renderEquipmentGrid();
+      openAssetHubModal(asset.id, 'fault', false);
+      document.getElementById('fault-desc-input').value = '';
+
+      showToast(`Condition updated for ${asset.id} (${severity})`);
+
+      if (openGithubIssue) {
+        const issueUrl = buildGitHubIssueUrl(
+          'unscheduled_downtime_fault.yml',
+          `[FAULT] ${asset.id}: ${asset.name} — ${severity}`,
+          {
+            asset_id: asset.id,
+            student_team: team,
+            severity_status:
+              severity === 'DOWN - LOCKED OUT'
+                ? 'DOWN - LOCKED OUT (Red Tag / Do Not Operate)'
+                : severity === 'DEGRADED'
+                ? 'DEGRADED / CAUTION (Yellow Tag / Needs Tooling or Minor Attention)'
+                : 'OPERATIONAL (Cleared / Returned to Service)',
+            reporter,
+            fault_description: desc
           }
-          return;
+        );
+        window.open(issueUrl, '_blank', 'noopener');
+      }
+    }
+
+    if (faultForm) {
+      faultForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        processFaultSubmission(false);
+      });
+    }
+    if (btnFaultGithub) {
+      btnFaultGithub.addEventListener('click', () => {
+        processFaultSubmission(true);
+      });
+    }
+
+    // Tab 4: Monthly PM Submission
+    const btnCheckAllPm = document.getElementById('btn-check-all-pm');
+    if (btnCheckAllPm) {
+      btnCheckAllPm.addEventListener('click', () => {
+        document.querySelectorAll('#pm-checklist-container input[type="checkbox"]').forEach((cb) => {
+          cb.checked = true;
+        });
+      });
+    }
+
+    const pmForm = document.getElementById('monthly-pm-form');
+    const btnPmGithub = document.getElementById('btn-pm-github-issue');
+    const btnPmJson = document.getElementById('btn-pm-download-json');
+
+    function collectAndSavePm(mode) {
+      const errEl = document.getElementById('pm-form-error');
+      if (errEl) errEl.classList.add('hidden');
+
+      const asset = findAssetById(state.activeAssetId);
+      if (!asset) return;
+
+      const tech = document.getElementById('pm-tech-input').value.trim();
+      const postStatus = document.getElementById('pm-status-select').value;
+      const notes = document.getElementById('pm-notes-input').value.trim();
+      const checkedBoxes = [
+        ...document.querySelectorAll('#pm-checklist-container input[type="checkbox"]:checked')
+      ];
+
+      if (!tech || !notes || checkedBoxes.length === 0) {
+        if (errEl) {
+          errEl.textContent =
+            'Please check completed PM tasks, enter Technician Name/Initials, and provide PM Notes.';
+          errEl.classList.remove('hidden');
         }
+        return;
+      }
 
-        const updatedEntry = {
-          status: statusVal,
-          category: categoryVal,
-          team: teamVal,
-          reporter: reporterVal,
-          notes: notesVal,
-          updatedAt: new Date().toISOString()
-        };
-
-        saveMachineStatusOverride(machineId, updatedEntry);
-        renderKpiRibbon();
-        renderEquipmentGrid();
-        renderUpdaterStatusBanner(machineId);
-
-        const machine = getMachineById(machineId) || {
-          id: machineId,
-          name: machineId,
-          zone: 'Student Projects Building'
-        };
-
-        // Fire async Teams Adaptive Card + optional state sync webhook
-        dispatchExternalWebhooks(machine, updatedEntry);
-
-        // Show visual toast confirmation
-        showToast('Status Updated & Sent to Microsoft Teams');
-
-        // Reset text inputs while keeping selected machine visible
-        if (notesInput) notesInput.value = '';
-      });
-    }
-
-    // QR View Controls
-    const btnRegenerateQr = document.getElementById('btn-regenerate-qr');
-    const qrBaseInput = document.getElementById('qr-base-url');
-    const btnPrintQr = document.getElementById('btn-print-qr');
-
-    if (btnRegenerateQr) {
-      btnRegenerateQr.addEventListener('click', () => {
-        if (qrBaseInput && qrBaseInput.value.trim()) {
-          localStorage.setItem(STORAGE_KEYS.QR_BASE_URL, qrBaseInput.value.trim());
+      const metricsObj = {};
+      document.querySelectorAll('#pm-metrics-container input[data-metric-key]').forEach((inp) => {
+        const key = inp.getAttribute('data-metric-key');
+        const unit = inp.getAttribute('data-metric-unit');
+        const val = inp.value.trim();
+        if (key && val) {
+          metricsObj[key] = unit && !val.includes(unit) ? `${val} ${unit}` : val;
         }
-        renderQrPlacards();
-        showToast(`Updated All ${state.machines.length} QR Code Links`);
       });
-    }
-    if (qrBaseInput) {
-      qrBaseInput.addEventListener('change', () => {
-        if (qrBaseInput.value.trim()) {
-          localStorage.setItem(STORAGE_KEYS.QR_BASE_URL, qrBaseInput.value.trim());
-        }
-        renderQrPlacards();
+
+      const now = new Date();
+      const todayIso = now.toISOString().slice(0, 10);
+      const nextDueIso = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .slice(0, 10);
+
+      saveAssetOverride(asset.id, {
+        status: postStatus === 'PM_DUE_SOON' ? 'DEGRADED' : postStatus,
+        pmStatus: postStatus === 'OPERATIONAL' ? 'COMPLIANT' : 'DUE_SOON',
+        lastPmDate: todayIso,
+        nextPmDue: nextDueIso,
+        lastPmTech: tech,
+        conditionNote: notes
       });
-    }
-    if (btnPrintQr) {
-      btnPrintQr.addEventListener('click', () => {
-        window.print();
-      });
+
+      const pmRecord = {
+        id: `PM-${todayIso.replace(/-/g, '')}-${asset.id.replace('-', '')}`,
+        timestamp: now.toISOString(),
+        type: 'MONTHLY_PM',
+        assetId: asset.id,
+        assetName: asset.name,
+        teamOrRole: 'Shop Staff / SRA',
+        technician: tech,
+        statusAfter: postStatus,
+        pmStatusAfter: 'COMPLIANT',
+        metrics: metricsObj,
+        completedItemsCount: checkedBoxes.length,
+        totalItemsCount: (asset.monthlyPm && asset.monthlyPm.checklist || []).length,
+        notes
+      };
+
+      prependHistoryEntry(pmRecord);
+      renderExecutiveKpis();
+      renderEquipmentGrid();
+      openAssetHubModal(asset.id, 'pm', false);
+
+      showToast(`Logged Monthly PM for ${asset.id} — Next Due: ${nextDueIso}`);
+
+      if (mode === 'json') {
+        downloadJsonFile(pmRecord, `${pmRecord.id}.json`);
+      } else if (mode === 'github') {
+        const checklistMd = checkedBoxes.map((cb) => `- [x] ${cb.value}`).join('\n');
+        const metricsMd = Object.entries(metricsObj)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join('\n');
+        const issueUrl = buildGitHubIssueUrl(
+          'monthly_pm_log.yml',
+          `[PM-LOG] ${asset.id}: ${asset.name} (${todayIso})`,
+          {
+            asset_id: asset.id,
+            post_pm_status: postStatus === 'PM_DUE_SOON' ? 'PM DUE SOON' : postStatus,
+            technician: tech,
+            checklist_summary: checklistMd,
+            quantitative_metrics: metricsMd,
+            pm_notes: notes
+          }
+        );
+        window.open(issueUrl, '_blank', 'noopener');
+      }
     }
 
-    // Supervisor Config Modal Controls
-    const btnOpenConfig = document.getElementById('btn-supervisor-config');
-    const modalBackdrop = document.getElementById('supervisor-modal-backdrop');
-    const btnCloseModal = document.getElementById('btn-close-modal');
-    const btnSaveConfig = document.getElementById('btn-save-config');
-    const btnTestWebhook = document.getElementById('btn-test-webhook');
+    if (pmForm) {
+      pmForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        collectAndSavePm('local');
+      });
+    }
+    if (btnPmGithub) {
+      btnPmGithub.addEventListener('click', () => collectAndSavePm('github'));
+    }
+    if (btnPmJson) {
+      btnPmJson.addEventListener('click', () => collectAndSavePm('json'));
+    }
+
+    // QR Decal Controls
+    const btnUpdateQrUrl = document.getElementById('btn-update-qr-url');
+    const qrBaseInput = document.getElementById('qr-base-url-input');
+    const btnPrintDecals = document.getElementById('btn-print-decals');
+
+    if (btnUpdateQrUrl) {
+      btnUpdateQrUrl.addEventListener('click', () => {
+        if (window.ShopQrGenerator && qrBaseInput) {
+          window.ShopQrGenerator.saveBaseUrlOverride(qrBaseInput.value);
+          window.ShopQrGenerator.renderQrDecalSheet(state.assets);
+          showToast(`Regenerated all ${state.assets.length} 2"×3" QR Machine Decals`);
+        }
+      });
+    }
+    if (btnPrintDecals) {
+      btnPrintDecals.addEventListener('click', () => window.print());
+    }
+
+    // Export Buttons
     const btnExportCsv = document.getElementById('btn-export-csv');
-    const btnResetAll = document.getElementById('btn-reset-all');
+    const btnExportHistCsv = document.getElementById('btn-export-history-csv');
+    const btnExportHistJson = document.getElementById('btn-export-history-json');
+    const btnExportMasterJson = document.getElementById('btn-export-master-json');
 
-    const inputTeamsWebhook = document.getElementById('config-teams-webhook');
-    const inputSyncEndpoint = document.getElementById('config-sync-endpoint');
-    const inputGithubToken = document.getElementById('config-github-token');
-
-    function openSupervisorModal() {
-      if (!modalBackdrop) return;
-      if (inputTeamsWebhook) {
-        inputTeamsWebhook.value = localStorage.getItem(STORAGE_KEYS.TEAMS_WEBHOOK) || '';
-      }
-      if (inputSyncEndpoint) {
-        inputSyncEndpoint.value = localStorage.getItem(STORAGE_KEYS.SYNC_ENDPOINT) || '';
-      }
-      if (inputGithubToken) {
-        inputGithubToken.value = localStorage.getItem(STORAGE_KEYS.GITHUB_TOKEN) || '';
-      }
-      modalBackdrop.classList.remove('hidden');
+    if (btnExportCsv) btnExportCsv.addEventListener('click', exportEquipmentMatrixCsv);
+    if (btnExportHistCsv) btnExportHistCsv.addEventListener('click', exportHistoryCsv);
+    if (btnExportHistJson) {
+      btnExportHistJson.addEventListener('click', () =>
+        downloadJsonFile(state.history, 'pm_history.json')
+      );
+    }
+    if (btnExportMasterJson) {
+      btnExportMasterJson.addEventListener('click', () =>
+        downloadJsonFile(
+          { metadata: state.metadata, assets: state.assets },
+          'equipment_master.json'
+        )
+      );
     }
 
-    function closeSupervisorModal() {
-      if (modalBackdrop) modalBackdrop.classList.add('hidden');
-    }
+    // Settings Modal
+    const btnOpenSettings = document.getElementById('btn-open-settings');
+    const btnCloseSettings = document.getElementById('btn-close-settings');
+    const settingsModal = document.getElementById('settings-modal');
+    const btnSaveSettings = document.getElementById('btn-save-settings');
+    const btnResetPortal = document.getElementById('btn-reset-portal');
 
-    if (btnOpenConfig) {
-      btnOpenConfig.addEventListener('click', openSupervisorModal);
+    if (btnOpenSettings && settingsModal) {
+      btnOpenSettings.addEventListener('click', () => {
+        document.getElementById('config-github-repo').value =
+          localStorage.getItem(STORAGE_KEYS.GITHUB_REPO) || DEFAULT_GITHUB_REPO;
+        document.getElementById('config-teams-webhook').value =
+          localStorage.getItem(STORAGE_KEYS.TEAMS_WEBHOOK) || '';
+        settingsModal.classList.remove('hidden');
+      });
     }
-    if (btnCloseModal) {
-      btnCloseModal.addEventListener('click', closeSupervisorModal);
+    if (btnCloseSettings && settingsModal) {
+      btnCloseSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));
     }
-    if (modalBackdrop) {
-      modalBackdrop.addEventListener('click', (e) => {
-        if (e.target === modalBackdrop) closeSupervisorModal();
+    if (btnSaveSettings && settingsModal) {
+      btnSaveSettings.addEventListener('click', () => {
+        localStorage.setItem(
+          STORAGE_KEYS.GITHUB_REPO,
+          document.getElementById('config-github-repo').value.trim() || DEFAULT_GITHUB_REPO
+        );
+        localStorage.setItem(
+          STORAGE_KEYS.TEAMS_WEBHOOK,
+          document.getElementById('config-teams-webhook').value.trim()
+        );
+        settingsModal.classList.add('hidden');
+        showToast('Saved Portal Sync & Repository Configuration');
+      });
+    }
+    if (btnResetPortal) {
+      btnResetPortal.addEventListener('click', async () => {
+        localStorage.removeItem(STORAGE_KEYS.ASSET_OVERRIDES);
+        localStorage.removeItem(STORAGE_KEYS.HISTORY_LOG);
+        await loadPortalData();
+        renderExecutiveKpis();
+        renderEquipmentGrid();
+        if (settingsModal) settingsModal.classList.add('hidden');
+        showToast(`Reset all ${state.assets.length} assets to baseline equipment_master.json state`);
       });
     }
 
-    if (btnSaveConfig) {
-      btnSaveConfig.addEventListener('click', () => {
-        if (inputTeamsWebhook) {
-          localStorage.setItem(STORAGE_KEYS.TEAMS_WEBHOOK, inputTeamsWebhook.value.trim());
-        }
-        if (inputSyncEndpoint) {
-          localStorage.setItem(STORAGE_KEYS.SYNC_ENDPOINT, inputSyncEndpoint.value.trim());
-        }
-        if (inputGithubToken) {
-          localStorage.setItem(STORAGE_KEYS.GITHUB_TOKEN, inputGithubToken.value.trim());
-        }
-        closeSupervisorModal();
-        showToast('Supervisor Integration Configuration Saved');
-      });
-    }
-
-    if (btnTestWebhook) {
-      btnTestWebhook.addEventListener('click', async () => {
-        if (inputTeamsWebhook) {
-          localStorage.setItem(STORAGE_KEYS.TEAMS_WEBHOOK, inputTeamsWebhook.value.trim());
-        }
-        const sampleMachine = getMachineById('CNC-02') || state.machines[0];
-        const sampleStatus = {
-          status: 'DEGRADED',
-          category: 'Broken Tooling / Blade / Insert',
-          team: 'Shop Staff / Lab Supervisor',
-          reporter: 'Supervisor Webhook Test',
-          notes: 'Diagnostic Adaptive Card v1.4 webhook test from Student Projects Building Machine Status System.',
-          updatedAt: new Date().toISOString()
-        };
-        await dispatchExternalWebhooks(sampleMachine, sampleStatus);
-        showToast('Status Updated & Sent to Microsoft Teams');
-      });
-    }
-
-    if (btnExportCsv) {
-      btnExportCsv.addEventListener('click', exportFaultLogToCsv);
-    }
-
-    if (btnResetAll) {
-      btnResetAll.addEventListener('click', () => {
-        resetAllToOperational();
-        closeSupervisorModal();
-      });
-    }
-
-    // Handle browser back/forward buttons
     window.addEventListener('popstate', handleRouteFromUrl);
   }
 
-  /**
-   * Initialize application
-   */
   async function init() {
-    await loadInitialData();
-    populateMachineSelector();
-    renderKpiRibbon();
+    await loadPortalData();
+    renderExecutiveKpis();
     renderEquipmentGrid();
     bindEvents();
     handleRouteFromUrl();

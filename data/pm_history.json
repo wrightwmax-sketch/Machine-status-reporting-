@@ -1,0 +1,94 @@
+[
+  {
+    "id": "PM-2026-1015-FAC01",
+    "timestamp": "2026-10-15T14:30:00Z",
+    "type": "MONTHLY_PM",
+    "assetId": "FAC-01",
+    "assetName": "General Shop Safety, LOTO Station, Battery Activity Zone & Paint/Prep Booth",
+    "teamOrRole": "Shop Staff / SRA",
+    "technician": "M. Wright",
+    "statusAfter": "OPERATIONAL",
+    "pmStatusAfter": "COMPLIANT",
+    "metrics": {
+      "loto_locks_count": "12 locks",
+      "eyewash_psi": "Pass"
+    },
+    "completedItemsCount": 4,
+    "totalItemsCount": 4,
+    "notes": "Audited LOTO locks/tags in machine shop cage and welding room; verified eyewash flush tags and Class ABC/D fire extinguishers."
+  },
+  {
+    "id": "PM-2026-1012-WLD04",
+    "timestamp": "2026-10-12T16:15:00Z",
+    "type": "MONTHLY_PM",
+    "assetId": "WLD-04",
+    "assetName": "Thermal Processing Suite: Blue M Industrial Oven & Muffle Furnace",
+    "teamOrRole": "Shop Staff / SRA",
+    "technician": "M. Wright",
+    "statusAfter": "OPERATIONAL",
+    "pmStatusAfter": "COMPLIANT",
+    "metrics": {
+      "otp_offset_c": "15 °C",
+      "blower_status": "Pass / Quiet"
+    },
+    "completedItemsCount": 4,
+    "totalItemsCount": 4,
+    "notes": "Verified OTP fail-safe calibration and 167°F cooldown protocol signage on Blue M oven; inspected Muffle Furnace refractory bricks."
+  },
+  {
+    "id": "PM-2026-1010-CNC02",
+    "timestamp": "2026-10-10T11:20:00Z",
+    "type": "MONTHLY_PM",
+    "assetId": "CNC-02",
+    "assetName": "Haas VF-2SS CNC Vertical Machining Center",
+    "teamOrRole": "Shop Staff / SRA",
+    "technician": "M. Wright",
+    "statusAfter": "OPERATIONAL",
+    "pmStatusAfter": "COMPLIANT",
+    "metrics": {
+      "coolant_brix": "9.2 % Brix",
+      "coolant_ph": "9.1 pH",
+      "pneumatic_psi": "88 PSI"
+    },
+    "completedItemsCount": 5,
+    "totalItemsCount": 5,
+    "notes": "Refractometer check on TRIM MicroSol 585XT (9.2% Brix); cleaned primary cloth net filter and CAT40 spindle taper."
+  },
+  {
+    "id": "PM-2026-1010-FAB03",
+    "timestamp": "2026-10-10T09:45:00Z",
+    "type": "MONTHLY_PM",
+    "assetId": "FAB-03",
+    "assetName": "Pedestal Bench Top Grinders & De-burring Station",
+    "teamOrRole": "Shop Staff / SRA",
+    "technician": "M. Wright",
+    "statusAfter": "OPERATIONAL",
+    "pmStatusAfter": "COMPLIANT",
+    "metrics": {
+      "tool_rest_gap": "0.050 in",
+      "tongue_guard_gap": "0.100 in"
+    },
+    "completedItemsCount": 3,
+    "totalItemsCount": 3,
+    "notes": "Ring-tested and dressed stone wheels square; adjusted tool rest strictly <= 1/16\" and spark tongue guard <= 1/8\"."
+  },
+  {
+    "id": "PM-2026-1005-MAC01",
+    "timestamp": "2026-10-05T13:00:00Z",
+    "type": "MONTHLY_PM",
+    "assetId": "MAC-01",
+    "assetName": "Bridgeport Series I Manual Knee Mill #1",
+    "teamOrRole": "Shop Staff / SRA",
+    "technician": "M. Wright",
+    "statusAfter": "OPERATIONAL",
+    "pmStatusAfter": "COMPLIANT",
+    "metrics": {
+      "x_backlash": "0.002 in",
+      "y_backlash": "0.002 in",
+      "way_lube_level": "100 %"
+    },
+    "completedItemsCount": 6,
+    "totalItemsCount": 6,
+    "notes": "Filled one-shot lubricator with Mobil Vactra No. 2; stoned table T-slots and logged X/Y backlash."
+  }
+]

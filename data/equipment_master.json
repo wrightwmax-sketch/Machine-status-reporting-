@@ -1,0 +1,1528 @@
+{
+  "metadata": {
+    "facility": "CAR Student Projects Shop — 930 Kinnear Rd",
+    "supervisor": "Max Wright (Sr. Instructional Lab Supervisor)",
+    "notificationChannel": "Max Wright - Teams / Text Message",
+    "milestoneTargetDate": "2027-03-31",
+    "milestoneTitle": "March 2027 Preventative Maintenance & Safety Standardization Goal",
+    "studentTeams": [
+      "Baja SAE",
+      "Formula SAE",
+      "Buckeye Current",
+      "EcoCAR",
+      "Venturi",
+      "DBR",
+      "Buckeye Experimental Aeronautics (BExA)",
+      "Experimental Methods Course",
+      "Shop Staff / SRA"
+    ],
+    "lastUpdated": "2026-10-21T20:00:00Z"
+  },
+  "assets": [
+    {
+      "id": "MAC-01",
+      "name": "Bridgeport Series I Manual Knee Mill #1",
+      "osuEquipmentId": "001",
+      "zone": "Zone 1: Manual Machining (MAC)",
+      "zoneCode": "MAC",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-05",
+      "nextPmDue": "2026-11-05",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Ways lubricated with Mobil Vactra No. 2; X/Y backlash within spec (0.002\").",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Turn power switch to middle OFF position (Top left front face).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V AC",
+            "isolationLocation": "Switch box to the right of Mill on fence post.",
+            "isolationProcedure": "Pull switch box lever down to OFF and install LOTO lock (from machine shop cage or welding room) through lever."
+          }
+        ],
+        "storedEnergyRelief": "Allow spindle and drive pulley assembly to coast to a complete stop.",
+        "zeroEnergyVerification": "Press black power button and verify spindle does not power on when mill switch is toggled."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses",
+          "Closed-Toe Shoes",
+          "Hair & Loose Clothing Secured",
+          "NO GLOVES While Spindle is Rotating"
+        ],
+        "hazards": [
+          "Rotating spindle, collet, and cutting tool entanglement hazard",
+          "Flying hot chips and broken cutter ejection",
+          "Crushing/pinch hazard between moving table and saddle"
+        ],
+        "beforeUse": [
+          "Check drawbar engagement and verify collet/tooling is properly seated.",
+          "Set speed via variable speed dial ONLY while spindle is running, or shift Hi-Neutral-Lo range lever ONLY when spindle is completely stopped."
+        ],
+        "duringUse": [
+          "Verify quill lock and table locks are set appropriately for the cut.",
+          "Confirm climb vs. conventional milling setup (use conventional milling on manual leadscrews to prevent cutter grab).",
+          "Never reach around a rotating cutter or adjust workpiece while spindle is turning."
+        ],
+        "afterUse": [
+          "Return machine to showroom condition (brush chips with shop brush—NEVER use compressed air).",
+          "Home and wipe down table, ways, and vise.",
+          "Remove collets/tooling from spindle and return to designated tool rack."
+        ],
+        "emergencyProtocol": "Turn rotary drum switch to center OFF position or disengage main disconnect lever on right fence post; notify Lab Supervisor or SRA immediately."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Fill one-shot lubricator (Mobil Vactra No. 2) & verify oil film on X/Y/Z ways",
+          "Check quill feed engagement & clock spring return tension",
+          "Measure & log X/Y leadscrew backlash (0.000\")",
+          "Check X/Y/Z gib strip play and adjust if excessive",
+          "Inspect vari-speed belt/pulley wear & check backgear noise",
+          "Stone table T-slots to remove burrs or dings"
+        ],
+        "metrics": [
+          { "key": "x_backlash", "label": "X-Axis Backlash (in)", "placeholder": "0.002", "unit": "in" },
+          { "key": "y_backlash", "label": "Y-Axis Backlash (in)", "placeholder": "0.002", "unit": "in" },
+          { "key": "way_lube_level", "label": "One-Shot Lube Level (%)", "placeholder": "100", "unit": "%" }
+        ]
+      }
+    },
+    {
+      "id": "MAC-02",
+      "name": "Bridgeport Series I Manual Knee Mill #2",
+      "osuEquipmentId": "002",
+      "zone": "Zone 1: Manual Machining (MAC)",
+      "zoneCode": "MAC",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-05",
+      "nextPmDue": "2026-11-05",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "One-shot lubricator topped off; table stoned and cleared for student use.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Turn power switch to middle OFF position (Top left front face).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V AC",
+            "isolationLocation": "Switch box to the right of Mill on fence post.",
+            "isolationProcedure": "Pull switch box lever down to OFF and install LOTO lock (from machine shop cage or welding room) through lever."
+          }
+        ],
+        "storedEnergyRelief": "Allow spindle and drive pulley assembly to coast to a complete stop.",
+        "zeroEnergyVerification": "Press black power button and verify spindle does not power on when mill switch is toggled."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses",
+          "Closed-Toe Shoes",
+          "Hair & Loose Clothing Secured",
+          "NO GLOVES While Spindle is Rotating"
+        ],
+        "hazards": [
+          "Rotating spindle, collet, and cutting tool entanglement hazard",
+          "Flying hot chips and broken cutter ejection",
+          "Crushing/pinch hazard between moving table and saddle"
+        ],
+        "beforeUse": [
+          "Check drawbar engagement and verify collet/tooling is properly seated.",
+          "Set speed via variable speed dial ONLY while spindle is running, or shift Hi-Neutral-Lo range lever ONLY when spindle is completely stopped."
+        ],
+        "duringUse": [
+          "Verify quill lock and table locks are set appropriately for the cut.",
+          "Confirm climb vs. conventional milling setup (use conventional milling on manual leadscrews to prevent cutter grab).",
+          "Never reach around a rotating cutter or adjust workpiece while spindle is turning."
+        ],
+        "afterUse": [
+          "Return machine to showroom condition (brush chips with shop brush—NEVER use compressed air).",
+          "Home and wipe down table, ways, and vise.",
+          "Remove collets/tooling from spindle and return to designated tool rack."
+        ],
+        "emergencyProtocol": "Turn rotary drum switch to center OFF position or disengage main disconnect lever on right fence post; notify Lab Supervisor or SRA immediately."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Fill one-shot lubricator (Mobil Vactra No. 2) & verify oil film on X/Y/Z ways",
+          "Check quill feed engagement & clock spring return tension",
+          "Measure & log X/Y leadscrew backlash (0.000\")",
+          "Check X/Y/Z gib strip play and adjust if excessive",
+          "Inspect vari-speed belt/pulley wear & check backgear noise",
+          "Stone table T-slots to remove burrs or dings"
+        ],
+        "metrics": [
+          { "key": "x_backlash", "label": "X-Axis Backlash (in)", "placeholder": "0.002", "unit": "in" },
+          { "key": "y_backlash", "label": "Y-Axis Backlash (in)", "placeholder": "0.003", "unit": "in" },
+          { "key": "way_lube_level", "label": "One-Shot Lube Level (%)", "placeholder": "100", "unit": "%" }
+        ]
+      }
+    },
+    {
+      "id": "MAC-03",
+      "name": "Bridgeport Series I Manual Knee Mill #3",
+      "osuEquipmentId": "003",
+      "zone": "Zone 1: Manual Machining (MAC)",
+      "zoneCode": "MAC",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-05",
+      "nextPmDue": "2026-11-05",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Quill clock spring tension verified; DRO & ways inspected.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Turn power switch to middle OFF position (Top left front face).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V AC",
+            "isolationLocation": "Switch box to the right of Mill on fence post.",
+            "isolationProcedure": "Pull switch box lever down to OFF and install LOTO lock (from machine shop cage or welding room) through lever."
+          }
+        ],
+        "storedEnergyRelief": "Allow spindle and drive pulley assembly to coast to a complete stop.",
+        "zeroEnergyVerification": "Press black power button and verify spindle does not power on when mill switch is toggled."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses",
+          "Closed-Toe Shoes",
+          "Hair & Loose Clothing Secured",
+          "NO GLOVES While Spindle is Rotating"
+        ],
+        "hazards": [
+          "Rotating spindle, collet, and cutting tool entanglement hazard",
+          "Flying hot chips and broken cutter ejection",
+          "Crushing/pinch hazard between moving table and saddle"
+        ],
+        "beforeUse": [
+          "Check drawbar engagement and verify collet/tooling is properly seated.",
+          "Set speed via variable speed dial ONLY while spindle is running, or shift Hi-Neutral-Lo range lever ONLY when spindle is completely stopped."
+        ],
+        "duringUse": [
+          "Verify quill lock and table locks are set appropriately for the cut.",
+          "Confirm climb vs. conventional milling setup (use conventional milling on manual leadscrews to prevent cutter grab).",
+          "Never reach around a rotating cutter or adjust workpiece while spindle is turning."
+        ],
+        "afterUse": [
+          "Return machine to showroom condition (brush chips with shop brush—NEVER use compressed air).",
+          "Home and wipe down table, ways, and vise.",
+          "Remove collets/tooling from spindle and return to designated tool rack."
+        ],
+        "emergencyProtocol": "Turn rotary drum switch to center OFF position or disengage main disconnect lever on right fence post; notify Lab Supervisor or SRA immediately."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Fill one-shot lubricator (Mobil Vactra No. 2) & verify oil film on X/Y/Z ways",
+          "Check quill feed engagement & clock spring return tension",
+          "Measure & log X/Y leadscrew backlash (0.000\")",
+          "Check X/Y/Z gib strip play and adjust if excessive",
+          "Inspect vari-speed belt/pulley wear & check backgear noise",
+          "Stone table T-slots to remove burrs or dings"
+        ],
+        "metrics": [
+          { "key": "x_backlash", "label": "X-Axis Backlash (in)", "placeholder": "0.002", "unit": "in" },
+          { "key": "y_backlash", "label": "Y-Axis Backlash (in)", "placeholder": "0.002", "unit": "in" },
+          { "key": "way_lube_level", "label": "One-Shot Lube Level (%)", "placeholder": "100", "unit": "%" }
+        ]
+      }
+    },
+    {
+      "id": "MAC-04",
+      "name": "Sharp Manual Engine Lathe",
+      "osuEquipmentId": "SHARP-LATHE-01",
+      "zone": "Zone 1: Manual Machining (MAC)",
+      "zoneCode": "MAC",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-06",
+      "nextPmDue": "2026-11-06",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Headstock sight glass full; foot brake interlock tested and responsive.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Power switch to OFF position (Bottom left front face).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V AC",
+            "isolationLocation": "Disconnect switch to the left of machine on wall.",
+            "isolationProcedure": "Pull switch box lever down to OFF position & install LOTO lock through lever."
+          }
+        ],
+        "storedEnergyRelief": "Depress foot brake and allow chuck/spindle to come to a complete standstill.",
+        "zeroEnergyVerification": "Press black power button / verify spindle does not power on."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses",
+          "NO GLOVES (Rotating Chuck/Stock Entanglement Hazard)",
+          "No Rings, Watches, or Jewelry",
+          "Closed-Toe Shoes & Secured Hair/Clothing"
+        ],
+        "hazards": [
+          "Severe entanglement hazard on rotating chuck, stock, and leadscrew",
+          "Flying chuck key projectile hazard if left in chuck",
+          "Carriage crash into rotating chuck jaws"
+        ],
+        "beforeUse": [
+          "Test emergency foot brake before starting spindle.",
+          "Verify 3-jaw/4-jaw/collet chuck clamping and REMOVE CHUCK KEY IMMEDIATELY from chuck before touching any controls.",
+          "Rotate chuck by hand to verify carriage and compound toolpost clearance."
+        ],
+        "duringUse": [
+          "Keep hands clear of rotating chuck and leadscrew at all times.",
+          "Use emergency foot brake for immediate stopping.",
+          "Never file, sand, or measure rotating workpieces without SRA supervision."
+        ],
+        "afterUse": [
+          "Clean bedways and swarf pan with brush (never use compressed air).",
+          "Disengage power feed and half-nut levers.",
+          "Return all tooling, centers, and chuck keys to showroom condition."
+        ],
+        "emergencyProtocol": "Stomp emergency foot brake immediately and hit red E-Stop button; notify Lab Supervisor or SRA."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Check headstock sight glass, apron, and quick-change gearbox oil levels",
+          "Clean bedway felt wipers and apply way oil (Mobil Vactra No. 2)",
+          "Check tailstock quill alignment & lock clamping force",
+          "Lubricate chuck scroll & check radial runout",
+          "Test emergency foot brake & limit switch interlock"
+        ],
+        "metrics": [
+          { "key": "chuck_runout", "label": "Chuck Runout (in)", "placeholder": "0.0015", "unit": "in" },
+          { "key": "headstock_oil", "label": "Headstock Sight Glass", "placeholder": "Full / Clear", "unit": "status" }
+        ]
+      }
+    },
+    {
+      "id": "CNC-01",
+      "name": "KIA 3-Axis CNC Vertical Machining Center",
+      "osuEquipmentId": "01168375",
+      "zone": "Zone 2: CNC Machining (CNC)",
+      "zoneCode": "CNC",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-08",
+      "nextPmDue": "2026-11-08",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Coolant at 9.0% Brix; SMTC arm and way covers cleaned.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Depress red OFF button (Front Control Panel), turn main power switch counterclockwise to OFF (Right Rear Control Panel).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V AC 3-Phase",
+            "isolationLocation": "Circuit panel on North Wall (Breaker 1-3-5).",
+            "isolationProcedure": "Switch Breaker 1-3-5 to OFF and apply Snap-On Circuit Breaker Lockout with LOTO padlock and tag."
+          }
+        ],
+        "storedEnergyRelief": "Ensure Z-axis head is resting in safe position and spindle is completely stopped.",
+        "zeroEnergyVerification": "Turn power switch on left side to ON and verify no lights illuminate on control pendant."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses",
+          "Closed-Toe Shoes",
+          "NO GLOVES When Loading Spindle or Near Rotating Parts"
+        ],
+        "hazards": [
+          "Side-Mount Tool Changer (SMTC) loses 3\" Z-clearance during tool swing",
+          "High-speed flying tool/workpiece ejection hazard (8,000 RPM inline direct-drive spindle, 600 IPM rapids)",
+          "Automatic axis motion during program execution"
+        ],
+        "beforeUse": [
+          "Machine Specs: 8,000 RPM inline direct-drive spindle, 600 IPM rapids.",
+          "Do NOT operate above 6,000 RPM without balanced tooling.",
+          "Verify tool length offsets (Z-heights) and workholding clearance (account for 3\" Z-drop during SMTC swing)."
+        ],
+        "duringUse": [
+          "Keep one hand on E-Stop during first run prove-out at 5% rapid override.",
+          "Keep enclosure doors closed during all machining operations.",
+          "Monitor Distance-To-Go readout before tool approach."
+        ],
+        "afterUse": [
+          "Brush chips ONLY when machine is powered down.",
+          "NEVER use compressed air inside enclosure (forces particulates under way covers and into spindle bearings).",
+          "Wipe down windows and return toolholders to rack."
+        ],
+        "emergencyProtocol": "Slam red E-Stop mushroom button on front CNC control pendant immediately; do not open doors until spindle comes to a full stop."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Check way lube reservoir level & delivery pressure",
+          "Inspect spindle taper condition & drawbar retention force",
+          "Refractometer coolant concentration check (Target: 8–10% Brix)",
+          "Clean telescoping way covers & Side-Mount Tool Changer (SMTC) arm",
+          "Clean electrical cabinet cooling filters",
+          "Drain pneumatic water separator bowl"
+        ],
+        "metrics": [
+          { "key": "coolant_brix", "label": "Coolant Concentration (% Brix)", "placeholder": "9.0", "unit": "% Brix" },
+          { "key": "air_pressure", "label": "Pneumatic Supply Pressure (PSI)", "placeholder": "85", "unit": "PSI" }
+        ]
+      }
+    },
+    {
+      "id": "CNC-02",
+      "name": "Haas VF-2SS CNC Vertical Machining Center",
+      "osuEquipmentId": "01191439",
+      "zone": "Zone 2: CNC Machining (CNC)",
+      "zoneCode": "CNC",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-10",
+      "nextPmDue": "2026-11-10",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "TRIM MicroSol 585XT at 9.2% Brix; CAT40 taper & drawbar inspected.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Depress E-Stop and Red Power Off button (Front right control panel).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V AC 3-Phase",
+            "isolationLocation": "Main circuit breaker on rear cabinet / wall disconnect.",
+            "isolationProcedure": "Switch Main circuit breaker to OFF position with individualized lock & tag; WAIT 5 MINUTES for vector drive capacitors to dissipate and verify vector drive voltage LED is completely OFF."
+          },
+          {
+            "type": "Pneumatic",
+            "magnitude": "80 PSI Compressed Air",
+            "isolationLocation": "Behind machine on wall air drop.",
+            "isolationProcedure": "Turn red handle counterclockwise to OFF, bleed bottom filter valve, and verify pressure gauge reads 0 PSI."
+          }
+        ],
+        "storedEnergyRelief": "Mandatory 5-minute wait for vector drive capacitor discharge (verify LED off) + pneumatic line bleed to 0 PSI.",
+        "zeroEnergyVerification": "Press [POWER ON] on pendant and verify with non-contact AC voltage detector at input terminals + confirm air gauge reads 0 PSI."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses",
+          "Closed-Toe Shoes",
+          "NO GLOVES During Tool Loading or Spindle Operation"
+        ],
+        "hazards": [
+          "12,000 RPM high-speed spindle and 1,400 IPM high-velocity rapids",
+          "Unbalanced toolholder ejection at >=10,000 RPM",
+          "High-pressure coolant and sharp swarf"
+        ],
+        "beforeUse": [
+          "Run 20-minute Spindle Warm-Up program if machine has been idle >24 hours.",
+          "Do NOT run >=10,000 RPM (requires Grade G2.5 balanced toolholders not stocked in general crib).",
+          "Clean coolant tank intake filter & chip tray screen before starting cycle."
+        ],
+        "duringUse": [
+          "Perform first-run verification at 5% rapid override with hand on E-Stop and Single Block + Distance-To-Go active.",
+          "Keep enclosure doors closed and interlock engaged."
+        ],
+        "afterUse": [
+          "Wash down interior ONLY with E-Stop depressed.",
+          "Shake out cloth net primary coolant tray filter into chip bin.",
+          "NEVER use compressed air inside enclosure."
+        ],
+        "emergencyProtocol": "Depress E-Stop immediately; report any crash, alarm code, or tool breakage to Lab Supervisor before resetting."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Refractometer coolant concentration (Target 8–10% Brix, TRIM MicroSol 585XT) & pH check",
+          "Verify Haas way lube grease/oil level & pneumatic supply pressure (85+ PSI)",
+          "Wipe CAT40 spindle taper & check drawbar retention force",
+          "Clean chip auger trough & coolant strainer screens",
+          "Clean vector drive cabinet air filters"
+        ],
+        "metrics": [
+          { "key": "coolant_brix", "label": "TRIM MicroSol 585XT (% Brix)", "placeholder": "9.2", "unit": "% Brix" },
+          { "key": "coolant_ph", "label": "Coolant pH", "placeholder": "9.1", "unit": "pH" },
+          { "key": "pneumatic_psi", "label": "Regulator Pressure (PSI)", "placeholder": "88", "unit": "PSI" }
+        ]
+      }
+    },
+    {
+      "id": "CNC-03",
+      "name": "Hurco CNC Turning Center / Lathe",
+      "osuEquipmentId": "HURCO-CNC-01",
+      "zone": "Zone 2: CNC Machining (CNC)",
+      "zoneCode": "CNC",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-09",
+      "nextPmDue": "2026-11-09",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Hydraulic chuck pressure verified; turret indexing and coolant checked.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Aux/Menu -> Utility Screen -> Shutdown Control on pendant, then Master Power to OFF (Left rear of machine).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V AC 3-Phase",
+            "isolationLocation": "Breaker switch on wall behind machine.",
+            "isolationProcedure": "Turn wall breaker switch to OFF and apply LOTO padlock & tag."
+          },
+          {
+            "type": "Pneumatic",
+            "magnitude": "80 PSI Compressed Air",
+            "isolationLocation": "Behind machine on wall.",
+            "isolationProcedure": "Turn red handle counterclockwise to OFF, open bottom filter bleed valve, and verify gauge reads 0 PSI."
+          }
+        ],
+        "storedEnergyRelief": "Bleed pneumatic filter bowl valve to 0 PSI and allow hydraulic accumulator pressure to bleed down.",
+        "zeroEnergyVerification": "Verify master power switch and pendant controls do not boot machine; confirm air gauge reads 0 PSI."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses",
+          "Closed-Toe Shoes",
+          "No Loose Clothing or Jewelry",
+          "NO GLOVES Near Rotating Chuck"
+        ],
+        "hazards": [
+          "High-RPM hydraulic chuck part ejection if jaw stroke or clamping pressure is incorrect",
+          "Turret index collision with tailstock or chuck jaws"
+        ],
+        "beforeUse": [
+          "Verify hydraulic chuck clamping pressure, jaw stroke limits, and turret tool clearances.",
+          "Check Z-zero and X-offset values before closing door."
+        ],
+        "duringUse": [
+          "First-run prove-out at 5% rapid override with hand on E-Stop and enclosure door closed.",
+          "Listen for abnormal chatter or load meter spikes."
+        ],
+        "afterUse": [
+          "Clear swarf with brush/washdown with machine completely stopped.",
+          "Home turret and power down via Utility Screen before turning off main breaker."
+        ],
+        "emergencyProtocol": "Depress red E-Stop button on Hurco control console; wait for chuck and turret to stop completely."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Check coolant concentration (Target: 8–10% Brix)",
+          "Verify hydraulic chuck clamping pressure & way lube reservoir level",
+          "Inspect turret indexing alignment & coolant seals",
+          "Clean bedway wipers and chip conveyor",
+          "Drain pneumatic air filter moisture trap"
+        ],
+        "metrics": [
+          { "key": "coolant_brix", "label": "Coolant Concentration (% Brix)", "placeholder": "8.8", "unit": "% Brix" },
+          { "key": "chuck_psi", "label": "Hydraulic Chuck Pressure (PSI)", "placeholder": "350", "unit": "PSI" }
+        ]
+      }
+    },
+    {
+      "id": "WLD-01",
+      "name": "Lincoln Precision TIG 275 Welder",
+      "osuEquipmentId": "TIG-275-01",
+      "zone": "Zone 3: Welding & Thermal Processing (WLD)",
+      "zoneCode": "WLD",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-11",
+      "nextPmDue": "2026-11-11",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Argon regulator leak-tested; torch cooler flow and foot pedal verified.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Extinguish arc, allow post-flow timer to cool tungsten, toggle main power switch OFF (Front Panel Upper Right).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V AC (High-Capacitance Inverter/Transformer)",
+            "isolationLocation": "Wall switch box disconnect behind welder.",
+            "isolationProcedure": "Pull wall switch box lever down to OFF & install LOTO lock; WAIT AT LEAST 5 MINUTES for internal capacitors to dissipate."
+          },
+          {
+            "type": "Pneumatic (Shielding Gas)",
+            "magnitude": "2,500 PSI Compressed Argon Cylinder",
+            "isolationLocation": "Argon cylinder top valve & regulator assembly.",
+            "isolationProcedure": "Turn cylinder top valve clockwise until all yellow (no red showing), remove gas line from regulator, depress foot pedal to purge solenoids/lines, and verify both regulator gauges read 0 PSI."
+          }
+        ],
+        "storedEnergyRelief": "Wait >= 5 minutes for capacitor bleed; depress foot pedal with gas disconnected to purge trapped Argon pressure.",
+        "zeroEnergyVerification": "Verify display is dark and cooling fan does not engage when power switch is toggled; confirm both regulator gauges read 0 PSI."
+      },
+      "sop": {
+        "noGlovesWarning": false,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses Under Shade 10–13 Auto-Darkening Helmet",
+          "Dry Hole-Free Leather TIG Gloves",
+          "Flame-Resistant (FR) Cotton/Leather Apparel",
+          "Active Fume Extraction Arm Positioned Within 12\""
+        ],
+        "hazards": [
+          "Intense UV/IR arc radiation (arc eye & skin burns)",
+          "High-frequency (HF) start electrical shock hazard",
+          "2,500 PSI compressed gas cylinder hazard & Argon asphyxiation in confined spaces"
+        ],
+        "beforeUse": [
+          "Inspect torch collet, gas lens, ceramic cup, and ground tungsten electrode.",
+          "Verify work lead (ground clamp) is securely clamped to clean bare metal.",
+          "Turn on Argon cylinder valve slowly and set flow rate (15–25 CFH)."
+        ],
+        "duringUse": [
+          "Keep welding curtains closed to protect bystanders from arc flash.",
+          "Observe machine duty cycle ratings and keep torch cable away from hot weldment."
+        ],
+        "afterUse": [
+          "Allow post-flow Argon to cool tungsten before lifting torch.",
+          "Close Argon bottle valve completely (all yellow), purge line via foot pedal, and power machine OFF.",
+          "Coil torch and ground leads neatly on rack."
+        ],
+        "emergencyProtocol": "Release foot pedal immediately, switch main power OFF, close Argon cylinder valve, and alert Lab Supervisor."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Leak-test Argon regulator, flowmeter, and gas hoses with soapy water",
+          "Inspect torch collets, gas lenses, ceramic cups, and back caps for cracks/arcing",
+          "Check water cooler coolant level & return flow rate",
+          "Test foot pedal amperage potentiometer & High-Frequency (HF) start",
+          "Check work lead clamp & terminal lug tightness"
+        ],
+        "metrics": [
+          { "key": "argon_psi", "label": "Cylinder Tank Pressure (PSI)", "placeholder": "1800", "unit": "PSI" },
+          { "key": "gas_flow_cfh", "label": "Regulator Flow Setting (CFH)", "placeholder": "20", "unit": "CFH" }
+        ]
+      }
+    },
+    {
+      "id": "WLD-02",
+      "name": "Lincoln Power MIG 255C Welder",
+      "osuEquipmentId": "NC090435",
+      "zone": "Zone 3: Welding & Thermal Processing (WLD)",
+      "zoneCode": "WLD",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-11",
+      "nextPmDue": "2026-11-11",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "MIG liner blown out; contact tip and nozzle cleaned; C25 flow set to 30 CFH.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Extinguish arc, toggle main power switch OFF (Front Panel Bottom Left), close shielding gas cylinder valve (Rear).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V AC",
+            "isolationLocation": "Wall switch box disconnect.",
+            "isolationProcedure": "Pull wall switch box lever down to OFF & install LOTO lock; WAIT 5 MINUTES for internal capacitors to dissipate."
+          },
+          {
+            "type": "Pneumatic (Shielding Gas)",
+            "magnitude": "2,500 PSI Compressed Argon/CO2 (C25)",
+            "isolationLocation": "Rear cylinder top valve & regulator.",
+            "isolationProcedure": "Turn bottle valve clockwise until all yellow, disconnect gas line, pull MIG trigger to purge lines, and verify regulator gauges read 0 PSI."
+          }
+        ],
+        "storedEnergyRelief": "5-minute capacitor bleed wait + pull MIG trigger to purge residual gas line pressure & release wire drive roll tension.",
+        "zeroEnergyVerification": "Verify digital wire speed/voltage displays stay dark when power switch is toggled; confirm regulator gauges read 0 PSI."
+      },
+      "sop": {
+        "noGlovesWarning": false,
+        "ppe": [
+          "Shade 10–13 Welding Helmet + ANSI Z87.1 Safety Goggles",
+          "Dry Heavy Leather MIG Gloves",
+          "Flame-Resistant (FR) Clothing (No Open Pockets or Cuffs)",
+          "Fume Extraction Active"
+        ],
+        "hazards": [
+          "Hot spatter, slag burns, and UV/IR arc radiation",
+          "Powered wire feed pinch/puncture hazard at drive rolls and gun tip",
+          "Thermal overload if exceeding 40% duty cycle at 250A"
+        ],
+        "beforeUse": [
+          "Check wire drive roll tension and liner alignment.",
+          "Verify DC+ polarity for solid wire with gas (or DC- for flux-core).",
+          "Open C25 gas cylinder slowly and set gas flow to 25–35 CFH."
+        ],
+        "duringUse": [
+          "Follow the 4-inch hand clearance rule from weld zone.",
+          "Maintain 1/4\"–3/8\" wire stick-out.",
+          "Respect 40% duty cycle at 250A (if thermal overload trips, let cooling fan run at idle—do not cycle power)."
+        ],
+        "afterUse": [
+          "Shut power switch OFF, close gas bottle valve tightly, pull trigger to purge gas line, and coil leads on hangers."
+        ],
+        "emergencyProtocol": "Release MIG gun trigger, turn main power switch OFF, and close gas cylinder valve."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Leak-test C25 Argon/CO2 regulator and gas hoses",
+          "Blow out MIG gun cable liner with dry compressed air",
+          "Clean anti-spatter or replace contact tip, gas diffuser, and nozzle",
+          "Inspect wire drive rolls, guide tube, and tensioner mechanism",
+          "Check ground clamp cable insulation and lug torque"
+        ],
+        "metrics": [
+          { "key": "c25_tank_psi", "label": "C25 Cylinder Pressure (PSI)", "placeholder": "1650", "unit": "PSI" },
+          { "key": "flow_cfh", "label": "Shielding Gas Flow (CFH)", "placeholder": "30", "unit": "CFH" }
+        ]
+      }
+    },
+    {
+      "id": "WLD-03",
+      "name": "CNC Plasma Table & Hand Plasma Station",
+      "osuEquipmentId": "PLASMA-CNC-01",
+      "zone": "Zone 3: Welding & Thermal Processing (WLD)",
+      "zoneCode": "WLD",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-12",
+      "nextPmDue": "2026-11-12",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Water table level full; desiccant air dryer & consumables inspected.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Turn off CNC controller & plasma power supply switch, close compressed air drop valve.",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V AC",
+            "isolationLocation": "Wall disconnect switch behind plasma power supply.",
+            "isolationProcedure": "Pull wall disconnect switch lever to OFF and install LOTO padlock & tag."
+          },
+          {
+            "type": "Pneumatic",
+            "magnitude": "100 PSI Shop Compressed Air",
+            "isolationLocation": "Wall air supply ball valve & filter/regulator.",
+            "isolationProcedure": "Close air supply ball valve, disconnect quick-connect airline, and bleed regulator to 0 PSI."
+          }
+        ],
+        "storedEnergyRelief": "Bleed residual compressed air from plasma supply filter/regulator until gauge reads 0 PSI.",
+        "zeroEnergyVerification": "Attempt to power on plasma cutter and CNC controller; verify zero power and 0 PSI on air gauge."
+      },
+      "sop": {
+        "noGlovesWarning": false,
+        "ppe": [
+          "Shade 5–8 Plasma Face Shield / Cutting Glasses",
+          "Leather Welding Gloves & FR Jacket",
+          "Hearing Protection",
+          "Fume / Water Table Downdraft Extraction Active"
+        ],
+        "hazards": [
+          "High-voltage plasma arc (up to 300V DC open-circuit) and molten dross spray",
+          "Automated X/Y CNC gantry pinch/crush hazard",
+          "Hydrogen gas pocket hazard under submerged aluminum on water table"
+        ],
+        "beforeUse": [
+          "Verify water table water level covers slats and check slat condition.",
+          "Inspect torch consumables (swirl ring, electrode, nozzle, retaining cap, shield).",
+          "Verify dry air supply pressure (85–100 PSI) and empty moisture trap."
+        ],
+        "duringUse": [
+          "Keep hands and tools completely clear of X/Y gantry travel during execution.",
+          "Monitor Torch Height Control (THC) and stand near E-Stop."
+        ],
+        "afterUse": [
+          "Power down CNC controller and plasma supply, close air supply valve, and remove cut parts/slag with tongs."
+        ],
+        "emergencyProtocol": "Hit red E-Stop on CNC controller or turn off plasma power supply disconnect immediately."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Clean & wipe X/Y linear guide rails and gear racks/pinions",
+          "Check water table level, pH, & anti-corrosion treatment",
+          "Inspect plasma torch consumables & test THC float switch / ohmic contact",
+          "Drain moisture trap & inspect desiccant air filter beads"
+        ],
+        "metrics": [
+          { "key": "plasma_air_psi", "label": "Supply Air Pressure (PSI)", "placeholder": "95", "unit": "PSI" },
+          { "key": "consumable_cond", "label": "Nozzle / Electrode Condition", "placeholder": "Pass / Clean", "unit": "status" }
+        ]
+      }
+    },
+    {
+      "id": "WLD-04",
+      "name": "Thermal Processing Suite: Blue M Industrial Oven & Muffle Furnace",
+      "osuEquipmentId": "THERM-BM-MF",
+      "zone": "Zone 3: Welding & Thermal Processing (WLD)",
+      "zoneCode": "WLD",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-12",
+      "nextPmDue": "2026-11-12",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "OTP mechanical fail-safe verified; blower bearings quiet; refractory bricks intact.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Blue M Oven: Lower setpoint to 167°F (75°C) and allow circulation fan to run until cooled below 167°F (turning off above 167°F seizes circulation motor bearings!), then toggle power switch OFF (Front lower center). Muffle Furnace: Press RUN key to stop heating program, toggle main power switch OFF.",
+        "energySources": [
+          {
+            "type": "Electrical (Blue M Oven)",
+            "magnitude": "240V AC",
+            "isolationLocation": "Wall switch box disconnect adjacent to Blue M Oven.",
+            "isolationProcedure": "Pull wall switch box lever down to OFF & apply LOTO lock; verify chamber light does not illuminate."
+          },
+          {
+            "type": "Thermal (Blue M Oven)",
+            "magnitude": "Up to 650°F (343°C)",
+            "isolationLocation": "Internal stainless steel heating chamber.",
+            "isolationProcedure": "Allow chamber to cool below 100°F / ambient before performing any internal maintenance."
+          },
+          {
+            "type": "Electrical (Muffle Furnace)",
+            "magnitude": "120V AC",
+            "isolationLocation": "120V power cord & wall receptacle.",
+            "isolationProcedure": "Unplug power cord and secure male plug inside Rotating Electrical Plug Lockout box; verify digital display is dark."
+          },
+          {
+            "type": "Thermal (Muffle Furnace)",
+            "magnitude": "Up to 1,250°C (2,282°F)",
+            "isolationLocation": "Refractory ceramic furnace chamber.",
+            "isolationProcedure": "Keep door closed until internal temp is < 200°C, then crack door slightly to reach ambient room temperature before servicing."
+          }
+        ],
+        "storedEnergyRelief": "Blue M Oven: Mandatory fan-on cooldown < 167°F (75°C) then cool to < 100°F. Muffle Furnace: Closed-door cooldown < 200°C to prevent refractory thermal shock, then cool to ambient.",
+        "zeroEnergyVerification": "Verify Blue M chamber light and Muffle Furnace controller stay completely dark and chamber thermometer reads ambient (<100°F)."
+      },
+      "sop": {
+        "noGlovesWarning": false,
+        "ppe": [
+          "ANSI Z87.1 Safety Goggles / Face Shield",
+          "High-Temperature Insulated Kevlar/Aluminized Gloves",
+          "Flame-Resistant (FR) Lab Coat & Closed-Toe Shoes"
+        ],
+        "hazards": [
+          "Extreme thermal burn and radiant heat hazard (up to 650°F in Blue M, 1,250°C in Muffle Furnace)",
+          "Explosion/fire hazard if flammable solvents, resins, or volatiles are placed inside (units are NON-explosion-proof)",
+          "Thermal burping (superheated air blast) if Blue M door is opened above 200°F",
+          "Blower motor bearing seizure if Blue M power is shut off above 167°F (75°C)"
+        ],
+        "beforeUse": [
+          "Strictly NO flammable solvents, uncured volatiles, or sealed containers inside either chamber.",
+          "Set Over-Temperature Protection (OTP) controller 15°C above main process setpoint."
+        ],
+        "duringUse": [
+          "Follow the '200°F Rule': Do NOT open the Blue M oven door when chamber temperature exceeds 200°F to prevent thermal burping.",
+          "Use long high-temperature tongs when loading/unloading Muffle Furnace."
+        ],
+        "afterUse": [
+          "Mandatory Blue M Cool-Down: Lower setpoint below 167°F (75°C) and keep blower running until chamber drops below 167°F before switching power OFF."
+        ],
+        "emergencyProtocol": "Shut off heating program, disconnect wall switch/plug if safe, keep chamber door CLOSED to contain any smoke/fire, and notify Lab Supervisor."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Inspect door gaskets/latches, airflow diffuser plates, and Muffle Furnace refractory bricks",
+          "Verify Over-Temperature Protection (OTP) mechanical fail-safe trip calibration",
+          "Check circulation blower motor bearing noise on Blue M industrial oven",
+          "Inspect power cords, relays, and Type-K thermocouple leads"
+        ],
+        "metrics": [
+          { "key": "otp_offset_c", "label": "OTP Fail-Safe Offset (°C)", "placeholder": "15", "unit": "°C" },
+          { "key": "blower_status", "label": "Blue M Blower Bearing Check", "placeholder": "Pass / Quiet", "unit": "status" }
+        ]
+      }
+    },
+    {
+      "id": "SAW-01",
+      "name": "Vertical Metal Cutting Bandsaw",
+      "osuEquipmentId": "VSAW-01",
+      "zone": "Zone 4: Cutting, Saws & Drilling (SAW)",
+      "zoneCode": "SAW",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-07",
+      "nextPmDue": "2026-11-07",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Bi-metal blade tensioned; upper/lower carbide guides adjusted.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Press red power switch OFF (Left side).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V AC",
+            "isolationLocation": "240V electrical plug & outlet behind saw.",
+            "isolationProcedure": "Unplug power cable from outlet and install Rotating Electrical Plug Lockout (from shop fence)."
+          }
+        ],
+        "storedEnergyRelief": "Wait for bandsaw wheels and blade to coast to a complete stop; release blade tension before changing blade.",
+        "zeroEnergyVerification": "Turn power switch ON and verify blade does not move."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses",
+          "Closed-Toe Shoes",
+          "NO GLOVES While Feeding Workpiece Near Moving Blade"
+        ],
+        "hazards": [
+          "Exposed vertical saw blade laceration/amputation hazard",
+          "Round stock spinning/kickback if not clamped in V-block",
+          "Gearbox tooth stripping if shifted at high RPM"
+        ],
+        "beforeUse": [
+          "Adjust upper blade guard to within 1/4\" of top of workpiece.",
+          "Verify blade tension and proper SFPM speed for material.",
+          "NEVER shift transmission gear at high RPM (must drop RPM dial as low as possible first)."
+        ],
+        "duringUse": [
+          "Keep hands at least 4 inches away from blade path at all times.",
+          "Use push stick for small stock and a V-block/clamp for ALL round stock.",
+          "Make relief cuts before cutting tight radius curves."
+        ],
+        "afterUse": [
+          "Wait for complete blade coast-down (never brake wheel or blade with hands).",
+          "Sweep and vacuum swarf from table and lower cabinet (no compressed air)."
+        ],
+        "emergencyProtocol": "Hit red OFF paddle switch on left column and step back until blade stops."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Inspect blade teeth/weld integrity and verify blade tension gauge",
+          "Adjust upper/lower carbide blade guides and rear thrust bearings",
+          "Clean lower wheel housing swarf and inspect rubber wheel tires"
+        ],
+        "metrics": [
+          { "key": "blade_tpi", "label": "Installed Blade Pitch (TPI)", "placeholder": "10-14", "unit": "TPI" },
+          { "key": "guide_gap", "label": " Thrust Bearing Clearance (in)", "placeholder": "0.002", "unit": "in" }
+        ]
+      }
+    },
+    {
+      "id": "SAW-02",
+      "name": "Horizontal Wet/Dry Drop Bandsaw",
+      "osuEquipmentId": "747061",
+      "zone": "Zone 4: Cutting, Saws & Drilling (SAW)",
+      "zoneCode": "SAW",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-07",
+      "nextPmDue": "2026-11-07",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Hydraulic downfeed rate verified; auto-shutoff switch tested.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Turn power switch to OFF position (Front right face).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V AC",
+            "isolationLocation": "Power switch & 240V wall outlet.",
+            "isolationProcedure": "Turn switch down to OFF, unplug machine from outlet, and install Rotating Electrical Plug Lockout on power cable."
+          }
+        ],
+        "storedEnergyRelief": "Lower saw bow head fully onto horizontal rest stop and close hydraulic feed valve.",
+        "zeroEnergyVerification": "Turn power switch ON and verify blade does not move."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses",
+          "Closed-Toe Shoes (Steel-Toe Recommended for Heavy Bar Stock)",
+          "Leather Gloves ONLY While Loading Raw Bar Stock (Remove Before Running)"
+        ],
+        "hazards": [
+          "Blade splitting/whipping hazard on right side of machine",
+          "Crushing hazard under dropping saw head or falling cut stock",
+          "Tooth stripping on thin-wall tubing (<1/8\" wall)"
+        ],
+        "beforeUse": [
+          "Minimum stock length is 4 inches (stock under 4\" requires Shop Supervisor/SRA approval & custom fixturing).",
+          "NO thin-wall tubing under 1/8\" wall thickness.",
+          "Verify coolant pump intake is submerged and adjust left blade guard close to soft jaw."
+        ],
+        "duringUse": [
+          "DO NOT stand to the right side of the machine (blade splitting hazard zone).",
+          "Clamp stock securely with soft jaw and vise handwheel.",
+          "Ease saw head down gently into initial cut using hydraulic feed control."
+        ],
+        "afterUse": [
+          "Wait for complete blade stop, release vise carefully so heavy stock does not drop to floor, and clean chips with brush/vacuum."
+        ],
+        "emergencyProtocol": "Hit red E-Stop / OFF switch and close hydraulic downfeed cylinder valve immediately."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Check hydraulic downfeed cylinder feed rate & rod seals",
+          "Check flood coolant level/concentration & clean sump return screen",
+          "Inspect wire chip brush contact against blade teeth",
+          "Verify blade guide bearings & bottom auto-shutoff limit switch"
+        ],
+        "metrics": [
+          { "key": "coolant_brix", "label": "Saw Coolant (% Brix)", "placeholder": "7.5", "unit": "% Brix" },
+          { "key": "shutoff_test", "label": "Bottom Limit Switch Test", "placeholder": "Pass", "unit": "status" }
+        ]
+      }
+    },
+    {
+      "id": "SAW-03",
+      "name": "Abrasive Chop Saw",
+      "osuEquipmentId": "CHOP-01",
+      "zone": "Zone 4: Cutting, Saws & Drilling (SAW)",
+      "zoneCode": "SAW",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-08",
+      "nextPmDue": "2026-11-08",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "14\" abrasive wheel inspected; lower retractable guard moves freely.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Release trigger (Top handle) and allow blade to come to a complete stop.",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "120V AC",
+            "isolationLocation": "120V wall receptacle.",
+            "isolationProcedure": "Unplug cord from wall and install Rotating Electrical Plug Lockout (from LoTo station by exit door)."
+          }
+        ],
+        "storedEnergyRelief": "Wait for abrasive wheel to coast to a complete stop.",
+        "zeroEnergyVerification": "Depress handle trigger to verify zero electrical energy."
+      },
+      "sop": {
+        "noGlovesWarning": false,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses + Face Shield",
+          "Hearing Protection",
+          "Heavy Leather Gloves for Raw Stock Handling Only",
+          "Hair & Loose Clothing Secured"
+        ],
+        "hazards": [
+          "Abrasive wheel shattering if workpiece shifts or binds in cut",
+          "High-velocity hot spark stream fire hazard",
+          "Severe burn hazard on freshly cut steel edges"
+        ],
+        "beforeUse": [
+          "Verify retractable lower guard moves freely without sticking.",
+          "Inspect abrasive wheel for cracks, chips, or excessive wear.",
+          "Clamp ALL stock securely in vise (NEVER hold stock by hand)."
+        ],
+        "duringUse": [
+          "Keep hands >= 4 inches away from blade path.",
+          "Aim spark deflector away from trash bins and flammables.",
+          "Feed down with steady moderate pressure—do not force or twist wheel."
+        ],
+        "afterUse": [
+          "Let abrasive blade coast to a complete stop before raising saw head.",
+          "Allow hot cut stock to cool or handle with pliers/leather gloves."
+        ],
+        "emergencyProtocol": "Release trigger immediately and keep head lowered until wheel stops spinning."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Inspect 14\" abrasive wheel for cracks, glazing, and minimum wear diameter",
+          "Check pivot hinge play & head return spring tension",
+          "Inspect vise screw threads & quick-release nut engagement",
+          "Verify lower retractable safety guard operation"
+        ],
+        "metrics": [
+          { "key": "wheel_dia_in", "label": "Abrasive Wheel Diameter (in)", "placeholder": "13.5", "unit": "in" }
+        ]
+      }
+    },
+    {
+      "id": "SAW-04",
+      "name": "10\" Bevel Compound Miter Saw & JET Industrial Drill Presses",
+      "osuEquipmentId": "MITER-JET-DP",
+      "zone": "Zone 4: Cutting, Saws & Drilling (SAW)",
+      "zoneCode": "SAW",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-08",
+      "nextPmDue": "2026-11-08",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "JET drill press quill return springs and chuck jaws inspected; miter guard checked.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Miter Saw: Release handle trigger. JET Drill Press: Toggle front main power switch OFF.",
+        "energySources": [
+          {
+            "type": "Electrical (Miter Saw & Drill Press)",
+            "magnitude": "120V AC",
+            "isolationLocation": "120V wall power cords.",
+            "isolationProcedure": "Unplug from wall and secure male plug inside Rotating Electrical Plug Lockout box; wait for spindle/blade coast-down."
+          },
+          {
+            "type": "Mechanical (JET Drill Press)",
+            "magnitude": "50 lbs Stored Spring Tension",
+            "isolationLocation": "Quill Return Spring housing (left side of head).",
+            "isolationProcedure": "Retract quill fully upward to top dead center before servicing."
+          }
+        ],
+        "storedEnergyRelief": "Wait for complete spindle/blade stop; retract drill press quill fully upward to relieve spring tension.",
+        "zeroEnergyVerification": "Depress Miter Saw trigger and toggle Drill Press switch ON to verify zero electrical energy."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses",
+          "NO GLOVES on Drill Press (Rotating Spindle Entanglement Hazard)",
+          "Hearing Protection",
+          "Hair & Loose Sleeves Secured"
+        ],
+        "hazards": [
+          "Drill press entanglement hazard if wearing gloves or loose sleeves",
+          "Workpiece helicopter spin if not clamped to drill press table",
+          "Chuck key ejection if left in drill chuck"
+        ],
+        "beforeUse": [
+          "Clamp ALL workpieces securely to table or drill press vise.",
+          "Remove chuck key immediately after tightening bit.",
+          "Verify drill speed pulley setting matches drill bit diameter and material."
+        ],
+        "duringUse": [
+          "Keep hands >= 4 inches from rotating blade or drill bit.",
+          "Back out drill bit periodically to clear long stringy chips."
+        ],
+        "afterUse": [
+          "Never brake rotating spindle or chuck by hand.",
+          "Brush chips from drill table and return drill bits to index."
+        ],
+        "emergencyProtocol": "Flip front paddle switch OFF or release trigger immediately."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Check miter saw angle detents & lower blade guard retraction",
+          "Inspect JET drill press spindle quill runout & chuck jaws",
+          "Check drill press V-belt condition and pulley tension",
+          "Lubricate table elevation rack/worm gear & check quill return spring tension"
+        ],
+        "metrics": [
+          { "key": "quill_runout", "label": "Drill Quill Runout (in)", "placeholder": "0.0015", "unit": "in" }
+        ]
+      }
+    },
+    {
+      "id": "FAB-01",
+      "name": "General International 15-015M1 6\"x48\" Belt / 12\" Disc Sander",
+      "osuEquipmentId": "15-015M1",
+      "zone": "Zone 5: Fabrication, Sheet Metal & Abrasive Finishing (FAB)",
+      "zoneCode": "FAB",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-09",
+      "nextPmDue": "2026-11-09",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Table-to-belt/disc gap set to 0.050\" (<= 1/16\"); tracking centered.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Red power switch to OFF position (Front face).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "120V AC",
+            "isolationLocation": "Ceiling cord drop plug.",
+            "isolationProcedure": "Unplug cord drop from ceiling receptacle and install Rotating Electrical Plug Lockout."
+          }
+        ],
+        "storedEnergyRelief": "Wait for abrasive belt and 12\" disc to coast to a complete stop.",
+        "zeroEnergyVerification": "Toggle red power switch ON to verify zero electrical energy."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Goggles + Full Face Shield",
+          "Hearing Protection (>90 dB Operating Noise)",
+          "NO GLOVES STRICTLY PROHIBITED (Severe Entanglement Hazard in 1/16\" Table Gap)"
+        ],
+        "hazards": [
+          "Fingers/gloves pulled into >1/16\" gap between work table and abrasive belt/disc",
+          "Workpiece violent upward kickback if sanding on upward-travel (right) side of 12\" disc",
+          "Abrasive dust inhalation and hot spark hazard"
+        ],
+        "beforeUse": [
+          "Verify work table-to-belt and table-to-disc gap is strictly <= 1/16\" (0.0625\").",
+          "Verify abrasive belt tracking and open dust collection blast gates."
+        ],
+        "duringUse": [
+          "Always sand on the DOWNWARD-TRAVEL (LEFT) SIDE of the 12\" disc to press stock onto table and prevent kickback.",
+          "Keep hands >= 4\" away from belt/disc (use push stick for small parts and V-block for round stock).",
+          "NEVER wear gloves while operating sander."
+        ],
+        "afterUse": [
+          "Wait for belt and disc to stop completely before cleaning area."
+        ],
+        "emergencyProtocol": "Hit red front OFF switch immediately; if stock jams in gap, do NOT attempt to free until LOTO is applied."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Check 6\"x48\" belt tracking & spring tensioner mechanism",
+          "Inspect graphite platen pad condition behind belt",
+          "Measure & set work table gap strictly <= 1/16\" (0.0625\") on both belt and 12\" disc",
+          "Empty dust collection trap / spark arrestor bin"
+        ],
+        "metrics": [
+          { "key": "table_gap_in", "label": "Table-to-Belt/Disc Gap (in, max 0.0625)", "placeholder": "0.050", "unit": "in" }
+        ]
+      }
+    },
+    {
+      "id": "FAB-02",
+      "name": "Grizzly G0767 4\"x79\" Tube Notcher, Tennsmith HBU48-16 Hand Brake & Industrial Shear",
+      "osuEquipmentId": "01166873",
+      "zone": "Zone 5: Fabrication, Sheet Metal & Abrasive Finishing (FAB)",
+      "zoneCode": "FAB",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-09",
+      "nextPmDue": "2026-11-09",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Grizzly G0767 belt & roller dies inspected; Tennsmith brake & Shear blades checked.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Tube Notcher: Push large red paddle OFF button (Left side). Shear (ID: 01166873): Push red power button (Right front face). Tennsmith Brake: Lower leaf and clamping handle.",
+        "energySources": [
+          {
+            "type": "Electrical (Grizzly G0767 Tube Notcher)",
+            "magnitude": "120V AC",
+            "isolationLocation": "Ceiling drop cord.",
+            "isolationProcedure": "Unplug ceiling drop cord and apply Rotating Electrical Plug Lockout; depress green start button to verify zero energy."
+          },
+          {
+            "type": "Mechanical (Tennsmith HBU48-16 Hand Brake)",
+            "magnitude": "300 Ft-Lbs Counterweight & Clamping Leaf",
+            "isolationLocation": "Handle / counterweight linkage & upper clamping jaws.",
+            "isolationProcedure": "Apply Chain and LOTO Lock around handle/counterweight area to prevent motion; place spacer stock beneath clamp jaws to relieve stored mechanical energy."
+          },
+          {
+            "type": "Electrical (Industrial Shear - ID: 01166873)",
+            "magnitude": "240V AC",
+            "isolationLocation": "Right-side electrical switch box.",
+            "isolationProcedure": "Turn right-side electrical switch box lever to OFF and install LOTO lock; press black power button to verify zero energy."
+          }
+        ],
+        "storedEnergyRelief": "Place spacer stock beneath Tennsmith brake clamping jaws; wait for Grizzly 5,900 FPM abrasive belt and Shear mechanism to stop.",
+        "zeroEnergyVerification": "Depress green start button on G0767 Notcher and black power button on Shear to verify zero energy; verify Tennsmith chain lock prevents leaf motion."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Goggles + Face Shield",
+          "Hearing Protection",
+          "NO GLOVES When Operating Grizzly G0767 Tube Notcher (5,900 FPM Belt Hazard)"
+        ],
+        "hazards": [
+          "Grizzly G0767: 2 HP motor driving abrasive belt at 5,900 FPM; severe entanglement and thermal burn hazard on notched tubing",
+          "Tennsmith HBU48-16 Brake: 300 ft-lb counterweight swing and finger pinch hazard under box fingers",
+          "Industrial Shear: Guillotine blade amputation hazard behind hold-down guard"
+        ],
+        "beforeUse": [
+          "Grizzly G0767 Notcher: Match grinding mandrel roller precisely to tube OD and lock quick-release vise (0–30° angle).",
+          "Tennsmith Brake & Shear: Never exceed rated mild steel gauge thickness (16 ga on HBU48-16)."
+        ],
+        "duringUse": [
+          "Stand to the side of the Grizzly G0767 during startup.",
+          "Feed tube steadily via carriage handwheel and keep hands >= 4\" from moving belt.",
+          "Allow notched tubing to cool before handling (extreme thermal heat transfer)."
+        ],
+        "afterUse": [
+          "Power down machine, brush away grinding grit/sheet metal offcuts, and return mandrel rollers to rack."
+        ],
+        "emergencyProtocol": "Slam large red paddle OFF button on left side of G0767 Notcher or red stop button on Shear."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Inspect Grizzly G0767 4\"x79\" belt tracking, mandrel roller bearings, and vise cam locks",
+          "Inspect Tennsmith HBU48-16 box fingers, clamping alignment, and counterweight pivot pins",
+          "Inspect Industrial Shear (ID: 01166873) blade clearance gap and hold-down feet"
+        ],
+        "metrics": [
+          { "key": "notcher_belt_cond", "label": "G0767 4\"x79\" Belt Condition", "placeholder": "Good / Centered", "unit": "status" },
+          { "key": "shear_gap_in", "label": "Shear Blade Gap (in)", "placeholder": "0.003", "unit": "in" }
+        ]
+      }
+    },
+    {
+      "id": "FAB-03",
+      "name": "Pedestal Bench Top Grinders & De-burring Station",
+      "osuEquipmentId": "GRIND-PED-01",
+      "zone": "Zone 5: Fabrication, Sheet Metal & Abrasive Finishing (FAB)",
+      "zoneCode": "FAB",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-10",
+      "nextPmDue": "2026-11-10",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Wheels dressed square; tool rest set to 0.050\" (<= 1/16\"); tongue guard <= 1/8\".",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Power switch to OFF position (Front lower center).",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "120V AC",
+            "isolationLocation": "120V electrical cord & plug.",
+            "isolationProcedure": "Unplug grinder and apply Rotating Electrical Plug Lockout to electrical plug."
+          }
+        ],
+        "storedEnergyRelief": "Wait for high-inertia grinding and wire wheels to coast to a complete standstill (1–2 minutes).",
+        "zeroEnergyVerification": "Toggle front power switch ON and verify grinding wheel does not spin."
+      },
+      "sop": {
+        "noGlovesWarning": true,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses + Full Face Shield",
+          "Hearing Protection",
+          "NO GLOVES Near Wire or Stone Wheels (Immediate Snag Hazard)"
+        ],
+        "hazards": [
+          "Workpiece wedging into tool rest gap (>1/16\") causing wheel explosion",
+          "High-velocity wire bristles detaching from de-burring wheel",
+          "Grinding aluminum/brass on aluminum-oxide wheel (loads wheel pores and causes violent shattering)"
+        ],
+        "beforeUse": [
+          "Verify tool rest gap is strictly <= 1/16\" (0.0625\") and upper spark tongue guard is <= 1/8\" (0.125\").",
+          "Inspect stone wheel for cracks or non-ferrous loading."
+        ],
+        "duringUse": [
+          "Stand to the side of the wheel plane during startup for 30 seconds.",
+          "Grind on the FACE of the stone wheel only (NEVER grind on the side of the wheel).",
+          "Quench hot metal frequently in water pot and hold small parts with locking pliers."
+        ],
+        "afterUse": [
+          "Turn switch OFF and let wheels coast down completely."
+        ],
+        "emergencyProtocol": "Flip center toggle switch OFF and step out of wheel plane immediately."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Ring-test and dress grinding wheels square with diamond dresser",
+          "Adjust tool rest gap strictly <= 1/16\" (0.0625\") and spark arrestor tongue guard <= 1/8\" (0.125\")",
+          "Inspect polycarbonate eye shields & check wire wheel arbor nuts"
+        ],
+        "metrics": [
+          { "key": "tool_rest_gap", "label": "Tool Rest Gap (in, max 0.0625)", "placeholder": "0.050", "unit": "in" },
+          { "key": "tongue_guard_gap", "label": "Tongue Guard Gap (in, max 0.125)", "placeholder": "0.100", "unit": "in" }
+        ]
+      }
+    },
+    {
+      "id": "FAB-04",
+      "name": "Abrasive Blast Cabinet & Hydraulic Shop Presses (Enerpac IPH1234 10-Ton & Redline 20-Ton)",
+      "osuEquipmentId": "BLAST-PRESS-10T20T",
+      "zone": "Zone 5: Fabrication, Sheet Metal & Abrasive Finishing (FAB)",
+      "zoneCode": "FAB",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-10",
+      "nextPmDue": "2026-11-10",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Blast window Mylar film replaced; Enerpac GF10P gauge & bed pins verified.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Blast Cabinet: Release trigger, toggle light/dust collector switch OFF (Top), close wall air drop ball valve. Hydraulic Presses: Slowly open hydraulic release valve to retract ram fully.",
+        "energySources": [
+          {
+            "type": "Electrical (Blast Cabinet)",
+            "magnitude": "120V AC",
+            "isolationLocation": "Vacuum / cabinet light power cord.",
+            "isolationProcedure": "Apply Rotating Electrical Plug Lockout over vacuum/light power cord; wait 60 seconds for dust collector impeller to stop; toggle switch ON to verify zero energy."
+          },
+          {
+            "type": "Pneumatic (Blast Cabinet)",
+            "magnitude": "100 PSI Compressed Air",
+            "isolationLocation": "Orange wall air valve & cabinet regulator.",
+            "isolationProcedure": "Turn orange air valve OFF, disconnect airline from regulator, and depress foot pedal/trigger inside cabinet until regulator gauges read 0 PSI."
+          },
+          {
+            "type": "Hydraulic / Mechanical (Enerpac 10T & Redline 20T Presses)",
+            "magnitude": "Up to 10,000 PSI Hydraulic / 20 Tons Force",
+            "isolationLocation": "Hydraulic hand/air pump release valve & H-frame bed support pins.",
+            "isolationProcedure": "Open hydraulic release valve to retract cylinder ram completely (0 PSI on GF10P gauge) and verify both H-frame bed support pins are fully seated."
+          }
+        ],
+        "storedEnergyRelief": "Blast Cabinet: Wait 60s for impeller stop + depress foot pedal to bleed air to 0 PSI. Presses: Retract hydraulic ram until gauge reads 0 PSI.",
+        "zeroEnergyVerification": "Toggle cabinet switch ON (no light/vacuum), confirm air gauge reads 0 PSI, and confirm hydraulic press GF10P gauge reads 0 PSI."
+      },
+      "sop": {
+        "noGlovesWarning": false,
+        "ppe": [
+          "Blast Cabinet: ANSI Z87.1 Safety Glasses + Integrated Cabinet Rubber Gloves",
+          "Hydraulic Presses: ANSI Z87.1 Goggles + Full Face Shield (Mandatory—Ballistic Shatter Hazard) + Steel-Toe Boots"
+        ],
+        "hazards": [
+          "Hydraulic Press: Ballistic part shattering under 10–20 tons of load; high-pressure hydraulic fluid injection hazard from pinhole leaks",
+          "Blast Cabinet: Silicosis/dust inhalation if opened before 30s dwell time; severe slip hazard from spilled glass bead media on shop floor"
+        ],
+        "beforeUse": [
+          "Blast Cabinet: Inspect integrated rubber gloves for holes; turn ON dust collector before blasting; verify air regulator <= 100 PSI.",
+          "Enerpac 10T & Redline 20T Presses: Verify bed support pins are fully seated through both sides of H-frame; inspect hoses, GA2 adapter, and GF10P pressure gauge; use ONLY rated V-blocks/mandrels (NEVER use hardened chrome tool sockets)."
+        ],
+        "duringUse": [
+          "Blast Cabinet: Blast at 45–60° angle away from viewing window and gloves.",
+          "Hydraulic Presses: Strictly obey the 'Center Rule' (align load vertically through center of gravity); stand to the side out of the 'Line of Fire' behind Lexan/mesh shield; STOP IMMEDIATELY if gauge pressure rises without ram movement."
+        ],
+        "afterUse": [
+          "Blast Cabinet: WAIT 30 SECONDS DWELL TIME after blasting before opening cabinet doors; sweep any spilled floor media immediately.",
+          "Hydraulic Presses: Slowly open release valve to retract ram; never inspect hydraulic pinhole leaks with bare hands (use cardboard)."
+        ],
+        "emergencyProtocol": "Presses: Stop pumping immediately, step out of Line of Fire, and slowly crack release valve. Blast Cabinet: Release foot pedal and shut off orange air valve."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Replace blast cabinet viewing window Mylar protector film",
+          "Inspect cabinet rubber gloves, ceramic blast nozzle orifice, and dust collector filter",
+          "Inspect Enerpac RR1010 & Redline 20T hydraulic ram seals and hoses for weeping",
+          "Verify GF10P pressure gauge zero return and inspect H-frame bed pins & arbor plates for bending/deformation"
+        ],
+        "metrics": [
+          { "key": "blast_psi", "label": "Blast Cabinet Regulator (PSI, max 100)", "placeholder": "90", "unit": "PSI" },
+          { "key": "press_gauge_zero", "label": "GF10P Gauge Zero Return", "placeholder": "Pass / 0 PSI", "unit": "status" }
+        ]
+      }
+    },
+    {
+      "id": "FAC-01",
+      "name": "General Shop Safety, LOTO Station, Battery Activity Zone & Paint/Prep Booth",
+      "osuEquipmentId": "FAC-SAFETY-01",
+      "zone": "Zone 6: Facility & Infrastructure (FAC)",
+      "zoneCode": "FAC",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-15",
+      "nextPmDue": "2026-11-15",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "LOTO lock/tag inventory complete; eyewash & Class ABC/D extinguishers verified.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Student Research Assistants (SRAs)",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Turn off Paint/Prep Booth exhaust fan switch; isolate high-voltage battery packs via manual service disconnect (MSD).",
+        "energySources": [
+          {
+            "type": "Electrical / Chemical (EV Battery Zone)",
+            "magnitude": ">55–60V DC High-Voltage Tractive Packs & Li-Ion Cells",
+            "isolationLocation": "Dedicated EV Battery Activity Zone bench & quarantine drum.",
+            "isolationProcedure": "Remove Manual Service Disconnect (MSD), apply insulated HV lockout cover, and verify 0V DC across main busbars with CAT III 1000V multimeter."
+          }
+        ],
+        "storedEnergyRelief": "Wait for HV bus discharge circuit to drop pack voltage < 5V DC; keep Class D & ABC extinguishers at arm's reach.",
+        "zeroEnergyVerification": "Live-Dead-Live voltage verification using rated CAT III/IV digital multimeter."
+      },
+      "sop": {
+        "noGlovesWarning": false,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses (Required Throughout 930 Kinnear Rd Shop)",
+          "EV Battery Zone: Class 0 High-Voltage Insulated Gloves (>55–60V), Face Shield, No Metal Jewelry",
+          "Paint/Prep Booth: Organic Vapor / Particulate Respirator & Nitrile Gloves"
+        ],
+        "hazards": [
+          "High-voltage DC arc flash and Li-Ion thermal runaway fire hazard",
+          "Paint/solvent vapor accumulation if booth exhaust filters are clogged"
+        ],
+        "beforeUse": [
+          "Verify LOTO locks, tags, hasps, and rotating plug lockouts are stocked in machine shop cage and welding room.",
+          "EV Battery Zone: Place insulating bench covers down, remove all jewelry/watches, and verify quarantine container availability per CAR Student Motorsports Battery SOP."
+        ],
+        "duringUse": [
+          "Maintain clear 36\" access around all electrical panels, eyewash stations, and fire extinguishers.",
+          "Never work alone on high-voltage (>55–60V) battery systems."
+        ],
+        "afterUse": [
+          "Return all LOTO devices to master board upon maintenance completion and log in shop portal."
+        ],
+        "emergencyProtocol": "For thermal runaway or fire: Pull fire alarm, evacuate shop, call 911 / OSU Public Safety, and notify Max Wright immediately."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Audit LOTO padlock, hasp, breaker lock, and rotating plug-lock inventory in shop cage & welding room",
+          "Verify weekly/monthly plumbed eyewash station activation & flush tags",
+          "Inspect Class ABC & Class D (combustible metal) fire extinguisher pressure gauges and inspection tags",
+          "Inspect Paint/Prep Booth intake and exhaust arrestor filters"
+        ],
+        "metrics": [
+          { "key": "loto_locks_count", "label": "Available Master LOTO Padlocks", "placeholder": "12", "unit": "locks" },
+          { "key": "eyewash_psi", "label": "Eyewash Flow / Tag Check", "placeholder": "Pass", "unit": "status" }
+        ]
+      }
+    },
+    {
+      "id": "FAC-02",
+      "name": "Shop Compressed Air System & Distribution Drops",
+      "osuEquipmentId": "FAC-AIR-02",
+      "zone": "Zone 6: Facility & Infrastructure (FAC)",
+      "zoneCode": "FAC",
+      "status": "OPERATIONAL",
+      "pmStatus": "COMPLIANT",
+      "lastPmDate": "2026-10-15",
+      "nextPmDue": "2026-11-15",
+      "lastPmTech": "M. Wright",
+      "conditionNote": "Main header holding 105 PSI; auto-drain trap and refrigerated dryer operating normally.",
+      "loto": {
+        "authorizedPersonnel": "Sr. Instructional Lab Supervisor (Max Wright) & Facility Maintenance",
+        "notificationMethod": "Max Wright - Teams / Text Message",
+        "normalShutdown": "Place compressor controller in OFF/STOP mode and close main receiver tank outlet ball valve.",
+        "energySources": [
+          {
+            "type": "Electrical",
+            "magnitude": "240V / 480V 3-Phase",
+            "isolationLocation": "Compressor room wall disconnect switch.",
+            "isolationProcedure": "Pull wall disconnect lever to OFF and install LOTO padlock & tag."
+          },
+          {
+            "type": "Pneumatic",
+            "magnitude": "125 PSI Receiver Tank & 80–100 PSI Distribution Header",
+            "isolationLocation": "Receiver tank isolation valve & manual blowdown drain.",
+            "isolationProcedure": "Close header valve, slowly open tank manual drain valve to bleed stored air pressure, and verify tank & manifold gauges read 0 PSI."
+          }
+        ],
+        "storedEnergyRelief": "Bleed air receiver tank and shop distribution drops completely to 0 PSI before servicing filters or regulators.",
+        "zeroEnergyVerification": "Verify compressor start button is dead and all pressure gauges read 0 PSI."
+      },
+      "sop": {
+        "noGlovesWarning": false,
+        "ppe": [
+          "ANSI Z87.1 Safety Glasses",
+          "Hearing Protection in Compressor Room"
+        ],
+        "hazards": [
+          "High-pressure hose whip if disconnected under load",
+          "Compressed air embolism hazard—NEVER direct compressed air at skin or clothing",
+          "STRICTLY NO compressed air blowdown on manual/CNC mills or lathes"
+        ],
+        "beforeUse": [
+          "Verify local drop regulator is set to machine specification (80–100 PSI) and inspect quick-connect coupler."
+        ],
+        "duringUse": [
+          "Hold hose end firmly when disconnecting self-venting safety couplers."
+        ],
+        "afterUse": [
+          "Close local drop ball valves on welding, plasma, and blast cabinet stations after use."
+        ],
+        "emergencyProtocol": "Close local drop ball valve or main receiver header valve and notify Lab Supervisor."
+      },
+      "monthlyPm": {
+        "checklist": [
+          "Verify automatic condensate drain trap operation on receiver tank",
+          "Check air compressor pump oil sight glass level & V-belt tension",
+          "Inspect refrigerated air dryer dew point indicator",
+          "Check wall drops & regulators (80–100 PSI) across CNC, Welding, and Fab zones for leaks or water bypass"
+        ],
+        "metrics": [
+          { "key": "header_psi", "label": "Main Shop Header Pressure (PSI)", "placeholder": "100", "unit": "PSI" },
+          { "key": "dryer_dewpoint", "label": "Air Dryer Dew Point Status", "placeholder": "Green / Normal", "unit": "status" }
+        ]
+      }
+    }
+  ]
+}

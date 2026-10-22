@@ -1,0 +1,74 @@
+name: "🚨 Machine Condition / Unscheduled Downtime Fault Report"
+description: "Report broken tooling, machine alarms, safety hazards, or LOTO lockouts from the shop floor."
+title: "[FAULT] "
+labels: ["machine-fault", "shop-portal-sync"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### CAR Student Projects Shop (930 Kinnear Rd) — Machine Condition & Fault Ticket
+        Submitting this ticket automatically updates the live shop portal status board (`data/equipment_master.json`) and logs the event in `data/pm_history.json`.
+        **For severe hazards or LOTO lockouts, also notify Max Wright immediately via Microsoft Teams or Text Message.**
+
+  - type: input
+    id: asset_id
+    attributes:
+      label: "Asset ID"
+      description: "Workstation Asset ID (e.g., MAC-01, CNC-02, WLD-01, SAW-02, FAB-01)"
+      placeholder: "MAC-01"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: student_team
+    attributes:
+      label: "Student Team / Course Affiliation"
+      options:
+        - "Baja SAE"
+        - "Formula SAE"
+        - "Buckeye Current"
+        - "EcoCAR"
+        - "Venturi"
+        - "DBR"
+        - "Buckeye Experimental Aeronautics (BExA)"
+        - "Experimental Methods Course"
+        - "Shop Staff / SRA"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity_status
+    attributes:
+      label: "Machine Condition / Severity Level"
+      options:
+        - "DOWN - LOCKED OUT (Red Tag / Do Not Operate)"
+        - "DEGRADED / CAUTION (Yellow Tag / Needs Tooling or Minor Attention)"
+        - "OPERATIONAL (Cleared / Returned to Service)"
+    validations:
+      required: true
+
+  - type: input
+    id: reporter
+    attributes:
+      label: "Reporter Name & OSU Email"
+      placeholder: "Alex Smith (smith.1@osu.edu)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: fault_description
+    attributes:
+      label: "Fault Description, Alarm Code, or Broken Tooling Details"
+      description: "Provide specific details (e.g., Haas VF-2SS Alarm Code, broken endmill/tap size, shielding gas leak, or blade snap)"
+      placeholder: "Describe what happened, current machine state, and whether LOTO has been applied..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: photo_upload
+    attributes:
+      label: "Photo / Evidence Upload (Drag & Drop or Paste Image Below)"
+      description: "Tap or drag-and-drop a photo of the alarm screen, broken tool, or workpiece setup directly into this box."
+      placeholder: "Drag & drop or paste photo here (optional)..."
+    validations:
+      required: false
