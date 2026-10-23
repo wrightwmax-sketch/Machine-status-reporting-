@@ -108,7 +108,16 @@
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 MAC-01: Bridgeport Series I Manual Knee Mill #1",
       "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/MAC-01-SOP.pdf"
+      "sop_related_docs": [
+        {
+          "label": "Manual Milling Machine SOP (Rev. Edit)",
+          "url": "https://drive.google.com/file/d/1nfdvQ-qfQbnG3ZQMs7zT4ZWrQgq7MUWV/view"
+        },
+        {
+          "label": "Manual Milling Machine SOP (Original)",
+          "url": "https://drive.google.com/file/d/1dMShRE4xwKjlGnTPjKyG1PegrorwW4bB/view"
+        }
+      ]
     },
     {
       "id": "MAC-02",
@@ -202,7 +211,16 @@
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 MAC-02: Bridgeport Series I Manual Knee Mill #2",
       "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/MAC-02-SOP.pdf"
+      "sop_related_docs": [
+        {
+          "label": "Manual Milling Machine SOP (Rev. Edit)",
+          "url": "https://drive.google.com/file/d/1nfdvQ-qfQbnG3ZQMs7zT4ZWrQgq7MUWV/view"
+        },
+        {
+          "label": "Manual Milling Machine SOP (Original)",
+          "url": "https://drive.google.com/file/d/1dMShRE4xwKjlGnTPjKyG1PegrorwW4bB/view"
+        }
+      ]
     },
     {
       "id": "MAC-03",
@@ -296,7 +314,16 @@
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 MAC-03: Bridgeport Series I Manual Knee Mill #3",
       "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/MAC-03-SOP.pdf"
+      "sop_related_docs": [
+        {
+          "label": "Manual Milling Machine SOP (Rev. Edit)",
+          "url": "https://drive.google.com/file/d/1nfdvQ-qfQbnG3ZQMs7zT4ZWrQgq7MUWV/view"
+        },
+        {
+          "label": "Manual Milling Machine SOP (Original)",
+          "url": "https://drive.google.com/file/d/1dMShRE4xwKjlGnTPjKyG1PegrorwW4bB/view"
+        }
+      ]
     },
     {
       "id": "MAC-04",
@@ -383,8 +410,7 @@
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 MAC-04: Sharp Manual Engine Lathe",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 MAC-04: Sharp Manual Engine Lathe",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/MAC-04-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     },
     {
       "id": "CNC-01",
@@ -466,13 +492,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/CNC-01-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1LpgODg6s4YCSnd0XT6wnCp5VNLkEiE_o/view",
       "loto_drive_url": "https://drive.google.com/file/d/1ivroXnA3TofddpJYmpIy0EMjJcpCAEuV/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 CNC-01: KIA 3-Axis CNC Vertical Machining Center",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 CNC-01: KIA 3-Axis CNC Vertical Machining Center",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/CNC-01-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     },
     {
       "id": "CNC-02",
@@ -564,13 +589,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/CNC-02-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1soydpUCikb1K8sC6lgNSlwgxeZVJ_Rp3/view",
       "loto_drive_url": "https://drive.google.com/file/d/1l6-JhN_3AnbNZg35Sr07ZHz67gHLC7zF/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 CNC-02: Haas VF-2SS CNC Vertical Machining Center",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 CNC-02: Haas VF-2SS CNC Vertical Machining Center",
       "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/CNC-02-SOP.pdf",
       "loto_related_docs": [
         {
           "label": "HAAS VF-2SS LOTO (Official PDF)",
@@ -664,13 +688,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/CNC-03-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1Pkb2mMHJc5RceiZk9aNj_zU5JVnR3ohQ/view",
       "loto_drive_url": "https://drive.google.com/file/d/12dZMK0GlXGJDDVo3ndlf1An6ylYA08km/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 CNC-03: Hurco CNC Turning Center / Lathe",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 CNC-03: Hurco CNC Turning Center / Lathe",
       "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/CNC-03-SOP.pdf",
       "loto_related_docs": [
         {
           "label": "Hurco CNC Lathe LOTO (Official PDF)",
@@ -767,13 +790,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/WLD-01-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1zvafiAoD31qkmta9Fhh9mA4jnWhvI0nR/view",
       "loto_drive_url": "https://drive.google.com/file/d/1QaTuiS9oEvpqZUFg8hHUTFFSW-B6AGa7/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 WLD-01: Lincoln Precision TIG 275 Welder #1",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 WLD-01: Lincoln Precision TIG 275 Welder #1",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/WLD-01-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     },
     {
       "id": "WLD-02",
@@ -860,13 +882,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/WLD-02-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1zvafiAoD31qkmta9Fhh9mA4jnWhvI0nR/view",
       "loto_drive_url": "https://drive.google.com/file/d/1QaTuiS9oEvpqZUFg8hHUTFFSW-B6AGa7/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 WLD-02: Lincoln Precision TIG 275 Welder #2",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 WLD-02: Lincoln Precision TIG 275 Welder #2",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/WLD-02-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     },
     {
       "id": "WLD-03",
@@ -952,13 +973,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/WLD-03-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/11Da6WReWnba28t9aUsYB10o8nZjhR9Ve/view",
       "loto_drive_url": "https://drive.google.com/file/d/19hI1VZiJecHugF966xbzqn2nG3IbBTVe/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 WLD-03: Lincoln Power MIG 255C Welder",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 WLD-03: Lincoln Power MIG 255C Welder",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/WLD-03-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     },
     {
       "id": "WLD-04",
@@ -1042,13 +1062,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/WLD-04-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/11Da6WReWnba28t9aUsYB10o8nZjhR9Ve/view",
       "loto_drive_url": "https://drive.google.com/file/d/1qMnuCrtp-xk1hkIZVSrUZktcAlnVrQV4/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 WLD-04: CNC Plasma Table & Hand Plasma Station",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 WLD-04: CNC Plasma Table & Hand Plasma Station",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/WLD-04-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     },
     {
       "id": "WLD-05",
@@ -1143,13 +1162,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/WLD-05-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1U9gchVZVqY_WsPb1B5OpFH50yOebKZFu/view",
       "loto_drive_url": "https://drive.google.com/file/d/1qNBZEEvCTinyc4lxHDLjd4DQAVnSsFFK/view",
-      "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 WLD-05: Thermal Processing Suite: Blue M Industrial Oven & Muffle Furnace",
+      "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 WLD-05: Blue M Industrial Oven & Muffle Furnace",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 WLD-05: Blue M Industrial Oven & Muffle Furnace",
       "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/WLD-05-SOP.pdf",
       "loto_related_docs": [
         {
           "label": "Blue M Industrial Oven LOTO",
@@ -1158,6 +1176,16 @@
         {
           "label": "Muffle Furnace LOTO",
           "url": "https://drive.google.com/file/d/17xSPYcHehVGpGzkeZd5RXw_Sh8X5UH5Z/view"
+        }
+      ],
+      "sop_related_docs": [
+        {
+          "label": "Blue M Industrial Oven SOP",
+          "url": "https://drive.google.com/file/d/1U9gchVZVqY_WsPb1B5OpFH50yOebKZFu/view"
+        },
+        {
+          "label": "Muffle Furnace SOP",
+          "url": "https://drive.google.com/file/d/16mS5377K5fszGknqG0XRbeplpnOa-MzZ/view"
         }
       ]
     },
@@ -1242,8 +1270,7 @@
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 SAW-01: Vertical Metal Cutting Bandsaw",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 SAW-01: Vertical Metal Cutting Bandsaw (ID: 747081)",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/SAW-01-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     },
     {
       "id": "SAW-02",
@@ -1321,13 +1348,26 @@
           }
         ]
       },
-      "sop_drive_url": "https://drive.google.com/file/d/1lLlxkQO9eE0nYBJb_74pPMbJ_4f_UnpP/view",
+      "sop_drive_url": "https://drive.google.com/file/d/1Zz-FrB6L7rpREIzLKV68Ivc2W_IWTjCB/view",
       "loto_drive_url": "https://drive.google.com/file/d/1z3fiGtzABSaDMVVUkQKs0-Ctvy6Ke3N_/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 SAW-02: Horizontal Wet/Dry Drop Bandsaw",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 SAW-02: Horizontal Wet/Dry Drop Bandsaw (ID: 747061)",
       "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/SAW-02-SOP.pdf"
+      "sop_related_docs": [
+        {
+          "label": "Drop Saw SOP",
+          "url": "https://drive.google.com/file/d/1Zz-FrB6L7rpREIzLKV68Ivc2W_IWTjCB/view"
+        },
+        {
+          "label": "Drop Saw SOP (Rev. 2)",
+          "url": "https://drive.google.com/file/d/18cljaPNpq3j8CcsWOoek_eRNRXr2ZJqO/view"
+        },
+        {
+          "label": "Bandsaw SOP",
+          "url": "https://drive.google.com/file/d/1lLlxkQO9eE0nYBJb_74pPMbJ_4f_UnpP/view"
+        }
+      ]
     },
     {
       "id": "SAW-03",
@@ -1401,13 +1441,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/SAW-03-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/18cljaPNpq3j8CcsWOoek_eRNRXr2ZJqO/view",
       "loto_drive_url": "https://drive.google.com/file/d/1YBM8s-43H4ZyKzDOTYeZ8eDohkQbGP8A/view",
-      "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 SAW-03: Abrasive Chop Saw",
+      "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 SAW-03: Abrasive Chop / Drop Saw",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 SAW-03: Abrasive Chop Saw",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/SAW-03-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     },
     {
       "id": "SAW-04",
@@ -1477,13 +1516,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/SAW-04-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1fSa9uyoyfRDXQFxbG6ESNWZpIQQaXO5x/view",
       "loto_drive_url": "https://drive.google.com/file/d/1YBM8s-43H4ZyKzDOTYeZ8eDohkQbGP8A/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 SAW-04: 10\" Bevel Compound Miter Saw",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 SAW-04: 10\" Bevel Compound Miter Saw",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/SAW-04-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     },
     {
       "id": "SAW-05",
@@ -1560,13 +1598,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/SAW-05-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/13eQI0swYIQs5Ey9Ohmia8d7cFQbuZZ9h/view",
       "loto_drive_url": "https://drive.google.com/file/d/1y-oNP9XECHc8Jzm1XMMdgHdMngY5JqDn/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 SAW-05: JET Industrial Floor Drill Presses",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 SAW-05: JET Industrial Floor Drill Presses",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/SAW-05-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     },
     {
       "id": "FAB-01",
@@ -1637,13 +1674,26 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/FAB-01-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1q50VmTjLkUpE4R6p-9Ws5eRPhCJ4za0W/view",
       "loto_drive_url": "https://drive.google.com/file/d/1TWQmKh3AM8CFsQ-8hzrJhNhFF_F-f1kS/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 FAB-01: General International 15-015M1 6\"x48\" Belt / 12\" Disc Sander",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 FAB-01: General International 6\"x48\" Belt / 12\" Disc Sander",
       "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/FAB-01-SOP.pdf"
+      "sop_related_docs": [
+        {
+          "label": "General International 15-015M1 Belt-Disc Sander SOP",
+          "url": "https://drive.google.com/file/d/1q50VmTjLkUpE4R6p-9Ws5eRPhCJ4za0W/view"
+        },
+        {
+          "label": "Belt-Disc Sander SOP",
+          "url": "https://drive.google.com/file/d/1IbtXKscqpOG5U-VjDDRNRxWFUIl2SI35/view"
+        },
+        {
+          "label": "General International 15-015M1 Reference",
+          "url": "https://drive.google.com/file/d/1K9GxiapfDKy8MF88zEdhcTKSe5DA2SES/view"
+        }
+      ]
     },
     {
       "id": "FAB-02",
@@ -1712,13 +1762,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/FAB-02-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1_QsD-HiPzj_LNS83mxvR51plDlernEf4/view",
       "loto_drive_url": "https://drive.google.com/file/d/1TWQmKh3AM8CFsQ-8hzrJhNhFF_F-f1kS/view",
-      "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 FAB-02: Grizzly G0767 4\"x79\" Tube & Pipe Notcher",
+      "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 FAB-02: Grizzly G0767 4\"x79\" Abrasive Tube Notcher",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 FAB-02: Grizzly G0767 4\"x79\" Tube & Pipe Notcher",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/FAB-02-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     },
     {
       "id": "FAB-03",
@@ -1798,7 +1847,6 @@
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 FAB-03: Tennsmith HBU48-16 Hand Brake & Industrial Metal Shear",
       "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/FAB-03-SOP.pdf",
       "loto_related_docs": [
         {
           "label": "Industrial Metal Shear LOTO",
@@ -1807,6 +1855,16 @@
         {
           "label": "Tennsmith HBU48-16 Bench Hand Brake LOTO",
           "url": "https://drive.google.com/file/d/1WPCc43vpc90m8GRYjaGcEUzCjdKJSr_z/view"
+        }
+      ],
+      "sop_related_docs": [
+        {
+          "label": "Industrial Metal Shear SOP",
+          "url": "https://drive.google.com/file/d/1Vl3CtQl42ezl3bjswwIKPSa-iJXCsyd2/view"
+        },
+        {
+          "label": "Bench Model Hand Brake SOP",
+          "url": "https://drive.google.com/file/d/1XU7-N0SszYIFPE1i4dn5pcWbDK6cieeX/view"
         }
       ]
     },
@@ -1884,13 +1942,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/FAB-04-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1SlGh6HjH5uKCJx1DmFjoWDAqnGaH7WfV/view",
       "loto_drive_url": "https://drive.google.com/file/d/1J2deJD4_m4i5yJNUQpVjs4CfAXfeqUNT/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 FAB-04: Pedestal Bench Top Grinders & Deburring Station",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 FAB-04: Pedestal Bench Top Grinders & Deburring Station",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/FAB-04-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     },
     {
       "id": "FAB-05",
@@ -1977,13 +2034,26 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/FAB-05-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1PaCA-oZqJjiqndfSirRGje4nzpC5OV4P/view",
       "loto_drive_url": "https://drive.google.com/file/d/1rfNSGo_AwqKWM-mKnpAzy2PJOQYTZAVG/view",
-      "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 FAB-05: Abrasive Blast Cabinet & Hydraulic Shop Presses (Enerpac 10T & Redline 20T)",
+      "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 FAB-05: Abrasive Blast Cabinet & Hydraulic Shop Presses (10T & 20T)",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 FAB-05: Abrasive Blast Cabinet & Hydraulic Shop Presses",
       "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/FAB-05-SOP.pdf"
+      "sop_related_docs": [
+        {
+          "label": "Sandblasting Cabinet SOP",
+          "url": "https://drive.google.com/file/d/1PaCA-oZqJjiqndfSirRGje4nzpC5OV4P/view"
+        },
+        {
+          "label": "Enerpac IPH1234 (10-Ton Hydraulic Press) SOP",
+          "url": "https://drive.google.com/file/d/1lDBka5aVbeEnMJ8dGunUPLrY92UJKTBW/view"
+        },
+        {
+          "label": "Redline 20-Ton Air Hydraulic Shop Press SOP",
+          "url": "https://drive.google.com/file/d/1l_0RC1U675JUV_ZC83sFa1HYe_camzlN/view"
+        }
+      ]
     },
     {
       "id": "FAC-01",
@@ -2058,13 +2128,22 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/FAC-01-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1jI4VN7yB4U6srLbs-pmJjyjB9HvDbG_8/view",
       "loto_drive_url": "https://drive.google.com/file/d/1qMnuCrtp-xk1hkIZVSrUZktcAlnVrQV4/view",
-      "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 FAC-01: Safety Hub, LOTO Lock Center, High-Voltage Battery Bench & Paint/Prep Booth",
+      "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 FAC-01: High-Voltage Battery Pack Building & Safety Hub",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 FAC-01: Safety Hub, LOTO Lock Center & HV Battery Bench",
       "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/FAC-01-SOP.pdf"
+      "sop_related_docs": [
+        {
+          "label": "Battery Pack Building SOP (Rev. 1-4-23)",
+          "url": "https://drive.google.com/file/d/1jI4VN7yB4U6srLbs-pmJjyjB9HvDbG_8/view"
+        },
+        {
+          "label": "Battery Pack Building SOP (Rev. 11-2022)",
+          "url": "https://drive.google.com/file/d/1OyCCuqbWxOztggK0CCMV0QsdkpPTirYu/view"
+        }
+      ]
     },
     {
       "id": "FAC-02",
@@ -2143,13 +2222,12 @@
           }
         ]
       },
-      "sop_drive_url": "docs/sop/FAC-02-SOP.pdf",
+      "sop_drive_url": "https://drive.google.com/file/d/1PaCA-oZqJjiqndfSirRGje4nzpC5OV4P/view",
       "loto_drive_url": "https://drive.google.com/file/d/1qMnuCrtp-xk1hkIZVSrUZktcAlnVrQV4/view",
       "sop_doc_title": "Standard Operating Procedure (SOP) \u2014 FAC-02: Shop Compressed Air System & Distribution Drops",
       "sop_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
       "loto_doc_title": "Lockout / Tagout (LOTO) Procedure \u2014 FAC-02: Shop Compressed Air System & Distribution Drops",
-      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard",
-      "sop_pdf_path": "docs/sop/FAC-02-SOP.pdf"
+      "loto_revision_date": "Rev. 2026-10 \u2022 Official Shop Standard"
     }
   ]
 }

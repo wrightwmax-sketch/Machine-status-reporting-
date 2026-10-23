@@ -586,11 +586,10 @@
       }
     };
 
-    const exactSopPdfPath = asset.sop_pdf_path || `docs/sop/${asset.id}-SOP.pdf`;
     bindDocumentViewer(
       'sop',
-      exactSopPdfPath,
-      asset.sop_drive_url || exactSopPdfPath,
+      asset.sop_pdf_path || '',
+      asset.sop_drive_url || '',
       asset.sop_doc_title || `Standard Operating Procedure (SOP) — ${asset.id}: ${asset.name}`,
       asset.sop_revision_date || 'Rev. 2026-10 • Official Shop Standard'
     );
@@ -603,26 +602,26 @@
       asset.loto_revision_date || 'Rev. 2026-10 • Official Shop Standard'
     );
 
-    // Optional Multi-Unit LOTO Document Switcher (e.g., Blue M Oven + Muffle Furnace, Shear + Brake)
-    const relatedBar = document.getElementById('loto-related-docs-bar');
-    if (relatedBar) {
-      const relatedDocs = Array.isArray(asset.loto_related_docs) ? asset.loto_related_docs : [];
-      if (relatedDocs.length > 1) {
+    const bindRelatedDocsBar = (prefix, relatedDocs, labelPrefix, docRev) => {
+      const relatedBar = document.getElementById(`${prefix}-related-docs-bar`);
+      if (!relatedBar) return;
+      const docs = Array.isArray(relatedDocs) ? relatedDocs : [];
+      if (docs.length > 1) {
         relatedBar.classList.remove('hidden');
         relatedBar.innerHTML =
-          `<span class="text-[11px] font-mono uppercase text-slate-400 font-bold mr-1">Select Unit LOTO:</span>` +
-          relatedDocs
+          `<span class="text-[11px] font-mono uppercase text-slate-400 font-bold mr-1">Select Unit ${prefix.toUpperCase()}:</span>` +
+          docs
             .map(
               (doc, idx) => `
               <button
                 type="button"
-                class="loto-unit-switch-btn px-3 py-1 rounded-lg text-xs font-bold border transition ${
+                class="${prefix}-unit-switch-btn px-3 py-1 rounded-lg text-xs font-bold border transition ${
                   idx === 0
                     ? 'bg-crimson text-white border-red-500'
                     : 'bg-slate-950 text-slate-300 border-slate-700 hover:bg-slate-800'
                 }"
-                data-loto-unit-url="${escapeHtml(doc.url)}"
-                data-loto-unit-label="${escapeHtml(doc.label)}"
+                data-unit-url="${escapeHtml(doc.url)}"
+                data-unit-label="${escapeHtml(doc.label)}"
               >
                 📄 ${escapeHtml(doc.label)}
               </button>
@@ -630,26 +629,26 @@
             )
             .join('');
 
-        relatedBar.querySelectorAll('.loto-unit-switch-btn').forEach((btn) => {
+        relatedBar.querySelectorAll(`.${prefix}-unit-switch-btn`).forEach((btn) => {
           btn.addEventListener('click', () => {
-            const unitUrl = btn.getAttribute('data-loto-unit-url') || '';
-            const unitLabel = btn.getAttribute('data-loto-unit-label') || asset.name;
-            relatedBar.querySelectorAll('.loto-unit-switch-btn').forEach((b) => {
+            const unitUrl = btn.getAttribute('data-unit-url') || '';
+            const unitLabel = btn.getAttribute('data-unit-label') || asset.name;
+            relatedBar.querySelectorAll(`.${prefix}-unit-switch-btn`).forEach((b) => {
               b.className =
                 b === btn
-                  ? 'loto-unit-switch-btn px-3 py-1 rounded-lg text-xs font-bold border transition bg-crimson text-white border-red-500'
-                  : 'loto-unit-switch-btn px-3 py-1 rounded-lg text-xs font-bold border transition bg-slate-950 text-slate-300 border-slate-700 hover:bg-slate-800';
+                  ? `${prefix}-unit-switch-btn px-3 py-1 rounded-lg text-xs font-bold border transition bg-crimson text-white border-red-500`
+                  : `${prefix}-unit-switch-btn px-3 py-1 rounded-lg text-xs font-bold border transition bg-slate-950 text-slate-300 border-slate-700 hover:bg-slate-800`;
             });
             bindDocumentViewer(
-              'loto',
+              prefix,
               '',
               unitUrl,
-              `Lockout / Tagout (LOTO) Procedure — ${asset.id}: ${unitLabel}`,
-              asset.loto_revision_date || 'Rev. 2026-10 • Official Shop Standard'
+              `${labelPrefix} — ${asset.id}: ${unitLabel}`,
+              docRev
             );
-            const info = state.activeViewerUrls.loto;
+            const info = state.activeViewerUrls[prefix];
             if (info) {
-              mountDocumentViewerFrame('loto', info.targetUrl, info.title);
+              mountDocumentViewerFrame(prefix, info.targetUrl, info.title);
               info.renderedForAsset = `${asset.id}:${unitUrl}`;
             }
           });
@@ -658,7 +657,21 @@
         relatedBar.classList.add('hidden');
         relatedBar.innerHTML = '';
       }
-    }
+    };
+
+    bindRelatedDocsBar(
+      'sop',
+      asset.sop_related_docs,
+      'Standard Operating Procedure (SOP)',
+      asset.sop_revision_date || 'Rev. 2026-10 • Official Shop Standard'
+    );
+
+    bindRelatedDocsBar(
+      'loto',
+      asset.loto_related_docs,
+      'Lockout / Tagout (LOTO) Procedure',
+      asset.loto_revision_date || 'Rev. 2026-10 • Official Shop Standard'
+    );
 
     // Populate Tab 2: SOP
     const sop = asset.sop || {};

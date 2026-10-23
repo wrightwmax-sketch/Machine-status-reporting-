@@ -462,12 +462,12 @@
               </div>
             </div>
 
-            <!-- Native Repository-Hosted PDF Viewer Container (SOP) -->
+            <!-- Official SOP Document Viewer Container -->
             <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-3">
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div class="text-[11px] font-mono uppercase tracking-wider text-emerald-400 font-bold">
-                    📄 OFFICIAL MACHINE SOP PDF (<code id="sop-local-path-badge" class="font-mono">docs/sop/MAC-01-SOP.pdf</code>)
+                    🦺 OFFICIAL MACHINE SOP DOCUMENT (<code id="sop-local-path-badge" class="font-mono">https://drive.google.com/file/d/1nfdvQ-qfQbnG3ZQMs7zT4ZWrQgq7MUWV/view</code>)
                   </div>
                   <h3 id="sop-doc-title" class="text-sm sm:text-base font-extrabold text-white">
                     Standard Operating Procedure (SOP)
@@ -479,7 +479,7 @@
                 <div class="flex flex-wrap items-center gap-2">
                   <a
                     id="sop-fullscreen-btn"
-                    href="docs/sop/MAC-01-SOP.pdf"
+                    href="https://drive.google.com/file/d/1nfdvQ-qfQbnG3ZQMs7zT4ZWrQgq7MUWV/view"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="px-3.5 py-2 rounded-lg bg-crimson hover:bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 shadow transition"
@@ -489,33 +489,37 @@
                   </a>
                   <a
                     id="sop-download-pdf-btn"
-                    href="docs/sop/MAC-01-SOP.pdf"
-                    download
+                    href="https://drive.google.com/uc?export=download&amp;id=1nfdvQ-qfQbnG3ZQMs7zT4ZWrQgq7MUWV"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs font-bold flex items-center gap-1.5 transition"
                   >
                     <span>📥</span>
-                    <span>Download PDF</span>
+                    <span>Download Document</span>
                   </a>
                   <a
                     id="sop-open-drive-btn"
-                    href="https://drive.google.com/"
+                    href="https://drive.google.com/file/d/1nfdvQ-qfQbnG3ZQMs7zT4ZWrQgq7MUWV/view"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition"
                   >
                     <span>☁️</span>
-                    <span>Open Drive Mirror</span>
+                    <span>Open in Google Drive</span>
                   </a>
                 </div>
               </div>
 
-              <!-- Dedicated Single-Machine SOP PDF Display Engine -->
+              <!-- Optional Multi-Equipment SOP Document Switcher (for combined stations) -->
+              <div id="sop-related-docs-bar" class="hidden pt-2 border-t border-slate-800/80 flex flex-wrap items-center gap-2"></div>
+
+              <!-- Dedicated Single-Machine SOP Document Display Engine -->
               <div id="sop-viewer-mount" class="drive-pdf-frame-shell min-h-[620px] sm:min-h-[680px] rounded-xl">
                 <iframe
                   id="sop-pdf-iframe"
                   src="about:blank"
                   class="drive-pdf-iframe min-h-[620px] sm:min-h-[680px] w-full"
-                  title="Official Standard Operating Procedure PDF"
+                  title="Official Standard Operating Procedure Document"
                 ></iframe>
               </div>
             </div>
@@ -749,7 +753,7 @@
   </footer>
 
   <!-- Portal Scripts -->
-  <script src="js/qr-generator.js?v=20261023"></script>
-  <script src="js/app.js?v=20261023"></script>
+  <script src="js/qr-generator.js?v=20261023b"></script>
+  <script src="js/app.js?v=20261023b"></script>
 </body>
 </html>
