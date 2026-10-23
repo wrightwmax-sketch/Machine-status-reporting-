@@ -450,34 +450,28 @@
   }
 
   /**
-   * Transform standard Google Drive sharing or folder links into responsive embed preview URLs,
-   * full view URLs, and direct download URLs.
+   * Transform standard Google Drive file links into responsive single-document embed preview URLs,
+   * full view URLs, and direct download URLs (never a folder list).
    */
   function transformGoogleDriveUrl(rawUrl) {
     const clean = String(rawUrl || '').trim();
     if (!clean) {
       return {
         docId: '',
-        viewUrl: 'https://drive.google.com/drive/u/0/folders/1dak3rYNFcNR9rRcwcjyfqcOymIxjqfNr',
-        previewUrl: 'https://drive.google.com/embeddedfolderview?id=1dak3rYNFcNR9rRcwcjyfqcOymIxjqfNr#list',
-        downloadUrl: 'https://drive.google.com/drive/u/0/folders/1dak3rYNFcNR9rRcwcjyfqcOymIxjqfNr'
-      };
-    }
-
-    const folderMatch = clean.match(/\/folders\/([a-zA-Z0-9_-]+)/);
-    if (folderMatch && folderMatch[1]) {
-      const folderId = folderMatch[1];
-      return {
-        docId: folderId,
-        viewUrl: `https://drive.google.com/drive/u/0/folders/${folderId}`,
-        previewUrl: `https://drive.google.com/embeddedfolderview?id=${folderId}#list`,
-        downloadUrl: `https://drive.google.com/drive/u/0/folders/${folderId}`
+        viewUrl: '',
+        previewUrl: '',
+        downloadUrl: ''
       };
     }
 
     const fileMatch = clean.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    const docMatch = clean.match(/\/document\/d\/([a-zA-Z0-9_-]+)/);
     const idParamMatch = clean.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    const docId = (fileMatch && fileMatch[1]) || (idParamMatch && idParamMatch[1]) || '';
+    const docId =
+      (fileMatch && fileMatch[1]) ||
+      (docMatch && docMatch[1]) ||
+      (idParamMatch && idParamMatch[1]) ||
+      '';
 
     if (docId) {
       return {
@@ -499,6 +493,25 @@
 
   window.transformGoogleDriveUrl = transformGoogleDriveUrl;
 
+  function mountDocumentViewerFrame(prefix, targetUrl, docTitle) {
+    if (!targetUrl) return;
+    const mountEl = document.getElementById(`${prefix}-viewer-mount`);
+    if (mountEl) {
+      mountEl.innerHTML = `
+        <iframe
+          id="${prefix}-pdf-iframe"
+          src="${escapeHtml(targetUrl)}"
+          class="drive-pdf-iframe min-h-[620px] sm:min-h-[680px] w-full"
+          title="${escapeHtml(docTitle || 'Official Machine Document')}"
+          allow="autoplay"
+        ></iframe>
+      `;
+    } else {
+      const iframeEl = document.getElementById(`${prefix}-pdf-iframe`);
+      if (iframeEl) iframeEl.setAttribute('src', targetUrl);
+    }
+  }
+
   /**
    * Populate the 4-Tab Unified Asset Hub Modal for a given asset
    */
@@ -508,6 +521,7 @@
 
     state.activeAssetId = asset.id;
     state.activeModalTab = initialTab || 'fault';
+    state.activeViewerUrls = state.activeViewerUrls || {};
 
     const modalEl = document.getElementById('asset-hub-modal');
     if (!modalEl) return;
@@ -535,14 +549,17 @@
     if (elNextPm) elNextPm.textContent = `Next Due: ${asset.nextPmDue || 'N/A'}`;
     if (elPmTech) elPmTech.textContent = `Tech: ${asset.lastPmTech || 'M. Wright'}`;
 
-    // Populate Official Document Viewer for SOP & LOTO (uses official Google Drive LOTO folder or configured PDF path)
-    const officialLotoFolderUrl = 'https://drive.google.com/drive/u/0/folders/1dak3rYNFcNR9rRcwcjyfqcOymIxjqfNr';
-
     const bindDocumentViewer = (prefix, localPdfPath, rawDriveUrl, docTitle, docRev) => {
-      const urls = transformGoogleDriveUrl(rawDriveUrl || officialLotoFolderUrl);
+      const urls = transformGoogleDriveUrl(rawDriveUrl || localPdfPath);
       const effectiveTargetUrl = localPdfPath || urls.previewUrl;
       const effectiveOpenUrl = localPdfPath || urls.viewUrl;
       const effectiveDownloadUrl = localPdfPath || urls.downloadUrl;
+
+      state.activeViewerUrls[prefix] = {
+        targetUrl: effectiveTargetUrl,
+        title: docTitle,
+        renderedForAsset: null
+      };
 
       const pathBadgeEl = document.getElementById(`${prefix}-local-path-badge`);
       const titleEl = document.getElementById(`${prefix}-doc-title`);
@@ -550,9 +567,6 @@
       const fullscreenBtn = document.getElementById(`${prefix}-fullscreen-btn`);
       const dlBtn = document.getElementById(`${prefix}-download-pdf-btn`);
       const openDriveBtn = document.getElementById(`${prefix}-open-drive-btn`);
-      const objectEl = document.getElementById(`${prefix}-pdf-object`);
-      const iframeEl = document.getElementById(`${prefix}-pdf-iframe`);
-      const fallbackLinkEl = document.getElementById(`${prefix}-pdf-fallback-link`);
 
       if (pathBadgeEl) pathBadgeEl.textContent = localPdfPath || urls.viewUrl;
       if (titleEl) titleEl.textContent = docTitle;
@@ -567,18 +581,16 @@
         }
       }
       if (openDriveBtn) {
-        openDriveBtn.href = urls.viewUrl;
+        openDriveBtn.href = urls.viewUrl || effectiveOpenUrl;
         openDriveBtn.classList.remove('hidden');
       }
-      if (objectEl) objectEl.setAttribute('data', effectiveTargetUrl);
-      if (iframeEl) iframeEl.setAttribute('src', effectiveTargetUrl);
-      if (fallbackLinkEl) fallbackLinkEl.setAttribute('href', effectiveOpenUrl);
     };
 
+    const exactSopPdfPath = asset.sop_pdf_path || `docs/sop/${asset.id}-SOP.pdf`;
     bindDocumentViewer(
       'sop',
-      asset.sop_pdf_path || '',
-      asset.sop_drive_url || officialLotoFolderUrl,
+      exactSopPdfPath,
+      asset.sop_drive_url || exactSopPdfPath,
       asset.sop_doc_title || `Standard Operating Procedure (SOP) — ${asset.id}: ${asset.name}`,
       asset.sop_revision_date || 'Rev. 2026-10 • Official Shop Standard'
     );
@@ -586,10 +598,67 @@
     bindDocumentViewer(
       'loto',
       asset.loto_pdf_path || '',
-      asset.loto_drive_url || officialLotoFolderUrl,
+      asset.loto_drive_url || '',
       asset.loto_doc_title || `Lockout / Tagout (LOTO) Procedure — ${asset.id}: ${asset.name}`,
       asset.loto_revision_date || 'Rev. 2026-10 • Official Shop Standard'
     );
+
+    // Optional Multi-Unit LOTO Document Switcher (e.g., Blue M Oven + Muffle Furnace, Shear + Brake)
+    const relatedBar = document.getElementById('loto-related-docs-bar');
+    if (relatedBar) {
+      const relatedDocs = Array.isArray(asset.loto_related_docs) ? asset.loto_related_docs : [];
+      if (relatedDocs.length > 1) {
+        relatedBar.classList.remove('hidden');
+        relatedBar.innerHTML =
+          `<span class="text-[11px] font-mono uppercase text-slate-400 font-bold mr-1">Select Unit LOTO:</span>` +
+          relatedDocs
+            .map(
+              (doc, idx) => `
+              <button
+                type="button"
+                class="loto-unit-switch-btn px-3 py-1 rounded-lg text-xs font-bold border transition ${
+                  idx === 0
+                    ? 'bg-crimson text-white border-red-500'
+                    : 'bg-slate-950 text-slate-300 border-slate-700 hover:bg-slate-800'
+                }"
+                data-loto-unit-url="${escapeHtml(doc.url)}"
+                data-loto-unit-label="${escapeHtml(doc.label)}"
+              >
+                📄 ${escapeHtml(doc.label)}
+              </button>
+            `
+            )
+            .join('');
+
+        relatedBar.querySelectorAll('.loto-unit-switch-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const unitUrl = btn.getAttribute('data-loto-unit-url') || '';
+            const unitLabel = btn.getAttribute('data-loto-unit-label') || asset.name;
+            relatedBar.querySelectorAll('.loto-unit-switch-btn').forEach((b) => {
+              b.className =
+                b === btn
+                  ? 'loto-unit-switch-btn px-3 py-1 rounded-lg text-xs font-bold border transition bg-crimson text-white border-red-500'
+                  : 'loto-unit-switch-btn px-3 py-1 rounded-lg text-xs font-bold border transition bg-slate-950 text-slate-300 border-slate-700 hover:bg-slate-800';
+            });
+            bindDocumentViewer(
+              'loto',
+              '',
+              unitUrl,
+              `Lockout / Tagout (LOTO) Procedure — ${asset.id}: ${unitLabel}`,
+              asset.loto_revision_date || 'Rev. 2026-10 • Official Shop Standard'
+            );
+            const info = state.activeViewerUrls.loto;
+            if (info) {
+              mountDocumentViewerFrame('loto', info.targetUrl, info.title);
+              info.renderedForAsset = `${asset.id}:${unitUrl}`;
+            }
+          });
+        });
+      } else {
+        relatedBar.classList.add('hidden');
+        relatedBar.innerHTML = '';
+      }
+    }
 
     // Populate Tab 2: SOP
     const sop = asset.sop || {};
@@ -750,8 +819,8 @@
       }
     }
 
-    switchModalTab(state.activeModalTab, pushUrl);
     modalEl.classList.remove('hidden');
+    switchModalTab(state.activeModalTab, pushUrl);
   }
 
   function switchModalTab(tabName, updateUrl) {
@@ -770,6 +839,21 @@
         panel.classList.toggle('hidden', t !== normalized);
       }
     });
+
+    if (state.activeViewerUrls) {
+      ['sop', 'loto'].forEach((prefix) => {
+        const info = state.activeViewerUrls[prefix];
+        if (!info || !info.targetUrl) return;
+        const iframeEl = document.getElementById(`${prefix}-pdf-iframe`);
+        const currentSrc = iframeEl ? iframeEl.getAttribute('src') : '';
+        if (prefix === normalized && info.renderedForAsset !== state.activeAssetId) {
+          mountDocumentViewerFrame(prefix, info.targetUrl, info.title);
+          info.renderedForAsset = state.activeAssetId;
+        } else if (currentSrc !== info.targetUrl) {
+          mountDocumentViewerFrame(prefix, info.targetUrl, info.title);
+        }
+      });
+    }
 
     if (updateUrl && state.activeAssetId && window.history && window.history.replaceState) {
       const url = new URL(window.location.href);

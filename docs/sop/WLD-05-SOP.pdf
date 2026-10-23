@@ -1,0 +1,94 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 3267 >>
+stream
+0.73 0.05 0.18 rg
+36 716 540 46 re f
+1 1 1 rg
+BT /F2 13 Tf 48 742 Td (STUDENT PROJECTS LABORATORY - 930 KINNEAR RD) Tj ET
+BT /F2 10 Tf 48 726 Td (STANDARD OPERATING PROCEDURE \(SOP\) | ASSET: WLD-05 | TAG: THERM-BM-MF) Tj ET
+0.95 0.96 0.98 rg
+36 672 540 38 re f
+0.06 0.09 0.16 rg
+BT /F2 12 Tf 46 693 Td (WLD-05: Thermal Processing Suite: Blue M Industrial Oven & Muffle Furnace) Tj ET
+BT /F1 9 Tf 46 679 Td (Facility Zone: Zone 3: Welding & Thermal Processing \(WLD\) | Supervisor: Max Wright \(Sr. Instructional Lab Supervisor\)) Tj ET
+0.04 0.47 0.34 rg
+36 638 540 18 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 643 Td (1. REQUIRED PERSONAL PROTECTIVE EQUIPMENT \(PPE\)) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 8.8 Tf 46 626 Td (1. ANSI Z87.1 Safety Goggles / Face Shield) Tj ET
+BT /F1 8.8 Tf 46 612.5 Td (2. High-Temperature Insulated Kevlar/Aluminized Gloves) Tj ET
+BT /F1 8.8 Tf 46 599.0 Td (3. Flame-Resistant \(FR\) Lab Coat & Closed-Toe Shoes) Tj ET
+0.71 0.33 0.04 rg
+36 565.5 540 18 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 570.5 Td (2. PRIMARY OPERATIONAL HAZARDS) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 8.8 Tf 46 553.5 Td (1. Extreme thermal burn and radiant heat hazard \(up to 650 deg F in Blue M, 1,250 deg C in Muffle) Tj ET
+BT /F1 8.8 Tf 46 542.0 Td (   Furnace\)) Tj ET
+BT /F1 8.8 Tf 46 528.5 Td (2. Explosion/fire hazard if flammable solvents, resins, or volatiles are placed inside) Tj ET
+BT /F1 8.8 Tf 46 517.0 Td (   \(units are NON-explosion-proof\)) Tj ET
+BT /F1 8.8 Tf 46 503.5 Td (3. Thermal burping \(superheated air blast\) if Blue M door is opened above 200 deg F) Tj ET
+BT /F1 8.8 Tf 46 490.0 Td (4. Blower motor bearing seizure if Blue M power is shut off above 167 deg F \(75 deg C\)) Tj ET
+0.12 0.25 0.45 rg
+36 456.5 540 18 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 461.5 Td (3. BEFORE OPERATION CHECKLIST) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 8.8 Tf 46 444.5 Td (1. Strictly NO flammable solvents, uncured volatiles, or sealed containers inside either) Tj ET
+BT /F1 8.8 Tf 46 433.0 Td (   chamber.) Tj ET
+BT /F1 8.8 Tf 46 419.5 Td (2. Set Over-Temperature Protection \(OTP\) controller 15 deg C above main process setpoint.) Tj ET
+0.12 0.25 0.45 rg
+36 386.0 540 18 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 391.0 Td (4. DURING OPERATION SAFETY RULES) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 8.8 Tf 46 374.0 Td (1. Follow the '200 deg F Rule': Do NOT open the Blue M oven door when chamber temperature) Tj ET
+BT /F1 8.8 Tf 46 362.5 Td (   exceeds 200 deg F to prevent thermal burping.) Tj ET
+BT /F1 8.8 Tf 46 349.0 Td (2. Use long high-temperature tongs when loading/unloading Muffle Furnace.) Tj ET
+0.04 0.47 0.34 rg
+36 315.5 540 18 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 320.5 Td (5. AFTER USE & SHOWROOM CLEANUP) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 8.8 Tf 46 303.5 Td (1. Mandatory Blue M Cool-Down: Lower setpoint below 167 deg F \(75 deg C\) and keep blower running) Tj ET
+BT /F1 8.8 Tf 46 292.0 Td (   until chamber drops below 167 deg F before switching power OFF.) Tj ET
+0.98 0.92 0.92 rg
+36 36 540 42 re f
+0.73 0.05 0.18 rg
+BT /F2 8.8 Tf 44 65 Td (EMERGENCY SHUTDOWN & INCIDENT PROTOCOL:) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 8.5 Tf 44 53 Td (Shut off heating program, disconnect wall switch/plug if safe, keep chamber door CLOSED to) Tj ET
+BT /F1 8.5 Tf 44 42 Td (contain any smoke/fire, and notify Lab Supervisor.) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+3714
+%%EOF

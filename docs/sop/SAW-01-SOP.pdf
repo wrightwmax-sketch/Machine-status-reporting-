@@ -1,0 +1,94 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 2897 >>
+stream
+0.73 0.05 0.18 rg
+36 716 540 46 re f
+1 1 1 rg
+BT /F2 13 Tf 48 742 Td (STUDENT PROJECTS LABORATORY - 930 KINNEAR RD) Tj ET
+BT /F2 10 Tf 48 726 Td (STANDARD OPERATING PROCEDURE \(SOP\) | ASSET: SAW-01 | TAG: VSAW-01) Tj ET
+0.95 0.96 0.98 rg
+36 672 540 38 re f
+0.06 0.09 0.16 rg
+BT /F2 12 Tf 46 693 Td (SAW-01: Vertical Metal Cutting Bandsaw) Tj ET
+BT /F1 9 Tf 46 679 Td (Facility Zone: Zone 4: Cutting, Saws & Drilling \(SAW\) | Supervisor: Max Wright \(Sr. Instructional Lab Supervisor\)) Tj ET
+0.86 0.15 0.15 rg
+36 630 540 26 re f
+1 1 1 rg
+BT /F2 9.5 Tf 46 639 Td (CRITICAL ENTANGLEMENT WARNING: STRICTLY NO GLOVES WHILE SPINDLE / BLADE IS ROTATING) Tj ET
+0.04 0.47 0.34 rg
+36 600 540 18 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 605 Td (1. REQUIRED PERSONAL PROTECTIVE EQUIPMENT \(PPE\)) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 8.8 Tf 46 588 Td (1. ANSI Z87.1 Safety Glasses) Tj ET
+BT /F1 8.8 Tf 46 574.5 Td (2. Closed-Toe Shoes) Tj ET
+BT /F1 8.8 Tf 46 561.0 Td (3. NO GLOVES While Feeding Workpiece Near Moving Blade) Tj ET
+0.71 0.33 0.04 rg
+36 527.5 540 18 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 532.5 Td (2. PRIMARY OPERATIONAL HAZARDS) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 8.8 Tf 46 515.5 Td (1. Exposed vertical saw blade laceration/amputation hazard) Tj ET
+BT /F1 8.8 Tf 46 502.0 Td (2. Round stock spinning/kickback if not clamped in V-block) Tj ET
+BT /F1 8.8 Tf 46 488.5 Td (3. Gearbox tooth stripping if shifted at high RPM) Tj ET
+0.12 0.25 0.45 rg
+36 455.0 540 18 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 460.0 Td (3. BEFORE OPERATION CHECKLIST) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 8.8 Tf 46 443.0 Td (1. Adjust upper blade guard to within 1/4" of top of workpiece.) Tj ET
+BT /F1 8.8 Tf 46 429.5 Td (2. Verify blade tension and proper SFPM speed for material.) Tj ET
+BT /F1 8.8 Tf 46 416.0 Td (3. NEVER shift transmission gear at high RPM \(must drop RPM dial as low as possible first\).) Tj ET
+0.12 0.25 0.45 rg
+36 382.5 540 18 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 387.5 Td (4. DURING OPERATION SAFETY RULES) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 8.8 Tf 46 370.5 Td (1. Keep hands at least 4 inches away from blade path at all times.) Tj ET
+BT /F1 8.8 Tf 46 357.0 Td (2. Use push stick for small stock and a V-block/clamp for ALL round stock.) Tj ET
+BT /F1 8.8 Tf 46 343.5 Td (3. Make relief cuts before cutting tight radius curves.) Tj ET
+0.04 0.47 0.34 rg
+36 310.0 540 18 re f
+1 1 1 rg
+BT /F2 9.5 Tf 44 315.0 Td (5. AFTER USE & SHOWROOM CLEANUP) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 8.8 Tf 46 298.0 Td (1. Wait for complete blade coast-down \(never brake wheel or blade with hands\).) Tj ET
+BT /F1 8.8 Tf 46 284.5 Td (2. Sweep and vacuum swarf from table and lower cabinet \(no compressed air\).) Tj ET
+0.98 0.92 0.92 rg
+36 36 540 42 re f
+0.73 0.05 0.18 rg
+BT /F2 8.8 Tf 44 65 Td (EMERGENCY SHUTDOWN & INCIDENT PROTOCOL:) Tj ET
+0.08 0.10 0.15 rg
+BT /F1 8.5 Tf 44 53 Td (Hit red OFF paddle switch on left column and step back until blade stops.) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+3344
+%%EOF
