@@ -8,6 +8,7 @@
   'use strict';
 
   const STORAGE_KEYS = {
+    PENDING_OVERRIDES: 'pending_equipment_overrides',
     ASSET_OVERRIDES: 'spl_shop_portal_asset_overrides_v3',
     HISTORY_LOG: 'spl_shop_portal_history_log_v3',
     GITHUB_REPO: 'spl_shop_portal_github_repo_v3',
@@ -15,14 +16,26 @@
   };
 
   const DEFAULT_GITHUB_REPO = 'wrightwmax-sketch/Machine-status-reporting-';
+  const CLOUD_SYNC_CONFIG = {
+    REST_OBJECT_URL: 'https://api.restful-api.dev/objects/ff808181a09d98f701a16f757d310149'
+  };
+
+  function fetchWithTimeout(url, options, timeoutMs) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs || 3500);
+    const mergedOptions = Object.assign({}, options || {}, { signal: controller.signal });
+    return fetch(url, mergedOptions).finally(() => clearTimeout(timer));
+  }
 
   const state = {
     metadata: {},
     assets: [],
     history: [],
-    currentView: 'dashboard', // 'dashboard' | 'history' | 'qr'
+    cloudOverrides: {},
+    cloudHistory: [],
     activeAssetId: null,
     activeModalTab: 'fault', // 'fault' | 'sop' | 'loto' | 'pm'
+    currentView: 'dashboard', // 'dashboard' | 'history' | 'qr'
     filters: {
       search: '',
       zone: 'ALL',
@@ -110,71 +123,443 @@
   }
 
   /**
-   * Load equipment_master.json and pm_history.json and merge client localStorage overrides
+   * Merge pending/recent local updates and cross-device cloud updates over static JSON records
    */
-  async function loadPortalData() {
-    const [masterResp, historyResp] = await Promise.all([
-      fetch(`data/equipment_master.json?t=${Date.now()}`, { cache: 'no-store' }),
-      fetch(`data/pm_history.json?t=${Date.now()}`, { cache: 'no-store' })
-    ]);
-
-    if (!masterResp.ok) {
-      throw new Error(`Failed to load data/equipment_master.json (${masterResp.status})`);
-    }
-
-    const masterData = await masterResp.json();
-    const baseHistory = historyResp.ok ? await historyResp.json() : [];
-
-    state.metadata = masterData.metadata || {};
-    const rawAssets = Array.isArray(masterData.assets) ? masterData.assets : [];
-
-    // Apply local overrides if present
-    let overrides = {};
+  function getMergedEquipmentData(fetchedData, cloudOverrides, githubIssueOverrides) {
+    let pendingOverrides = {};
     try {
-      overrides = JSON.parse(localStorage.getItem(STORAGE_KEYS.ASSET_OVERRIDES) || '{}') || {};
+      pendingOverrides = JSON.parse(localStorage.getItem(STORAGE_KEYS.PENDING_OVERRIDES) || '{}') || {};
     } catch (e) {
-      overrides = {};
+      pendingOverrides = {};
     }
 
-    state.assets = rawAssets.map((asset) => {
-      const ov = overrides[asset.id];
-      if (!ov) return asset;
-      return Object.assign({}, asset, ov);
-    });
-
-    let localHistory = [];
+    let legacyOverrides = {};
     try {
-      localHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY_LOG) || '[]') || [];
+      legacyOverrides = JSON.parse(localStorage.getItem(STORAGE_KEYS.ASSET_OVERRIDES) || '{}') || {};
     } catch (e) {
-      localHistory = [];
+      legacyOverrides = {};
     }
 
-    // Merge localHistory + baseHistory deduplicated by id
-    const seenIds = new Set();
-    const mergedHistory = [];
-    [...localHistory, ...baseHistory].forEach((entry) => {
-      if (entry && entry.id && !seenIds.has(entry.id)) {
-        seenIds.add(entry.id);
-        mergedHistory.push(entry);
-      }
-    });
+    const localMap = Object.assign({}, legacyOverrides, pendingOverrides);
+    const cloudMap = cloudOverrides || state.cloudOverrides || {};
+    const issueMap = githubIssueOverrides || {};
 
-    state.history = mergedHistory;
+    return (fetchedData || []).map((asset) => {
+      const candidates = [issueMap[asset.id], cloudMap[asset.id], localMap[asset.id]].filter(Boolean);
+      if (candidates.length === 0) return asset;
+
+      candidates.sort((a, b) => {
+        const ta = Date.parse(a.last_updated || a.updatedAt || '1970-01-01T00:00:00Z') || 0;
+        const tb = Date.parse(b.last_updated || b.updatedAt || '1970-01-01T00:00:00Z') || 0;
+        return ta - tb;
+      });
+
+      let merged = Object.assign({}, asset);
+      candidates.forEach((ov) => {
+        const cleanOv = Object.assign({}, ov);
+        if (cleanOv.last_fault_notes && !cleanOv.conditionNote) {
+          cleanOv.conditionNote = cleanOv.last_fault_notes;
+        }
+        if (cleanOv.conditionNote && !cleanOv.last_fault_notes) {
+          cleanOv.last_fault_notes = cleanOv.conditionNote;
+        }
+        merged = Object.assign({}, merged, cleanOv);
+      });
+      return merged;
+    });
   }
 
+  window.getMergedEquipmentData = getMergedEquipmentData;
+
+  /**
+   * Store the latest logged condition directly into localStorage ('pending_equipment_overrides')
+   * for instant UI updates and sync with local asset overrides.
+   */
+  function logConditionLocally(assetId, newStatus, issueNotes, extraPatch) {
+    let pending = {};
+    try {
+      pending = JSON.parse(localStorage.getItem(STORAGE_KEYS.PENDING_OVERRIDES) || '{}') || {};
+    } catch (e) {
+      pending = {};
+    }
+    const nowIso = new Date().toISOString();
+    const record = Object.assign({}, pending[assetId] || {}, extraPatch || {}, {
+      status: newStatus,
+      conditionNote: issueNotes,
+      last_fault_notes: issueNotes,
+      last_updated: nowIso
+    });
+    pending[assetId] = record;
+    localStorage.setItem(STORAGE_KEYS.PENDING_OVERRIDES, JSON.stringify(pending));
+    saveAssetOverride(assetId, record);
+    return record;
+  }
+
+  window.logConditionLocally = logConditionLocally;
+
+  /**
+   * Fetch cross-device shared cloud state
+   * so QR scans submitted on any phone/tablet appear immediately when refreshing on any workstation.
+   */
+  async function fetchCrossDeviceCloudState() {
+    let cloudOverrides = {};
+    let cloudHistory = [];
+
+    try {
+      const resp = await fetchWithTimeout(
+        `${CLOUD_SYNC_CONFIG.REST_OBJECT_URL}?t=${Date.now()}`,
+        { cache: 'no-store' },
+        3500
+      );
+      if (resp.ok) {
+        const json = await resp.json();
+        const data = (json && json.data) || {};
+        if (data.overrides && typeof data.overrides === 'object') {
+          cloudOverrides = data.overrides;
+        }
+        if (Array.isArray(data.history)) {
+          cloudHistory = data.history;
+        }
+      }
+    } catch (e) {
+      // Non-fatal fallback
+    }
+
+    state.cloudOverrides = cloudOverrides;
+    state.cloudHistory = cloudHistory;
+    return { cloudOverrides, cloudHistory };
+  }
+
+  /**
+   * Push a condition or PM update to the cross-device cloud store so all other devices see it immediately
+   */
+  async function publishCrossDeviceSync(assetId, patch, historyEntry) {
+    try {
+      await fetchCrossDeviceCloudState();
+    } catch (e) {
+      // Continue with local cloud state
+    }
+
+    state.cloudOverrides = state.cloudOverrides || {};
+    state.cloudOverrides[assetId] = patch;
+    if (historyEntry && historyEntry.id) {
+      state.cloudHistory = state.cloudHistory || [];
+      const exists = state.cloudHistory.some((h) => h && h.id === historyEntry.id);
+      if (!exists) {
+        state.cloudHistory.unshift(historyEntry);
+      }
+      state.cloudHistory = state.cloudHistory.slice(0, 40);
+    }
+
+    const bodyPayload = {
+      name: 'spl_930_kinnear_sync',
+      data: {
+        updatedAt: new Date().toISOString(),
+        overrides: state.cloudOverrides,
+        history: state.cloudHistory
+      }
+    };
+
+    try {
+      await fetchWithTimeout(
+        CLOUD_SYNC_CONFIG.REST_OBJECT_URL,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyPayload)
+        },
+        4000
+      );
+    } catch (e) {
+      // Non-fatal fallback
+    }
+  }
+
+  /**
+   * Fetch open/recent GitHub Issues directly via GitHub REST API so any submitted issue
+   * reflects immediately even before GitHub Actions or GitHub Pages CDN finishes deploying.
+   */
+  async function fetchLiveGithubIssues() {
+    const issueOverrides = {};
+    const issueHistory = [];
+    const repo = getConfiguredGithubRepo();
+    if (!repo) return { issueOverrides, issueHistory };
+
+    try {
+      const resp = await fetch(
+        `https://api.github.com/repos/${repo}/issues?state=all&per_page=30&t=${Date.now()}`,
+        { cache: 'no-store' }
+      );
+      if (!resp.ok) return { issueOverrides, issueHistory };
+      const issues = await resp.json();
+      if (!Array.isArray(issues)) return { issueOverrides, issueHistory };
+
+      const extractSection = (body, heading) => {
+        const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`###\\s+${escaped}\\s*\\n+([\\s\\S]*?)(?=\\n###\\s+|$)`, 'i');
+        const m = (body || '').match(regex);
+        return m ? m[1].trim() : '';
+      };
+
+      // Process oldest to newest so newer issues override older ones
+      issues
+        .slice()
+        .reverse()
+        .forEach((iss) => {
+          if (!iss || iss.pull_request) return;
+          const title = iss.title || '';
+          const body = iss.body || '';
+          let assetId = extractSection(body, 'Asset ID').toUpperCase();
+          if (!assetId) {
+            const m = title.toUpperCase().match(/(MAC-\d+|CNC-\d+|WLD-\d+|SAW-\d+|FAB-\d+|FAC-\d+)/);
+            assetId = m ? m[1] : '';
+          }
+          if (!assetId) return;
+
+          const createdAt = iss.created_at || new Date().toISOString();
+          if (title.toUpperCase().includes('[PM-LOG]') || body.includes('Post-PM Operational Status')) {
+            const statusRaw = extractSection(body, 'Post-PM Operational Status').toUpperCase();
+            const statusAfter = statusRaw.includes('DOWN')
+              ? 'DOWN'
+              : statusRaw.includes('DUE')
+              ? 'DEGRADED'
+              : 'OPERATIONAL';
+            const tech =
+              extractSection(body, 'Technician / SRA Name & Initials') ||
+              (iss.user && iss.user.login) ||
+              'Shop Staff';
+            const notes =
+              extractSection(body, 'Inspection Notes, Parts Replaced, or Follow-Up Actions') || title;
+            const pmDate = createdAt.slice(0, 10);
+            const nextDue = new Date(Date.parse(createdAt) + 30 * 24 * 60 * 60 * 1000)
+              .toISOString()
+              .slice(0, 10);
+
+            issueOverrides[assetId] = {
+              status: statusAfter,
+              pmStatus: statusAfter === 'OPERATIONAL' ? 'COMPLIANT' : 'ATTENTION',
+              lastPmDate: pmDate,
+              nextPmDue: nextDue,
+              lastPmTech: tech,
+              conditionNote: notes,
+              last_fault_notes: notes,
+              last_updated: createdAt
+            };
+            issueHistory.unshift({
+              id: `GH-ISS-${iss.number}`,
+              timestamp: createdAt,
+              type: 'MONTHLY_PM',
+              assetId: assetId,
+              assetName: assetId,
+              teamOrRole: 'Shop Staff',
+              technician: tech,
+              statusAfter: statusAfter,
+              pmStatusAfter: statusAfter === 'OPERATIONAL' ? 'COMPLIANT' : 'ATTENTION',
+              metrics: {},
+              completedItemsCount: 0,
+              totalItemsCount: 0,
+              notes: notes
+            });
+          } else if (
+            title.toUpperCase().includes('[FAULT]') ||
+            body.includes('Machine Condition / Severity Level')
+          ) {
+            const sevRaw = extractSection(body, 'Machine Condition / Severity Level').toUpperCase();
+            const statusAfter = sevRaw.includes('DOWN')
+              ? 'DOWN'
+              : sevRaw.includes('DEGRADED') || sevRaw.includes('CAUTION')
+              ? 'DEGRADED'
+              : 'OPERATIONAL';
+            const reporter =
+              extractSection(body, 'Reporter Name & Email') ||
+              (iss.user && iss.user.login) ||
+              'Shop Floor User';
+            const team =
+              extractSection(body, 'Student Team / Affiliation') ||
+              extractSection(body, 'Student Team / Course Affiliation') ||
+              'Student Team';
+            const notes =
+              extractSection(body, 'Fault Description, Broken Tooling, or Alarm Code') || title;
+
+            issueOverrides[assetId] = {
+              status: statusAfter,
+              conditionNote: notes,
+              last_fault_notes: notes,
+              last_updated: createdAt
+            };
+            issueHistory.unshift({
+              id: `GH-ISS-${iss.number}`,
+              timestamp: createdAt,
+              type: statusAfter === 'OPERATIONAL' ? 'FAULT_RESOLVED' : 'FAULT_REPORT',
+              assetId: assetId,
+              assetName: assetId,
+              teamOrRole: team,
+              technician: reporter,
+              statusAfter: statusAfter,
+              pmStatusAfter: 'COMPLIANT',
+              metrics: {},
+              completedItemsCount: 0,
+              totalItemsCount: 0,
+              notes: notes
+            });
+          }
+        });
+    } catch (e) {
+      // Non-fatal fallback
+    }
+
+    return { issueOverrides, issueHistory };
+  }
+
+  function renderDashboard() {
+    renderExecutiveKpis();
+    renderEquipmentGrid();
+    renderHistoryTable();
+  }
+
+  window.renderDashboard = renderDashboard;
+
+  /**
+   * Eliminate Browser Cache + CDN Edge Delay and merge local, cloud, and GitHub Issue state
+   */
+  async function loadEquipmentData() {
+    try {
+      const cacheBuster = `?t=${Date.now()}`;
+      const repo = getConfiguredGithubRepo();
+
+      // Fetch local static JSON, raw GitHub main branch JSON (bypasses Pages CDN delay),
+      // live GitHub Issues API, and cross-device cloud store in parallel
+      const [equipmentRes, historyRes, rawGitMainRes, rawGitHistRes, cloudState, issueState] =
+        await Promise.all([
+          fetch(`data/equipment_master.json${cacheBuster}`, { cache: 'no-store' }),
+          fetch(`data/pm_history.json${cacheBuster}`, { cache: 'no-store' }),
+          fetch(
+            `https://raw.githubusercontent.com/${repo}/main/data/equipment_master.json${cacheBuster}`,
+            { cache: 'no-store' }
+          ).catch(() => null),
+          fetch(
+            `https://raw.githubusercontent.com/${repo}/main/data/pm_history.json${cacheBuster}`,
+            { cache: 'no-store' }
+          ).catch(() => null),
+          fetchCrossDeviceCloudState(),
+          fetchLiveGithubIssues()
+        ]);
+
+      if (!equipmentRes.ok && (!rawGitMainRes || !rawGitMainRes.ok)) {
+        throw new Error(`HTTP error: ${equipmentRes.status}`);
+      }
+
+      let masterData = equipmentRes.ok ? await equipmentRes.json() : null;
+      if (rawGitMainRes && rawGitMainRes.ok) {
+        try {
+          const rawMainData = await rawGitMainRes.json();
+          const localTs = Date.parse((masterData && masterData.metadata && masterData.metadata.lastUpdated) || '') || 0;
+          const mainTs = Date.parse((rawMainData && rawMainData.metadata && rawMainData.metadata.lastUpdated) || '') || 0;
+          if (!masterData || mainTs >= localTs) {
+            masterData = rawMainData;
+          }
+        } catch (e) {
+          // Keep local masterData
+        }
+      }
+
+      let baseHistory = historyRes && historyRes.ok ? await historyRes.json() : [];
+      if (rawGitHistRes && rawGitHistRes.ok) {
+        try {
+          const rawMainHist = await rawGitHistRes.json();
+          if (Array.isArray(rawMainHist) && rawMainHist.length >= baseHistory.length) {
+            baseHistory = rawMainHist;
+          }
+        } catch (e) {
+          // Keep local baseHistory
+        }
+      }
+
+      state.metadata = (masterData && masterData.metadata) || {};
+      const rawAssets = Array.isArray(masterData && masterData.assets) ? masterData.assets : [];
+
+      state.assets = getMergedEquipmentData(
+        rawAssets,
+        cloudState && cloudState.cloudOverrides,
+        issueState && issueState.issueOverrides
+      );
+
+      window.equipmentData = {
+        metadata: state.metadata,
+        assets: state.assets
+      };
+
+      let localHistory = [];
+      try {
+        localHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY_LOG) || '[]') || [];
+      } catch (e) {
+        localHistory = [];
+      }
+
+      const seenIds = new Set();
+      const mergedHistory = [];
+      [
+        ...localHistory,
+        ...((cloudState && cloudState.cloudHistory) || []),
+        ...((issueState && issueState.issueHistory) || []),
+        ...(Array.isArray(baseHistory) ? baseHistory : [])
+      ].forEach((entry) => {
+        if (entry && entry.id && !seenIds.has(entry.id)) {
+          seenIds.add(entry.id);
+          mergedHistory.push(entry);
+        }
+      });
+
+      mergedHistory.sort((a, b) => {
+        const ta = Date.parse(a.timestamp || '') || 0;
+        const tb = Date.parse(b.timestamp || '') || 0;
+        return tb - ta;
+      });
+
+      state.history = mergedHistory;
+      window.pmHistoryData = mergedHistory;
+
+      renderDashboard();
+    } catch (err) {
+      console.warn('Live fetch failed, falling back to embedded baseline data:', err);
+      if (typeof window.FALLBACK_EQUIPMENT_DATA !== 'undefined') {
+        window.equipmentData = window.FALLBACK_EQUIPMENT_DATA;
+        state.assets = getMergedEquipmentData(window.FALLBACK_EQUIPMENT_DATA.assets || []);
+        renderDashboard();
+      }
+    }
+  }
+
+  const loadPortalData = loadEquipmentData;
+  window.loadEquipmentData = loadEquipmentData;
+
   function saveAssetOverride(assetId, patch) {
+    const nowIso = new Date().toISOString();
+    const enrichedPatch = Object.assign({}, patch, {
+      last_updated: patch.last_updated || nowIso
+    });
+
     let overrides = {};
     try {
       overrides = JSON.parse(localStorage.getItem(STORAGE_KEYS.ASSET_OVERRIDES) || '{}') || {};
     } catch (e) {
       overrides = {};
     }
-    overrides[assetId] = Object.assign({}, overrides[assetId] || {}, patch);
+    overrides[assetId] = Object.assign({}, overrides[assetId] || {}, enrichedPatch);
     localStorage.setItem(STORAGE_KEYS.ASSET_OVERRIDES, JSON.stringify(overrides));
+
+    let pending = {};
+    try {
+      pending = JSON.parse(localStorage.getItem(STORAGE_KEYS.PENDING_OVERRIDES) || '{}') || {};
+    } catch (e) {
+      pending = {};
+    }
+    pending[assetId] = Object.assign({}, pending[assetId] || {}, enrichedPatch);
+    localStorage.setItem(STORAGE_KEYS.PENDING_OVERRIDES, JSON.stringify(pending));
 
     const idx = state.assets.findIndex((a) => a.id === assetId);
     if (idx !== -1) {
-      state.assets[idx] = Object.assign({}, state.assets[idx], patch);
+      state.assets[idx] = Object.assign({}, state.assets[idx], enrichedPatch);
     }
   }
 
@@ -905,7 +1290,7 @@
   }
 
   /**
-   * Handle Fault Report Submission (Local + Optional GitHub Issue Window)
+   * Handle Fault Report Submission (Local + Cross-Device Cloud Sync + Optional GitHub Issue Window)
    */
   async function handleFaultSubmission(openGithubIssue) {
     const asset = state.assets.find((a) => a.id === state.activeAssetId);
@@ -923,36 +1308,7 @@
       (descInput && descInput.value.trim()) ||
       `Status updated to ${severityVal} via Unified QR Hub.`;
 
-    const nowIso = new Date().toISOString();
-    saveAssetOverride(asset.id, {
-      status: severityVal,
-      conditionNote: description
-    });
-
-    const entry = {
-      id: `FLT-${Date.now()}-${asset.id.replace('-', '')}`,
-      timestamp: nowIso,
-      type: severityVal === 'OPERATIONAL' ? 'FAULT_RESOLVED' : 'FAULT_REPORT',
-      assetId: asset.id,
-      assetName: asset.name,
-      teamOrRole: team,
-      technician: reporter,
-      statusAfter: severityVal,
-      pmStatusAfter: asset.pmStatus || 'COMPLIANT',
-      metrics: {},
-      completedItemsCount: 0,
-      totalItemsCount: 0,
-      notes: description
-    };
-
-    prependHistoryEntry(entry);
-    renderExecutiveKpis();
-    renderEquipmentGrid();
-    renderHistoryTable();
-    openAssetHubModal(asset.id, 'fault', false);
-
-    await dispatchTeamsAlert('Machine Condition Alert', asset, severityVal, reporter, team, description);
-
+    // Open GitHub Issue tab synchronously inside user gesture handler before awaiting network calls
     if (openGithubIssue) {
       const severityDropdownText =
         severityVal === 'DOWN'
@@ -971,14 +1327,45 @@
       });
 
       window.open(issueUrl, '_blank', 'noopener');
-      showToast(`Updated ${asset.id} (${severityVal}) & opened GitHub Fault Ticket`);
+    }
+
+    const nowIso = new Date().toISOString();
+    const patch = logConditionLocally(asset.id, severityVal, description);
+
+    const entry = {
+      id: `FLT-${Date.now()}-${asset.id.replace('-', '')}`,
+      timestamp: nowIso,
+      type: severityVal === 'OPERATIONAL' ? 'FAULT_RESOLVED' : 'FAULT_REPORT',
+      assetId: asset.id,
+      assetName: asset.name,
+      teamOrRole: team,
+      technician: reporter,
+      statusAfter: severityVal,
+      pmStatusAfter: asset.pmStatus || 'COMPLIANT',
+      metrics: {},
+      completedItemsCount: 0,
+      totalItemsCount: 0,
+      notes: description
+    };
+
+    prependHistoryEntry(entry);
+    renderDashboard();
+    openAssetHubModal(asset.id, 'fault', false);
+
+    await Promise.all([
+      publishCrossDeviceSync(asset.id, patch, entry),
+      dispatchTeamsAlert('Machine Condition Alert', asset, severityVal, reporter, team, description)
+    ]);
+
+    if (openGithubIssue) {
+      showToast(`Synced ${asset.id} (${severityVal}) across all devices & opened GitHub Fault Ticket`);
     } else {
-      showToast(`Status updated for ${asset.id}: ${severityVal}`);
+      showToast(`Synced status for ${asset.id}: ${severityVal} across all devices`);
     }
   }
 
   /**
-   * Handle Monthly PM Checklist Submission (Local + Optional GitHub Issue Window)
+   * Handle Monthly PM Checklist Submission (Local + Cross-Device Cloud Sync + Optional GitHub Issue Window)
    */
   async function handlePmSubmission(openGithubIssue) {
     const asset = state.assets.find((a) => a.id === state.activeAssetId);
@@ -1018,13 +1405,32 @@
     const todayStr = now.toISOString().slice(0, 10);
     const nextDue = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
-    saveAssetOverride(asset.id, {
-      status: postStatus === 'DOWN' ? 'DOWN' : postStatus === 'PM_DUE_SOON' ? 'DEGRADED' : 'OPERATIONAL',
+    // Open GitHub Issue tab synchronously inside user gesture handler before awaiting network calls
+    if (openGithubIssue) {
+      const issueUrl = buildGithubIssueUrl('monthly_pm_log.yml', {
+        title: `[PM-LOG] ${asset.id} (${asset.name}) — ${todayStr}`,
+        asset_id: asset.id,
+        post_pm_status:
+          postStatus === 'PM_DUE_SOON'
+            ? 'PM DUE SOON'
+            : postStatus === 'DOWN'
+            ? 'DOWN - LOCKED OUT'
+            : 'OPERATIONAL',
+        technician: technician,
+        checklist_summary: completedLines.join('\n'),
+        quantitative_metrics: metricsLines.join('\n'),
+        pm_notes: notes
+      });
+      window.open(issueUrl, '_blank', 'noopener');
+    }
+
+    const effectiveStatus =
+      postStatus === 'DOWN' ? 'DOWN' : postStatus === 'PM_DUE_SOON' ? 'DEGRADED' : 'OPERATIONAL';
+    const patch = logConditionLocally(asset.id, effectiveStatus, notes, {
       pmStatus: postStatus === 'OPERATIONAL' ? 'COMPLIANT' : 'ATTENTION',
       lastPmDate: todayStr,
       nextPmDue: nextDue,
-      lastPmTech: technician,
-      conditionNote: notes
+      lastPmTech: technician
     });
 
     const entry = {
@@ -1044,27 +1450,18 @@
     };
 
     prependHistoryEntry(entry);
-    renderExecutiveKpis();
-    renderEquipmentGrid();
-    renderHistoryTable();
+    renderDashboard();
     openAssetHubModal(asset.id, 'pm', false);
 
-    await dispatchTeamsAlert('Monthly PM Logged', asset, postStatus, technician, 'Shop Staff', notes);
+    await Promise.all([
+      publishCrossDeviceSync(asset.id, patch, entry),
+      dispatchTeamsAlert('Monthly PM Logged', asset, postStatus, technician, 'Shop Staff', notes)
+    ]);
 
     if (openGithubIssue) {
-      const issueUrl = buildGithubIssueUrl('monthly_pm_log.yml', {
-        title: `[PM-LOG] ${asset.id} (${asset.name}) — ${todayStr}`,
-        asset_id: asset.id,
-        post_pm_status: postStatus === 'PM_DUE_SOON' ? 'PM DUE SOON' : postStatus === 'DOWN' ? 'DOWN - LOCKED OUT' : 'OPERATIONAL',
-        technician: technician,
-        checklist_summary: completedLines.join('\n'),
-        quantitative_metrics: metricsLines.join('\n'),
-        pm_notes: notes
-      });
-      window.open(issueUrl, '_blank', 'noopener');
-      showToast(`Monthly PM logged for ${asset.id} & opened GitHub PM Issue`);
+      showToast(`Monthly PM synced for ${asset.id} & opened GitHub PM Issue`);
     } else {
-      showToast(`Monthly PM recorded for ${asset.id} (Next due: ${nextDue})`);
+      showToast(`Monthly PM synced for ${asset.id} across all devices (Next due: ${nextDue})`);
     }
   }
 
@@ -1379,16 +1776,51 @@
 
     if (clearOverridesBtn) {
       clearOverridesBtn.addEventListener('click', async () => {
+        localStorage.removeItem(STORAGE_KEYS.PENDING_OVERRIDES);
         localStorage.removeItem(STORAGE_KEYS.ASSET_OVERRIDES);
         localStorage.removeItem(STORAGE_KEYS.HISTORY_LOG);
-        await loadPortalData();
-        renderExecutiveKpis();
-        renderEquipmentGrid();
-        renderHistoryTable();
+        state.cloudOverrides = {};
+        state.cloudHistory = [];
+        try {
+          await fetchWithTimeout(
+            CLOUD_SYNC_CONFIG.REST_OBJECT_URL,
+            {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: 'spl_930_kinnear_sync',
+                data: { updatedAt: new Date().toISOString(), overrides: {}, history: [] }
+              })
+            },
+            3500
+          );
+        } catch (e) {
+          // Ignore network error
+        }
+        await loadEquipmentData();
         if (settingsModal) settingsModal.classList.add('hidden');
         showToast(`Reset all ${state.assets.length} assets to baseline equipment_master.json state`);
       });
     }
+  }
+
+  /**
+   * Subscribe to cross-device updates on window focus, tab visibility change, and 20s background poll
+   */
+  function startRealtimeCrossDeviceListener() {
+    window.addEventListener('focus', () => {
+      loadEquipmentData();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        loadEquipmentData();
+      }
+    });
+    setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        loadEquipmentData();
+      }
+    }, 20000);
   }
 
   /**
@@ -1413,12 +1845,10 @@
 
   async function init() {
     try {
-      await loadPortalData();
-      renderExecutiveKpis();
-      renderEquipmentGrid();
-      renderHistoryTable();
+      await loadEquipmentData();
       bindEvents();
       handleInitialDeepLink();
+      startRealtimeCrossDeviceListener();
     } catch (err) {
       console.error('Portal initialization error:', err);
     }

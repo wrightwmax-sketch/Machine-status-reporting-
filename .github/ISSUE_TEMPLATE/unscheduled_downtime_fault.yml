@@ -1,7 +1,7 @@
 name: "🚨 Machine Condition / Unscheduled Downtime Fault Report"
 description: "Report broken tooling, machine alarms, safety hazards, or LOTO lockouts from the shop floor."
 title: "[FAULT] "
-labels: ["machine-fault", "shop-portal-sync"]
+labels: ["fault-report", "machine-fault", "shop-portal-sync"]
 body:
   - type: markdown
     attributes:

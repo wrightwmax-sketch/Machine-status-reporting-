@@ -1,7 +1,7 @@
 name: "🛠️ Monthly Preventative Maintenance (PM) Log"
 description: "Submit a completed monthly preventative maintenance checklist and quantitative wear metrics for a 930 Kinnear Rd shop asset."
 title: "[PM-LOG] "
-labels: ["monthly-pm", "shop-portal-sync"]
+labels: ["pm-log", "monthly-pm", "shop-portal-sync"]
 body:
   - type: markdown
     attributes:
