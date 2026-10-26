@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; frame-src 'self' https://drive.google.com https://docs.google.com; connect-src 'self' https://ntfy.sh https://api.restful-api.dev https://api.github.com https://raw.githubusercontent.com https://*.logic.azure.com https://*.webhook.office.com https://*.api.powerplatform.com; object-src 'none'; base-uri 'self';" />
   <title>Student Projects Laboratory — Operations, Safety (SOP/LOTO) &amp; PM Portal (930 Kinnear Rd)</title>
   <meta name="description" content="Unified Preventative Maintenance (PM), Machine Condition/Fault Reporting, and Digital SOP/LOTO Safety Repository for the Student Projects Laboratory at 930 Kinnear Rd." />
   <!-- Day / Night Theme Switcher loaded in head to prevent FOUC -->
@@ -408,6 +410,7 @@
                     id="fault-reporter-input"
                     type="text"
                     required
+                    maxlength="80"
                     placeholder="e.g., Alex Smith (smith.1@example.edu)"
                     class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                   />
@@ -423,6 +426,7 @@
                   id="fault-description-input"
                   rows="3"
                   required
+                  maxlength="500"
                   placeholder="Describe exactly what happened, any abnormal noises/alarms, and whether an SRA or Max Wright was notified..."
                   class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                 ></textarea>
@@ -433,15 +437,15 @@
                 <button
                   id="btn-fault-local-save"
                   type="button"
-                  class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700 transition"
+                  class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition"
                 >
-                  ⚡ Instant Cloud Board Update + Teams Alert
+                  📋 Also Open Pre-Filled GitHub Ticket &nearr;
                 </button>
                 <button
                   type="submit"
                   class="px-5 py-2.5 rounded-xl bg-crimson hover:bg-red-600 text-white text-xs font-extrabold shadow-lg shadow-red-950/60 transition"
                 >
-                  🚨 Sync Portal &amp; Submit Pre-Filled GitHub Fault Ticket &rarr;
+                  🚨 Submit Fault &amp; Sync All Shop Screens Now
                 </button>
               </div>
             </form>
@@ -633,6 +637,7 @@
                     id="pm-tech-input"
                     type="text"
                     required
+                    maxlength="80"
                     placeholder="e.g., Max Wright (MW)"
                     class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                   />
@@ -657,6 +662,7 @@
                   id="pm-notes-input"
                   rows="2"
                   required
+                  maxlength="500"
                   placeholder="e.g., Topped off Mobil Vactra No. 2 way oil, cleaned chip pan, verified leadscrew backlash..."
                   class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                 ></textarea>
@@ -666,15 +672,15 @@
                 <button
                   id="btn-pm-local-save"
                   type="button"
-                  class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700 transition"
+                  class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition"
                 >
-                  ✅ Sync Monthly PM Across Devices (+30 Days)
+                  📋 Also Open Pre-Filled GitHub PM Ticket &nearr;
                 </button>
                 <button
                   type="submit"
                   class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-lg transition"
                 >
-                  🛠️ Sync PM &amp; Open Pre-Filled GitHub PM Log Issue &rarr;
+                  ✅ Submit Monthly PM &amp; Sync All Shop Screens (+30 Days)
                 </button>
               </div>
             </form>
@@ -753,7 +759,7 @@
   </footer>
 
   <!-- Portal Scripts -->
-  <script src="js/qr-generator.js?v=20261024"></script>
-  <script src="js/app.js?v=20261024"></script>
+  <script src="js/qr-generator.js?v=20261026"></script>
+  <script src="js/app.js?v=20261026"></script>
 </body>
 </html>

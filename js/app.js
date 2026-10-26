@@ -17,12 +17,36 @@
 
   const DEFAULT_GITHUB_REPO = 'wrightwmax-sketch/Machine-status-reporting-';
   const CLOUD_SYNC_CONFIG = {
-    REST_OBJECT_URL: 'https://api.restful-api.dev/objects/ff808181a09d98f701a16f757d310149'
+    REST_OBJECT_URL: 'https://api.restful-api.dev/objects/ff808181a09d98f701a16f757d310149',
+    NTFY_TOPIC: 'spl_930_kinnear_shop_sync_v6'
   };
+
+  /**
+   * Strict Security Policy & Allowlists (Anti-XSS, Anti-Prototype-Pollution, Anti-Mass-Assignment)
+   */
+  const SECURITY_POLICY = {
+    VALID_ASSET_IDS: new Set([
+      'MAC-01', 'MAC-02', 'MAC-03', 'MAC-04', 'MAC-05', 'MAC-06', 'MAC-07',
+      'CNC-08', 'CNC-09', 'CNC-10',
+      'WLD-11', 'WLD-12', 'WLD-13',
+      'SAW-14', 'SAW-15', 'SAW-16', 'SAW-17', 'SAW-18',
+      'FAB-19', 'FAB-20', 'FAB-21', 'FAB-22',
+      'FAC-23', 'FAC-24'
+    ]),
+    VALID_STATUSES: new Set(['OPERATIONAL', 'DEGRADED', 'PM_DUE_SOON', 'PM_OVERDUE', 'DOWN']),
+    VALID_PM_STATUSES: new Set(['COMPLIANT', 'DUE_SOON', 'OVERDUE', 'ATTENTION']),
+    VALID_HISTORY_TYPES: new Set(['FAULT_REPORT', 'FAULT_RESOLVED', 'MONTHLY_PM']),
+    FORBIDDEN_KEYS: new Set(['__proto__', 'constructor', 'prototype']),
+    MAX_CLOCK_SKEW_MS: 2 * 60 * 1000, // Reject/clamp future timestamps > 2 min ahead
+    MIN_VALID_EPOCH_MS: Date.parse('2025-01-01T00:00:00Z'),
+    SUBMISSION_COOLDOWN_MS: 2000
+  };
+
+  let lastSubmissionEpochMs = 0;
 
   function fetchWithTimeout(url, options, timeoutMs) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs || 3500);
+    const timer = setTimeout(() => controller.abort(), timeoutMs || 8000);
     const mergedOptions = Object.assign({}, options || {}, { signal: controller.signal });
     return fetch(url, mergedOptions).finally(() => clearTimeout(timer));
   }
@@ -50,8 +74,159 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+      .replace(/'/g, '&#039;')
+      .replace(/`/g, '&#096;');
   }
+
+  /**
+   * Sanitize untrusted plain-text input: strips null/control bytes, dangerous HTML/script patterns, and enforces max length
+   */
+  function sanitizePlainText(input, maxLen) {
+    if (input === null || input === undefined) return '';
+    const limit = typeof maxLen === 'number' && maxLen > 0 ? maxLen : 500;
+    return String(input)
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+      .replace(/<\s*\/?\s*(script|iframe|object|embed|svg|math|style|link|meta|base|form|input|button|textarea)[^>]*>/gi, '')
+      .replace(/javascript\s*:/gi, '')
+      .replace(/vbscript\s*:/gi, '')
+      .replace(/data\s*:\s*text\/html/gi, '')
+      .replace(/\bon[a-z]+\s*=/gi, '')
+      .trim()
+      .slice(0, limit);
+  }
+
+  /**
+   * Validate and clamp ISO-8601 timestamps so an attacker cannot inject a year-2099 timestamp to lock Last-Write-Wins
+   */
+  function clampAndValidateTimestamp(rawTs) {
+    if (!rawTs || typeof rawTs !== 'string') return null;
+    const parsed = Date.parse(rawTs.trim());
+    if (Number.isNaN(parsed) || parsed < SECURITY_POLICY.MIN_VALID_EPOCH_MS) {
+      return null;
+    }
+    const maxAllowed = Date.now() + SECURITY_POLICY.MAX_CLOCK_SKEW_MS;
+    const clamped = parsed > maxAllowed ? Date.now() : parsed;
+    return new Date(clamped).toISOString();
+  }
+
+  function isValidDateYmd(str) {
+    return typeof str === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(str.trim());
+  }
+
+  /**
+   * Strictly validate & sanitize an asset override object.
+   * Blocks prototype pollution and mass assignment (never allows overwriting sop_drive_url, loto_drive_url, name, etc.)
+   */
+  function sanitizeAssetOverride(assetId, rawOv) {
+    const cleanId = String(assetId || '').trim().toUpperCase();
+    if (
+      !SECURITY_POLICY.VALID_ASSET_IDS.has(cleanId) ||
+      SECURITY_POLICY.FORBIDDEN_KEYS.has(cleanId) ||
+      !rawOv ||
+      typeof rawOv !== 'object' ||
+      Array.isArray(rawOv)
+    ) {
+      return null;
+    }
+
+    const rawStatus = String(rawOv.status || '').trim().toUpperCase();
+    if (!SECURITY_POLICY.VALID_STATUSES.has(rawStatus)) {
+      return null;
+    }
+
+    const validTs = clampAndValidateTimestamp(rawOv.last_updated || rawOv.updatedAt);
+    if (!validTs) {
+      return null;
+    }
+
+    const cleanNote = sanitizePlainText(
+      rawOv.conditionNote !== undefined ? rawOv.conditionNote : rawOv.last_fault_notes,
+      500
+    );
+
+    const safeRecord = {
+      status: rawStatus,
+      conditionNote: cleanNote,
+      last_fault_notes: cleanNote,
+      last_updated: validTs
+    };
+
+    if (rawOv.pmStatus) {
+      const rawPmStatus = String(rawOv.pmStatus).trim().toUpperCase();
+      if (SECURITY_POLICY.VALID_PM_STATUSES.has(rawPmStatus)) {
+        safeRecord.pmStatus = rawPmStatus;
+      }
+    }
+    if (isValidDateYmd(rawOv.lastPmDate)) {
+      safeRecord.lastPmDate = rawOv.lastPmDate.trim();
+    }
+    if (isValidDateYmd(rawOv.nextPmDue)) {
+      safeRecord.nextPmDue = rawOv.nextPmDue.trim();
+    }
+    if (rawOv.lastPmTech) {
+      safeRecord.lastPmTech = sanitizePlainText(rawOv.lastPmTech, 80);
+    }
+
+    return safeRecord;
+  }
+
+  /**
+   * Strictly validate & sanitize a history entry from local, cloud, or GitHub Issue sources
+   */
+  function sanitizeHistoryEntry(rawEntry) {
+    if (!rawEntry || typeof rawEntry !== 'object' || Array.isArray(rawEntry)) return null;
+
+    const cleanId = String(rawEntry.id || '').trim();
+    if (!/^[A-Za-z0-9_-]{3,80}$/.test(cleanId)) return null;
+
+    const cleanAssetId = String(rawEntry.assetId || '').trim().toUpperCase();
+    if (!SECURITY_POLICY.VALID_ASSET_IDS.has(cleanAssetId)) return null;
+
+    const validTs = clampAndValidateTimestamp(rawEntry.timestamp);
+    if (!validTs) return null;
+
+    const rawType = String(rawEntry.type || 'FAULT_REPORT').trim().toUpperCase();
+    const safeType = SECURITY_POLICY.VALID_HISTORY_TYPES.has(rawType) ? rawType : 'FAULT_REPORT';
+
+    const rawStatusAfter = String(rawEntry.statusAfter || 'OPERATIONAL').trim().toUpperCase();
+    const safeStatusAfter = SECURITY_POLICY.VALID_STATUSES.has(rawStatusAfter)
+      ? rawStatusAfter
+      : 'OPERATIONAL';
+
+    const rawPmAfter = String(rawEntry.pmStatusAfter || 'COMPLIANT').trim().toUpperCase();
+    const safePmAfter = SECURITY_POLICY.VALID_PM_STATUSES.has(rawPmAfter) ? rawPmAfter : 'COMPLIANT';
+
+    const safeMetrics = {};
+    if (rawEntry.metrics && typeof rawEntry.metrics === 'object' && !Array.isArray(rawEntry.metrics)) {
+      Object.entries(rawEntry.metrics)
+        .slice(0, 10)
+        .forEach(([k, v]) => {
+          const cleanK = sanitizePlainText(k, 40);
+          if (cleanK && !SECURITY_POLICY.FORBIDDEN_KEYS.has(cleanK)) {
+            safeMetrics[cleanK] = sanitizePlainText(v, 60);
+          }
+        });
+    }
+
+    return {
+      id: cleanId,
+      timestamp: validTs,
+      type: safeType,
+      assetId: cleanAssetId,
+      assetName: sanitizePlainText(rawEntry.assetName || cleanAssetId, 100),
+      teamOrRole: sanitizePlainText(rawEntry.teamOrRole || 'Student Team', 80),
+      technician: sanitizePlainText(rawEntry.technician || 'Shop User', 80),
+      statusAfter: safeStatusAfter,
+      pmStatusAfter: safePmAfter,
+      metrics: safeMetrics,
+      completedItemsCount: Math.max(0, Math.min(50, parseInt(rawEntry.completedItemsCount, 10) || 0)),
+      totalItemsCount: Math.max(0, Math.min(50, parseInt(rawEntry.totalItemsCount, 10) || 0)),
+      notes: sanitizePlainText(rawEntry.notes || '', 500)
+    };
+  }
+
+  window.sanitizeAssetOverride = sanitizeAssetOverride;
+  window.sanitizeHistoryEntry = sanitizeHistoryEntry;
 
   /**
    * Determine effective operational/PM bucket for an asset
@@ -113,17 +288,33 @@
   }
 
   function getConfiguredGithubRepo() {
-    const saved = localStorage.getItem(STORAGE_KEYS.GITHUB_REPO);
-    return saved && saved.trim() ? saved.trim() : DEFAULT_GITHUB_REPO;
+    const saved = (localStorage.getItem(STORAGE_KEYS.GITHUB_REPO) || '').trim();
+    if (saved && /^[A-Za-z0-9_.-]{1,64}\/[A-Za-z0-9_.-]{1,100}$/.test(saved)) {
+      return saved;
+    }
+    return DEFAULT_GITHUB_REPO;
   }
 
   function getConfiguredTeamsWebhook() {
-    const saved = localStorage.getItem(STORAGE_KEYS.TEAMS_WEBHOOK);
-    return saved && saved.trim() ? saved.trim() : '';
+    const saved = (localStorage.getItem(STORAGE_KEYS.TEAMS_WEBHOOK) || '').trim();
+    if (!saved) return '';
+    try {
+      const parsed = new URL(saved);
+      if (parsed.protocol !== 'https:') return '';
+      const host = parsed.hostname.toLowerCase();
+      const allowedHost =
+        host.endsWith('.logic.azure.com') ||
+        host.endsWith('.webhook.office.com') ||
+        host.endsWith('.api.powerplatform.com');
+      return allowedHost ? parsed.toString() : '';
+    } catch (e) {
+      return '';
+    }
   }
 
   /**
-   * Merge pending/recent local updates and cross-device cloud updates over static JSON records
+   * Merge pending/recent local updates and cross-device cloud updates over static JSON records.
+   * Strictly sanitizes every candidate override so untrusted payloads can never alter SOP/LOTO URLs or execute XSS.
    */
   function getMergedEquipmentData(fetchedData, cloudOverrides, githubIssueOverrides) {
     let pendingOverrides = {};
@@ -145,25 +336,29 @@
     const issueMap = githubIssueOverrides || {};
 
     return (fetchedData || []).map((asset) => {
-      const candidates = [issueMap[asset.id], cloudMap[asset.id], localMap[asset.id]].filter(Boolean);
+      const rawCandidates = [issueMap[asset.id], cloudMap[asset.id], localMap[asset.id]].filter(Boolean);
+      const candidates = rawCandidates
+        .map((c) => sanitizeAssetOverride(asset.id, c))
+        .filter(Boolean);
+
       if (candidates.length === 0) return asset;
 
       candidates.sort((a, b) => {
-        const ta = Date.parse(a.last_updated || a.updatedAt || '1970-01-01T00:00:00Z') || 0;
-        const tb = Date.parse(b.last_updated || b.updatedAt || '1970-01-01T00:00:00Z') || 0;
+        const ta = Date.parse(a.last_updated || '1970-01-01T00:00:00Z') || 0;
+        const tb = Date.parse(b.last_updated || '1970-01-01T00:00:00Z') || 0;
         return ta - tb;
       });
 
       let merged = Object.assign({}, asset);
-      candidates.forEach((ov) => {
-        const cleanOv = Object.assign({}, ov);
-        if (cleanOv.last_fault_notes && !cleanOv.conditionNote) {
-          cleanOv.conditionNote = cleanOv.last_fault_notes;
-        }
-        if (cleanOv.conditionNote && !cleanOv.last_fault_notes) {
-          cleanOv.last_fault_notes = cleanOv.conditionNote;
-        }
-        merged = Object.assign({}, merged, cleanOv);
+      candidates.forEach((cleanOv) => {
+        merged.status = cleanOv.status;
+        merged.conditionNote = cleanOv.conditionNote;
+        merged.last_fault_notes = cleanOv.last_fault_notes;
+        merged.last_updated = cleanOv.last_updated;
+        if (cleanOv.pmStatus) merged.pmStatus = cleanOv.pmStatus;
+        if (cleanOv.lastPmDate) merged.lastPmDate = cleanOv.lastPmDate;
+        if (cleanOv.nextPmDue) merged.nextPmDue = cleanOv.nextPmDue;
+        if (cleanOv.lastPmTech) merged.lastPmTech = cleanOv.lastPmTech;
       });
       return merged;
     });
@@ -183,12 +378,18 @@
       pending = {};
     }
     const nowIso = new Date().toISOString();
-    const record = Object.assign({}, pending[assetId] || {}, extraPatch || {}, {
+    const rawRecord = Object.assign({}, pending[assetId] || {}, extraPatch || {}, {
       status: newStatus,
       conditionNote: issueNotes,
       last_fault_notes: issueNotes,
       last_updated: nowIso
     });
+    const record = sanitizeAssetOverride(assetId, rawRecord) || {
+      status: 'OPERATIONAL',
+      conditionNote: sanitizePlainText(issueNotes, 500),
+      last_fault_notes: sanitizePlainText(issueNotes, 500),
+      last_updated: nowIso
+    };
     pending[assetId] = record;
     localStorage.setItem(STORAGE_KEYS.PENDING_OVERRIDES, JSON.stringify(pending));
     saveAssetOverride(assetId, record);
@@ -198,81 +399,179 @@
   window.logConditionLocally = logConditionLocally;
 
   /**
-   * Fetch cross-device shared cloud state
-   * so QR scans submitted on any phone/tablet appear immediately when refreshing on any workstation.
+   * Fetch cross-device shared cloud state across Dual Redundant Cloud Backends:
+   * 1) Backend A (REST Object Snapshot) — long-term multi-week persistence
+   * 2) Backend B (ntfy Event Stream) — zero-conflict concurrent event log across any IP/MAC
+   * Every record is strictly validated through sanitizeAssetOverride() and sanitizeHistoryEntry().
    */
-  async function fetchCrossDeviceCloudState() {
-    let cloudOverrides = {};
-    let cloudHistory = [];
+  async function fetchCrossDeviceCloudState(options) {
+    const opts = options || {};
+    const cloudOverrides = {};
+    const cloudHistory = [];
 
-    try {
-      const resp = await fetchWithTimeout(
-        `${CLOUD_SYNC_CONFIG.REST_OBJECT_URL}?t=${Date.now()}`,
-        { cache: 'no-store' },
-        3500
-      );
-      if (resp.ok) {
-        const json = await resp.json();
-        const data = (json && json.data) || {};
-        if (data.overrides && typeof data.overrides === 'object') {
-          cloudOverrides = data.overrides;
-        }
-        if (Array.isArray(data.history)) {
-          cloudHistory = data.history;
-        }
-      }
-    } catch (e) {
-      // Non-fatal fallback
-    }
-
-    state.cloudOverrides = cloudOverrides;
-    state.cloudHistory = cloudHistory;
-    return { cloudOverrides, cloudHistory };
-  }
-
-  /**
-   * Push a condition or PM update to the cross-device cloud store so all other devices see it immediately
-   */
-  async function publishCrossDeviceSync(assetId, patch, historyEntry) {
-    try {
-      await fetchCrossDeviceCloudState();
-    } catch (e) {
-      // Continue with local cloud state
-    }
-
-    state.cloudOverrides = state.cloudOverrides || {};
-    state.cloudOverrides[assetId] = patch;
-    if (historyEntry && historyEntry.id) {
-      state.cloudHistory = state.cloudHistory || [];
-      const exists = state.cloudHistory.some((h) => h && h.id === historyEntry.id);
-      if (!exists) {
-        state.cloudHistory.unshift(historyEntry);
-      }
-      state.cloudHistory = state.cloudHistory.slice(0, 40);
-    }
-
-    const bodyPayload = {
-      name: 'spl_930_kinnear_sync',
-      data: {
-        updatedAt: new Date().toISOString(),
-        overrides: state.cloudOverrides,
-        history: state.cloudHistory
+    const applyCandidateOverride = (assetId, rawPatch) => {
+      const clean = sanitizeAssetOverride(assetId, rawPatch);
+      if (!clean) return;
+      const existing = cloudOverrides[assetId];
+      const existingTs = existing ? Date.parse(existing.last_updated || '') || 0 : 0;
+      const incomingTs = Date.parse(clean.last_updated || '') || 0;
+      if (incomingTs >= existingTs) {
+        cloudOverrides[assetId] = clean;
       }
     };
 
-    try {
+    const applyCandidateHistory = (rawEntry) => {
+      const clean = sanitizeHistoryEntry(rawEntry);
+      if (!clean) return;
+      if (!cloudHistory.some((h) => h.id === clean.id)) {
+        cloudHistory.push(clean);
+      }
+    };
+
+    const restPromise = opts.ntfyOnly
+      ? Promise.resolve()
+      : (async () => {
+          try {
+            const resp = await fetchWithTimeout(
+              `${CLOUD_SYNC_CONFIG.REST_OBJECT_URL}?t=${Date.now()}`,
+              { cache: 'no-store' },
+              8000
+            );
+            if (resp.ok) {
+              const json = await resp.json();
+              const data = (json && json.data) || {};
+              if (data.overrides && typeof data.overrides === 'object') {
+                Object.entries(data.overrides).forEach(([id, ov]) => {
+                  applyCandidateOverride(id, ov);
+                });
+              }
+              if (Array.isArray(data.history)) {
+                data.history.forEach((h) => applyCandidateHistory(h));
+              }
+            }
+          } catch (e) {
+            // Non-fatal fallback
+          }
+        })();
+
+    const ntfyPromise = (async () => {
+      try {
+        const resp = await fetchWithTimeout(
+          `https://ntfy.sh/${CLOUD_SYNC_CONFIG.NTFY_TOPIC}/json?poll=1&since=48h&_cb=${Date.now()}`,
+          { cache: 'no-store' },
+          8000
+        );
+        if (resp.ok) {
+          const text = await resp.text();
+          const lines = text.split('\n').filter((l) => l.trim());
+          lines.forEach((line) => {
+            try {
+              const evt = JSON.parse(line);
+              if (evt.event === 'message' && evt.message) {
+                const payload = JSON.parse(evt.message);
+                if (payload && payload.action === 'CLEAR_ALL') {
+                  const clearTs = Date.parse(clampAndValidateTimestamp(payload.timestamp) || '') || 0;
+                  Object.keys(cloudOverrides).forEach((k) => {
+                    const ovTs = Date.parse(cloudOverrides[k].last_updated || '') || 0;
+                    if (ovTs <= clearTs) delete cloudOverrides[k];
+                  });
+                  for (let i = cloudHistory.length - 1; i >= 0; i--) {
+                    const hTs = Date.parse(cloudHistory[i].timestamp || '') || 0;
+                    if (hTs <= clearTs) cloudHistory.splice(i, 1);
+                  }
+                } else if (payload && payload.assetId && payload.patch) {
+                  applyCandidateOverride(payload.assetId, payload.patch);
+                  if (payload.historyEntry) {
+                    applyCandidateHistory(payload.historyEntry);
+                  }
+                }
+              }
+            } catch (innerErr) {
+              // Ignore malformed event line
+            }
+          });
+        }
+      } catch (e) {
+        // Non-fatal fallback
+      }
+    })();
+
+    await Promise.allSettled([restPromise, ntfyPromise]);
+
+    cloudHistory.sort((a, b) => (Date.parse(b.timestamp) || 0) - (Date.parse(a.timestamp) || 0));
+
+    state.cloudOverrides = cloudOverrides;
+    state.cloudHistory = cloudHistory.slice(0, 40);
+    return { cloudOverrides: state.cloudOverrides, cloudHistory: state.cloudHistory };
+  }
+
+  /**
+   * Push a condition or PM update to both cross-device cloud stores with keepalive: true
+   * so all other devices on any IP/MAC address see the update immediately.
+   */
+  async function publishCrossDeviceSync(assetId, patch, historyEntry) {
+    const cleanPatch = sanitizeAssetOverride(assetId, patch);
+    if (!cleanPatch) return;
+    const cleanHistory = historyEntry ? sanitizeHistoryEntry(historyEntry) : null;
+
+    // 1. Immediately fire append-only event to Backend B (ntfy.sh) with keepalive: true
+    const eventPayload = {
+      action: 'ASSET_UPDATE',
+      timestamp: cleanPatch.last_updated,
+      assetId: assetId,
+      patch: cleanPatch,
+      historyEntry: cleanHistory
+    };
+
+    const ntfyTask = fetchWithTimeout(
+      `https://ntfy.sh/${CLOUD_SYNC_CONFIG.NTFY_TOPIC}`,
+      {
+        method: 'POST',
+        keepalive: true,
+        body: JSON.stringify(eventPayload)
+      },
+      4000
+    ).catch(() => {});
+
+    // 2. Reconcile latest state and update persistent snapshot in Backend A (restful-api.dev)
+    const restTask = (async () => {
+      try {
+        await fetchCrossDeviceCloudState();
+      } catch (e) {
+        // Continue with current state
+      }
+      state.cloudOverrides = state.cloudOverrides || {};
+      state.cloudOverrides[assetId] = cleanPatch;
+      if (cleanHistory) {
+        state.cloudHistory = state.cloudHistory || [];
+        if (!state.cloudHistory.some((h) => h && h.id === cleanHistory.id)) {
+          state.cloudHistory.unshift(cleanHistory);
+        }
+        state.cloudHistory = state.cloudHistory.slice(0, 40);
+      }
+
+      const bodyPayload = {
+        name: 'spl_930_kinnear_sync',
+        data: {
+          updatedAt: new Date().toISOString(),
+          overrides: state.cloudOverrides,
+          history: state.cloudHistory
+        }
+      };
+
       await fetchWithTimeout(
         CLOUD_SYNC_CONFIG.REST_OBJECT_URL,
         {
           method: 'PUT',
+          keepalive: true,
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(bodyPayload)
         },
         4000
       );
-    } catch (e) {
-      // Non-fatal fallback
-    }
+    })().catch(() => {});
+
+    await Promise.allSettled([ntfyTask, restTask]);
   }
 
   /**
@@ -503,10 +802,11 @@
         ...((cloudState && cloudState.cloudHistory) || []),
         ...((issueState && issueState.issueHistory) || []),
         ...(Array.isArray(baseHistory) ? baseHistory : [])
-      ].forEach((entry) => {
-        if (entry && entry.id && !seenIds.has(entry.id)) {
-          seenIds.add(entry.id);
-          mergedHistory.push(entry);
+      ].forEach((rawEntry) => {
+        const cleanEntry = sanitizeHistoryEntry(rawEntry);
+        if (cleanEntry && cleanEntry.id && !seenIds.has(cleanEntry.id)) {
+          seenIds.add(cleanEntry.id);
+          mergedHistory.push(cleanEntry);
         }
       });
 
@@ -838,6 +1138,16 @@
    * Transform standard Google Drive file links into responsive single-document embed preview URLs,
    * full view URLs, and direct download URLs (never a folder list).
    */
+  function isSafeDocumentUrl(url) {
+    const clean = String(url || '').trim();
+    if (!clean) return false;
+    if (/^docs\/(sop|loto)\/[A-Za-z0-9_.-]+\.pdf$/i.test(clean)) return true;
+    if (/^https:\/\/drive\.google\.com\/(file\/d\/[A-Za-z0-9_-]{10,80}\/(preview|view)|uc\?export=download&id=[A-Za-z0-9_-]{10,80})$/.test(clean)) {
+      return true;
+    }
+    return false;
+  }
+
   function transformGoogleDriveUrl(rawUrl) {
     const clean = String(rawUrl || '').trim();
     if (!clean) {
@@ -849,9 +1159,9 @@
       };
     }
 
-    const fileMatch = clean.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-    const docMatch = clean.match(/\/document\/d\/([a-zA-Z0-9_-]+)/);
-    const idParamMatch = clean.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    const fileMatch = clean.match(/\/file\/d\/([a-zA-Z0-9_-]{10,80})/);
+    const docMatch = clean.match(/\/document\/d\/([a-zA-Z0-9_-]{10,80})/);
+    const idParamMatch = clean.match(/[?&]id=([a-zA-Z0-9_-]{10,80})/);
     const docId =
       (fileMatch && fileMatch[1]) ||
       (docMatch && docMatch[1]) ||
@@ -867,19 +1177,27 @@
       };
     }
 
-    const fallbackPreview = clean.replace(/\/view(\?.*)?$/i, '/preview');
+    if (/^docs\/(sop|loto)\/[A-Za-z0-9_.-]+\.pdf$/i.test(clean)) {
+      return {
+        docId: '',
+        viewUrl: clean,
+        previewUrl: clean,
+        downloadUrl: clean
+      };
+    }
+
     return {
       docId: '',
-      viewUrl: clean,
-      previewUrl: fallbackPreview,
-      downloadUrl: clean
+      viewUrl: '',
+      previewUrl: '',
+      downloadUrl: ''
     };
   }
 
   window.transformGoogleDriveUrl = transformGoogleDriveUrl;
 
   function mountDocumentViewerFrame(prefix, targetUrl, docTitle) {
-    if (!targetUrl) return;
+    if (!targetUrl || !isSafeDocumentUrl(targetUrl)) return;
     const mountEl = document.getElementById(`${prefix}-viewer-mount`);
     if (mountEl) {
       mountEl.innerHTML = `
@@ -888,6 +1206,7 @@
           src="${escapeHtml(targetUrl)}"
           class="drive-pdf-iframe min-h-[620px] sm:min-h-[680px] w-full"
           title="${escapeHtml(docTitle || 'Official Machine Document')}"
+          referrerpolicy="strict-origin-when-cross-origin"
           allow="autoplay"
         ></iframe>
       `;
@@ -1290,25 +1609,33 @@
   }
 
   /**
-   * Handle Fault Report Submission (Local + Cross-Device Cloud Sync + Optional GitHub Issue Window)
+   * Handle Fault Report Submission (Local + Dual-Cloud Cross-Device Sync + Optional GitHub Issue Window)
    */
   async function handleFaultSubmission(openGithubIssue) {
+    const nowMs = Date.now();
+    if (nowMs - lastSubmissionEpochMs < SECURITY_POLICY.SUBMISSION_COOLDOWN_MS) {
+      showToast('Please wait a moment before submitting another report.');
+      return;
+    }
+    lastSubmissionEpochMs = nowMs;
+
     const asset = state.assets.find((a) => a.id === state.activeAssetId);
     if (!asset) return;
 
     const checkedRadio = document.querySelector('input[name="fault-severity"]:checked');
-    const severityVal = checkedRadio ? checkedRadio.value : 'DOWN';
+    const rawSeverity = checkedRadio ? checkedRadio.value : 'DOWN';
+    const severityVal = SECURITY_POLICY.VALID_STATUSES.has(rawSeverity) ? rawSeverity : 'DOWN';
     const teamSelect = document.getElementById('fault-team-select');
     const reporterInput = document.getElementById('fault-reporter-input');
     const descInput = document.getElementById('fault-description-input');
 
-    const team = teamSelect ? teamSelect.value : 'Formula Buckeyes';
-    const reporter = (reporterInput && reporterInput.value.trim()) || 'Shop Floor User';
+    const team = sanitizePlainText(teamSelect ? teamSelect.value : 'Formula Buckeyes', 80) || 'Formula Buckeyes';
+    const reporter = sanitizePlainText(reporterInput && reporterInput.value, 80) || 'Shop Floor User';
     const description =
-      (descInput && descInput.value.trim()) ||
+      sanitizePlainText(descInput && descInput.value, 500) ||
       `Status updated to ${severityVal} via Unified QR Hub.`;
 
-    // Open GitHub Issue tab synchronously inside user gesture handler before awaiting network calls
+    // Open GitHub Issue tab synchronously inside user gesture handler if requested
     if (openGithubIssue) {
       const severityDropdownText =
         severityVal === 'DOWN'
@@ -1326,13 +1653,13 @@
         fault_description: description
       });
 
-      window.open(issueUrl, '_blank', 'noopener');
+      window.open(issueUrl, '_blank', 'noopener,noreferrer');
     }
 
     const nowIso = new Date().toISOString();
     const patch = logConditionLocally(asset.id, severityVal, description);
 
-    const entry = {
+    const entry = sanitizeHistoryEntry({
       id: `FLT-${Date.now()}-${asset.id.replace('-', '')}`,
       timestamp: nowIso,
       type: severityVal === 'OPERATIONAL' ? 'FAULT_RESOLVED' : 'FAULT_REPORT',
@@ -1346,9 +1673,11 @@
       completedItemsCount: 0,
       totalItemsCount: 0,
       notes: description
-    };
+    });
 
-    prependHistoryEntry(entry);
+    if (entry) {
+      prependHistoryEntry(entry);
+    }
     renderDashboard();
     openAssetHubModal(asset.id, 'fault', false);
 
@@ -1360,14 +1689,21 @@
     if (openGithubIssue) {
       showToast(`Synced ${asset.id} (${severityVal}) across all devices & opened GitHub Fault Ticket`);
     } else {
-      showToast(`Synced status for ${asset.id}: ${severityVal} across all devices`);
+      showToast(`Synced status for ${asset.id}: ${severityVal} across all shop screens & devices`);
     }
   }
 
   /**
-   * Handle Monthly PM Checklist Submission (Local + Cross-Device Cloud Sync + Optional GitHub Issue Window)
+   * Handle Monthly PM Checklist Submission (Local + Dual-Cloud Cross-Device Sync + Optional GitHub Issue Window)
    */
   async function handlePmSubmission(openGithubIssue) {
+    const nowMs = Date.now();
+    if (nowMs - lastSubmissionEpochMs < SECURITY_POLICY.SUBMISSION_COOLDOWN_MS) {
+      showToast('Please wait a moment before submitting another report.');
+      return;
+    }
+    lastSubmissionEpochMs = nowMs;
+
     const asset = state.assets.find((a) => a.id === state.activeAssetId);
     if (!asset) return;
 
@@ -1375,15 +1711,16 @@
     const postStatusSelect = document.getElementById('pm-post-status-select');
     const notesInput = document.getElementById('pm-notes-input');
 
-    const technician = (techInput && techInput.value.trim()) || 'Max Wright (MW)';
-    const postStatus = postStatusSelect ? postStatusSelect.value : 'OPERATIONAL';
+    const technician = sanitizePlainText(techInput && techInput.value, 80) || 'Max Wright (MW)';
+    const rawPostStatus = postStatusSelect ? postStatusSelect.value : 'OPERATIONAL';
+    const postStatus = SECURITY_POLICY.VALID_STATUSES.has(rawPostStatus) ? rawPostStatus : 'OPERATIONAL';
     const notes =
-      (notesInput && notesInput.value.trim()) ||
+      sanitizePlainText(notesInput && notesInput.value, 500) ||
       `Completed standardized monthly PM checklist for ${asset.id}.`;
 
     const checkedBoxes = Array.from(document.querySelectorAll('#pm-checklist-items .pm-check-item'));
     const completedLines = checkedBoxes.map((cb) => {
-      const lbl = cb.getAttribute('data-check-label') || '';
+      const lbl = sanitizePlainText(cb.getAttribute('data-check-label') || '', 120);
       return `- [${cb.checked ? 'x' : ' '}] ${lbl}`;
     });
     const completedCount = checkedBoxes.filter((cb) => cb.checked).length;
@@ -1392,10 +1729,10 @@
     const metricsObj = {};
     const metricsLines = [];
     metricInputs.forEach((inp) => {
-      const key = inp.getAttribute('data-metric-key');
-      const unit = inp.getAttribute('data-metric-unit') || '';
-      const val = (inp.value || '').trim();
-      if (key && val) {
+      const key = sanitizePlainText(inp.getAttribute('data-metric-key'), 40);
+      const unit = sanitizePlainText(inp.getAttribute('data-metric-unit') || '', 20);
+      const val = sanitizePlainText(inp.value || '', 40);
+      if (key && val && !SECURITY_POLICY.FORBIDDEN_KEYS.has(key)) {
         metricsObj[key] = unit && !val.includes(unit) ? `${val} ${unit}` : val;
         metricsLines.push(`${key}: ${metricsObj[key]}`);
       }
@@ -1405,7 +1742,7 @@
     const todayStr = now.toISOString().slice(0, 10);
     const nextDue = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
-    // Open GitHub Issue tab synchronously inside user gesture handler before awaiting network calls
+    // Open GitHub Issue tab synchronously inside user gesture handler if requested
     if (openGithubIssue) {
       const issueUrl = buildGithubIssueUrl('monthly_pm_log.yml', {
         title: `[PM-LOG] ${asset.id} (${asset.name}) — ${todayStr}`,
@@ -1421,7 +1758,7 @@
         quantitative_metrics: metricsLines.join('\n'),
         pm_notes: notes
       });
-      window.open(issueUrl, '_blank', 'noopener');
+      window.open(issueUrl, '_blank', 'noopener,noreferrer');
     }
 
     const effectiveStatus =
@@ -1433,7 +1770,7 @@
       lastPmTech: technician
     });
 
-    const entry = {
+    const entry = sanitizeHistoryEntry({
       id: `PM-${Date.now()}-${asset.id.replace('-', '')}`,
       timestamp: now.toISOString(),
       type: 'MONTHLY_PM',
@@ -1447,9 +1784,11 @@
       completedItemsCount: completedCount,
       totalItemsCount: checkedBoxes.length,
       notes: notes
-    };
+    });
 
-    prependHistoryEntry(entry);
+    if (entry) {
+      prependHistoryEntry(entry);
+    }
     renderDashboard();
     openAssetHubModal(asset.id, 'pm', false);
 
@@ -1693,33 +2032,39 @@
       });
     }
 
-    // Fault report form submissions
+    // Fault report form submissions: Primary submit syncs in-app across all screens; secondary also opens GitHub Issue
     const faultForm = document.getElementById('fault-report-form');
     if (faultForm) {
       faultForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        handleFaultSubmission(true);
+        handleFaultSubmission(false);
       });
     }
     const faultLocalBtn = document.getElementById('btn-fault-local-save');
     if (faultLocalBtn) {
       faultLocalBtn.addEventListener('click', () => {
-        handleFaultSubmission(false);
+        if (faultForm && typeof faultForm.reportValidity === 'function' && !faultForm.reportValidity()) {
+          return;
+        }
+        handleFaultSubmission(true);
       });
     }
 
-    // Monthly PM form submissions
+    // Monthly PM form submissions: Primary submit syncs in-app across all screens; secondary also opens GitHub Issue
     const pmForm = document.getElementById('monthly-pm-form');
     if (pmForm) {
       pmForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        handlePmSubmission(true);
+        handlePmSubmission(false);
       });
     }
     const pmLocalBtn = document.getElementById('btn-pm-local-save');
     if (pmLocalBtn) {
       pmLocalBtn.addEventListener('click', () => {
-        handlePmSubmission(false);
+        if (pmForm && typeof pmForm.reportValidity === 'function' && !pmForm.reportValidity()) {
+          return;
+        }
+        handlePmSubmission(true);
       });
     }
 
@@ -1781,19 +2126,32 @@
         localStorage.removeItem(STORAGE_KEYS.HISTORY_LOG);
         state.cloudOverrides = {};
         state.cloudHistory = [];
+        const clearIso = new Date().toISOString();
         try {
-          await fetchWithTimeout(
-            CLOUD_SYNC_CONFIG.REST_OBJECT_URL,
-            {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                name: 'spl_930_kinnear_sync',
-                data: { updatedAt: new Date().toISOString(), overrides: {}, history: [] }
-              })
-            },
-            3500
-          );
+          await Promise.allSettled([
+            fetchWithTimeout(
+              `https://ntfy.sh/${CLOUD_SYNC_CONFIG.NTFY_TOPIC}`,
+              {
+                method: 'POST',
+                keepalive: true,
+                body: JSON.stringify({ action: 'CLEAR_ALL', timestamp: clearIso })
+              },
+              3500
+            ),
+            fetchWithTimeout(
+              CLOUD_SYNC_CONFIG.REST_OBJECT_URL,
+              {
+                method: 'PUT',
+                keepalive: true,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  name: 'spl_930_kinnear_sync',
+                  data: { updatedAt: clearIso, overrides: {}, history: [] }
+                })
+              },
+              3500
+            )
+          ]);
         } catch (e) {
           // Ignore network error
         }
@@ -1805,7 +2163,7 @@
   }
 
   /**
-   * Subscribe to cross-device updates on window focus, tab visibility change, and 20s background poll
+   * Subscribe to cross-device updates on window focus, tab visibility change, and rate-limit-safe background poll
    */
   function startRealtimeCrossDeviceListener() {
     window.addEventListener('focus', () => {
@@ -1816,11 +2174,19 @@
         loadEquipmentData();
       }
     });
-    setInterval(() => {
+    setInterval(async () => {
       if (document.visibilityState === 'visible') {
-        loadEquipmentData();
+        try {
+          const cloudState = await fetchCrossDeviceCloudState({ ntfyOnly: true });
+          if (cloudState && cloudState.cloudOverrides) {
+            state.assets = getMergedEquipmentData(state.assets, cloudState.cloudOverrides);
+            renderDashboard();
+          }
+        } catch (e) {
+          // Non-fatal background poll
+        }
       }
-    }, 20000);
+    }, 30000);
   }
 
   /**
