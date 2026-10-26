@@ -1,5 +1,24 @@
 [
   {
+    "id": "PM-1793031742927-MAC01",
+    "timestamp": "2026-10-26T16:22:22.927Z",
+    "type": "MONTHLY_PM",
+    "assetId": "MAC-01",
+    "assetName": "Bridgeport Series I Manual Knee Mill #1",
+    "teamOrRole": "Shop Staff",
+    "technician": "MW",
+    "statusAfter": "OPERATIONAL",
+    "pmStatusAfter": "COMPLIANT",
+    "metrics": {
+      "x_backlash": "0.002 in",
+      "y_backlash": "0.002 in",
+      "way_lube_level": "100 %"
+    },
+    "completedItemsCount": 6,
+    "totalItemsCount": 6,
+    "notes": "Clean"
+  },
+  {
     "id": "PM-2026-1015-FAC01",
     "timestamp": "2026-10-15T14:30:00Z",
     "type": "MONTHLY_PM",

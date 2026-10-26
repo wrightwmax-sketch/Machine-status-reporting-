@@ -16,9 +16,20 @@
   };
 
   const DEFAULT_GITHUB_REPO = 'wrightwmax-sketch/Machine-status-reporting-';
+  const urlSyncTopicOverride = (() => {
+    try {
+      const p = new URLSearchParams(window.location.search).get('sync_topic');
+      return p && /^[A-Za-z0-9_-]{8,64}$/.test(p) ? p : '';
+    } catch (e) {
+      return '';
+    }
+  })();
+
   const CLOUD_SYNC_CONFIG = {
-    REST_OBJECT_URL: 'https://api.restful-api.dev/objects/ff808181a09d98f701a16f757d310149',
-    NTFY_TOPIC: 'spl_930_kinnear_shop_sync_v6'
+    REST_OBJECT_URL: urlSyncTopicOverride
+      ? ''
+      : 'https://api.restful-api.dev/objects/ff808181a09d98f701a17a8043301cf6',
+    NTFY_TOPIC: urlSyncTopicOverride || 'spl_930_kinnear_prod_sync_v7'
   };
 
   /**
@@ -26,20 +37,20 @@
    */
   const SECURITY_POLICY = {
     VALID_ASSET_IDS: new Set([
-      'MAC-01', 'MAC-02', 'MAC-03', 'MAC-04', 'MAC-05', 'MAC-06', 'MAC-07',
-      'CNC-08', 'CNC-09', 'CNC-10',
-      'WLD-11', 'WLD-12', 'WLD-13',
-      'SAW-14', 'SAW-15', 'SAW-16', 'SAW-17', 'SAW-18',
-      'FAB-19', 'FAB-20', 'FAB-21', 'FAB-22',
-      'FAC-23', 'FAC-24'
+      'MAC-01', 'MAC-02', 'MAC-03', 'MAC-04',
+      'CNC-01', 'CNC-02', 'CNC-03',
+      'WLD-01', 'WLD-02', 'WLD-03', 'WLD-04', 'WLD-05',
+      'SAW-01', 'SAW-02', 'SAW-03', 'SAW-04', 'SAW-05',
+      'FAB-01', 'FAB-02', 'FAB-03', 'FAB-04', 'FAB-05',
+      'FAC-01', 'FAC-02'
     ]),
     VALID_STATUSES: new Set(['OPERATIONAL', 'DEGRADED', 'PM_DUE_SOON', 'PM_OVERDUE', 'DOWN']),
     VALID_PM_STATUSES: new Set(['COMPLIANT', 'DUE_SOON', 'OVERDUE', 'ATTENTION']),
     VALID_HISTORY_TYPES: new Set(['FAULT_REPORT', 'FAULT_RESOLVED', 'MONTHLY_PM']),
     FORBIDDEN_KEYS: new Set(['__proto__', 'constructor', 'prototype']),
-    MAX_CLOCK_SKEW_MS: 2 * 60 * 1000, // Reject/clamp future timestamps > 2 min ahead
+    MAX_CLOCK_SKEW_MS: 10 * 60 * 1000, // Reject forged future timestamps > 10 min ahead
     MIN_VALID_EPOCH_MS: Date.parse('2025-01-01T00:00:00Z'),
-    SUBMISSION_COOLDOWN_MS: 2000
+    SUBMISSION_COOLDOWN_MS: 1500
   };
 
   let lastSubmissionEpochMs = 0;
@@ -96,7 +107,7 @@
   }
 
   /**
-   * Validate and clamp ISO-8601 timestamps so an attacker cannot inject a year-2099 timestamp to lock Last-Write-Wins
+   * Validate ISO-8601 timestamps so an attacker cannot inject a year-2099 timestamp to lock Last-Write-Wins
    */
   function clampAndValidateTimestamp(rawTs) {
     if (!rawTs || typeof rawTs !== 'string') return null;
@@ -105,8 +116,10 @@
       return null;
     }
     const maxAllowed = Date.now() + SECURITY_POLICY.MAX_CLOCK_SKEW_MS;
-    const clamped = parsed > maxAllowed ? Date.now() : parsed;
-    return new Date(clamped).toISOString();
+    if (parsed > maxAllowed) {
+      return null;
+    }
+    return new Date(parsed).toISOString();
   }
 
   function isValidDateYmd(str) {
@@ -384,8 +397,11 @@
       last_fault_notes: issueNotes,
       last_updated: nowIso
     });
+    const safeFallbackStatus = SECURITY_POLICY.VALID_STATUSES.has(String(newStatus || '').toUpperCase())
+      ? String(newStatus).toUpperCase()
+      : 'OPERATIONAL';
     const record = sanitizeAssetOverride(assetId, rawRecord) || {
-      status: 'OPERATIONAL',
+      status: safeFallbackStatus,
       conditionNote: sanitizePlainText(issueNotes, 500),
       last_fault_notes: sanitizePlainText(issueNotes, 500),
       last_updated: nowIso
@@ -406,17 +422,18 @@
    */
   async function fetchCrossDeviceCloudState(options) {
     const opts = options || {};
-    const cloudOverrides = {};
-    const cloudHistory = [];
+    const cloudOverrides = opts.ntfyOnly ? Object.assign({}, state.cloudOverrides || {}) : {};
+    const cloudHistory = opts.ntfyOnly ? (state.cloudHistory || []).slice() : [];
 
     const applyCandidateOverride = (assetId, rawPatch) => {
       const clean = sanitizeAssetOverride(assetId, rawPatch);
       if (!clean) return;
-      const existing = cloudOverrides[assetId];
+      const cleanId = String(assetId || '').trim().toUpperCase();
+      const existing = cloudOverrides[cleanId];
       const existingTs = existing ? Date.parse(existing.last_updated || '') || 0 : 0;
       const incomingTs = Date.parse(clean.last_updated || '') || 0;
       if (incomingTs >= existingTs) {
-        cloudOverrides[assetId] = clean;
+        cloudOverrides[cleanId] = clean;
       }
     };
 
@@ -428,75 +445,89 @@
       }
     };
 
-    const restPromise = opts.ntfyOnly
-      ? Promise.resolve()
-      : (async () => {
-          try {
-            const resp = await fetchWithTimeout(
-              `${CLOUD_SYNC_CONFIG.REST_OBJECT_URL}?t=${Date.now()}`,
-              { cache: 'no-store' },
-              8000
-            );
-            if (resp.ok) {
-              const json = await resp.json();
-              const data = (json && json.data) || {};
-              if (data.overrides && typeof data.overrides === 'object') {
-                Object.entries(data.overrides).forEach(([id, ov]) => {
-                  applyCandidateOverride(id, ov);
-                });
+    const restPromise =
+      opts.ntfyOnly || !CLOUD_SYNC_CONFIG.REST_OBJECT_URL
+        ? Promise.resolve(null)
+        : (async () => {
+            try {
+              const resp = await fetchWithTimeout(
+                `${CLOUD_SYNC_CONFIG.REST_OBJECT_URL}?t=${Date.now()}`,
+                { cache: 'no-store' },
+                8000
+              );
+              if (resp.ok) {
+                const json = await resp.json();
+                return (json && json.data) || null;
               }
-              if (Array.isArray(data.history)) {
-                data.history.forEach((h) => applyCandidateHistory(h));
-              }
+            } catch (e) {
+              // Non-fatal fallback
             }
-          } catch (e) {
-            // Non-fatal fallback
-          }
-        })();
+            return null;
+          })();
 
     const ntfyPromise = (async () => {
       try {
         const resp = await fetchWithTimeout(
-          `https://ntfy.sh/${CLOUD_SYNC_CONFIG.NTFY_TOPIC}/json?poll=1&since=48h&_cb=${Date.now()}`,
+          `https://ntfy.sh/${CLOUD_SYNC_CONFIG.NTFY_TOPIC}/json?poll=1&since=all&_cb=${Date.now()}`,
           { cache: 'no-store' },
           8000
         );
         if (resp.ok) {
           const text = await resp.text();
-          const lines = text.split('\n').filter((l) => l.trim());
-          lines.forEach((line) => {
-            try {
-              const evt = JSON.parse(line);
-              if (evt.event === 'message' && evt.message) {
-                const payload = JSON.parse(evt.message);
-                if (payload && payload.action === 'CLEAR_ALL') {
-                  const clearTs = Date.parse(clampAndValidateTimestamp(payload.timestamp) || '') || 0;
-                  Object.keys(cloudOverrides).forEach((k) => {
-                    const ovTs = Date.parse(cloudOverrides[k].last_updated || '') || 0;
-                    if (ovTs <= clearTs) delete cloudOverrides[k];
-                  });
-                  for (let i = cloudHistory.length - 1; i >= 0; i--) {
-                    const hTs = Date.parse(cloudHistory[i].timestamp || '') || 0;
-                    if (hTs <= clearTs) cloudHistory.splice(i, 1);
-                  }
-                } else if (payload && payload.assetId && payload.patch) {
-                  applyCandidateOverride(payload.assetId, payload.patch);
-                  if (payload.historyEntry) {
-                    applyCandidateHistory(payload.historyEntry);
-                  }
-                }
-              }
-            } catch (innerErr) {
-              // Ignore malformed event line
-            }
-          });
+          return text.split('\n').filter((l) => l.trim());
         }
       } catch (e) {
         // Non-fatal fallback
       }
+      return [];
     })();
 
-    await Promise.allSettled([restPromise, ntfyPromise]);
+    const [restResult, ntfyResult] = await Promise.allSettled([restPromise, ntfyPromise]);
+    const restData = restResult.status === 'fulfilled' ? restResult.value : null;
+    const ntfyLines = ntfyResult.status === 'fulfilled' ? ntfyResult.value || [] : [];
+
+    // 1. Seed from persistent REST snapshot first
+    if (restData) {
+      if (restData.overrides && typeof restData.overrides === 'object') {
+        Object.entries(restData.overrides).forEach(([id, ov]) => {
+          applyCandidateOverride(id, ov);
+        });
+      }
+      if (Array.isArray(restData.history)) {
+        restData.history.forEach((h) => applyCandidateHistory(h));
+      }
+    }
+
+    // 2. Replay chronological ntfy event stream on top of snapshot
+    ntfyLines.forEach((line) => {
+      try {
+        const evt = JSON.parse(line);
+        if (evt.event === 'message' && evt.message) {
+          const payload = JSON.parse(evt.message);
+          if (payload && payload.action === 'CLEAR_ALL') {
+            const validClearIso = clampAndValidateTimestamp(payload.timestamp);
+            const clearTs = validClearIso ? Date.parse(validClearIso) : 0;
+            if (clearTs > 0) {
+              Object.keys(cloudOverrides).forEach((k) => {
+                const ovTs = Date.parse(cloudOverrides[k].last_updated || '') || 0;
+                if (ovTs <= clearTs) delete cloudOverrides[k];
+              });
+              for (let i = cloudHistory.length - 1; i >= 0; i--) {
+                const hTs = Date.parse(cloudHistory[i].timestamp || '') || 0;
+                if (hTs <= clearTs) cloudHistory.splice(i, 1);
+              }
+            }
+          } else if (payload && payload.assetId && payload.patch) {
+            applyCandidateOverride(payload.assetId, payload.patch);
+            if (payload.historyEntry) {
+              applyCandidateHistory(payload.historyEntry);
+            }
+          }
+        }
+      } catch (innerErr) {
+        // Ignore malformed event line
+      }
+    });
 
     cloudHistory.sort((a, b) => (Date.parse(b.timestamp) || 0) - (Date.parse(a.timestamp) || 0));
 
@@ -506,19 +537,30 @@
   }
 
   /**
-   * Push a condition or PM update to both cross-device cloud stores with keepalive: true
-   * so all other devices on any IP/MAC address see the update immediately.
+   * Push a condition or PM update to both cross-device cloud stores immediately in parallel
+   * with keepalive: true so all other devices on any IP/MAC address see the update right away.
    */
   async function publishCrossDeviceSync(assetId, patch, historyEntry) {
-    const cleanPatch = sanitizeAssetOverride(assetId, patch);
+    const cleanId = String(assetId || '').trim().toUpperCase();
+    const cleanPatch = sanitizeAssetOverride(cleanId, patch);
     if (!cleanPatch) return;
     const cleanHistory = historyEntry ? sanitizeHistoryEntry(historyEntry) : null;
+
+    state.cloudOverrides = state.cloudOverrides || {};
+    state.cloudOverrides[cleanId] = cleanPatch;
+    if (cleanHistory) {
+      state.cloudHistory = state.cloudHistory || [];
+      if (!state.cloudHistory.some((h) => h && h.id === cleanHistory.id)) {
+        state.cloudHistory.unshift(cleanHistory);
+      }
+      state.cloudHistory = state.cloudHistory.slice(0, 40);
+    }
 
     // 1. Immediately fire append-only event to Backend B (ntfy.sh) with keepalive: true
     const eventPayload = {
       action: 'ASSET_UPDATE',
       timestamp: cleanPatch.last_updated,
-      assetId: assetId,
+      assetId: cleanId,
       patch: cleanPatch,
       historyEntry: cleanHistory
     };
@@ -530,46 +572,29 @@
         keepalive: true,
         body: JSON.stringify(eventPayload)
       },
-      4000
+      5000
     ).catch(() => {});
 
-    // 2. Reconcile latest state and update persistent snapshot in Backend A (restful-api.dev)
-    const restTask = (async () => {
-      try {
-        await fetchCrossDeviceCloudState();
-      } catch (e) {
-        // Continue with current state
-      }
-      state.cloudOverrides = state.cloudOverrides || {};
-      state.cloudOverrides[assetId] = cleanPatch;
-      if (cleanHistory) {
-        state.cloudHistory = state.cloudHistory || [];
-        if (!state.cloudHistory.some((h) => h && h.id === cleanHistory.id)) {
-          state.cloudHistory.unshift(cleanHistory);
-        }
-        state.cloudHistory = state.cloudHistory.slice(0, 40);
-      }
-
-      const bodyPayload = {
-        name: 'spl_930_kinnear_sync',
-        data: {
-          updatedAt: new Date().toISOString(),
-          overrides: state.cloudOverrides,
-          history: state.cloudHistory
-        }
-      };
-
-      await fetchWithTimeout(
-        CLOUD_SYNC_CONFIG.REST_OBJECT_URL,
-        {
-          method: 'PUT',
-          keepalive: true,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(bodyPayload)
-        },
-        4000
-      );
-    })().catch(() => {});
+    // 2. Immediately update persistent snapshot in Backend A (restful-api.dev) in parallel
+    const restTask = !CLOUD_SYNC_CONFIG.REST_OBJECT_URL
+      ? Promise.resolve()
+      : fetchWithTimeout(
+          CLOUD_SYNC_CONFIG.REST_OBJECT_URL,
+          {
+            method: 'PUT',
+            keepalive: true,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: 'spl_930_kinnear_prod_sync_v7',
+              data: {
+                updatedAt: cleanPatch.last_updated,
+                overrides: state.cloudOverrides,
+                history: state.cloudHistory
+              }
+            })
+          },
+          5000
+        ).catch(() => {});
 
     await Promise.allSettled([ntfyTask, restTask]);
   }
@@ -776,6 +801,11 @@
 
       state.metadata = (masterData && masterData.metadata) || {};
       const rawAssets = Array.isArray(masterData && masterData.assets) ? masterData.assets : [];
+      rawAssets.forEach((a) => {
+        if (a && a.id && /^[A-Z]{2,5}-\d{2,3}$/.test(String(a.id).toUpperCase())) {
+          SECURITY_POLICY.VALID_ASSET_IDS.add(String(a.id).toUpperCase());
+        }
+      });
 
       state.assets = getMergedEquipmentData(
         rawAssets,
@@ -1324,7 +1354,8 @@
                     ? 'bg-crimson text-white border-red-500'
                     : 'bg-slate-950 text-slate-300 border-slate-700 hover:bg-slate-800'
                 }"
-                data-unit-url="${escapeHtml(doc.url)}"
+                data-unit-pdf="${escapeHtml(doc.pdf_path || '')}"
+                data-unit-url="${escapeHtml(doc.url || '')}"
                 data-unit-label="${escapeHtml(doc.label)}"
               >
                 📄 ${escapeHtml(doc.label)}
@@ -1335,6 +1366,7 @@
 
         relatedBar.querySelectorAll(`.${prefix}-unit-switch-btn`).forEach((btn) => {
           btn.addEventListener('click', () => {
+            const unitPdf = btn.getAttribute('data-unit-pdf') || '';
             const unitUrl = btn.getAttribute('data-unit-url') || '';
             const unitLabel = btn.getAttribute('data-unit-label') || asset.name;
             relatedBar.querySelectorAll(`.${prefix}-unit-switch-btn`).forEach((b) => {
@@ -1345,7 +1377,7 @@
             });
             bindDocumentViewer(
               prefix,
-              '',
+              unitPdf,
               unitUrl,
               `${labelPrefix} — ${asset.id}: ${unitLabel}`,
               docRev
@@ -1353,7 +1385,7 @@
             const info = state.activeViewerUrls[prefix];
             if (info) {
               mountDocumentViewerFrame(prefix, info.targetUrl, info.title);
-              info.renderedForAsset = `${asset.id}:${unitUrl}`;
+              info.renderedForAsset = `${asset.id}:${unitPdf || unitUrl}`;
             }
           });
         });
@@ -2128,7 +2160,7 @@
         state.cloudHistory = [];
         const clearIso = new Date().toISOString();
         try {
-          await Promise.allSettled([
+          const tasks = [
             fetchWithTimeout(
               `https://ntfy.sh/${CLOUD_SYNC_CONFIG.NTFY_TOPIC}`,
               {
@@ -2137,21 +2169,26 @@
                 body: JSON.stringify({ action: 'CLEAR_ALL', timestamp: clearIso })
               },
               3500
-            ),
-            fetchWithTimeout(
-              CLOUD_SYNC_CONFIG.REST_OBJECT_URL,
-              {
-                method: 'PUT',
-                keepalive: true,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  name: 'spl_930_kinnear_sync',
-                  data: { updatedAt: clearIso, overrides: {}, history: [] }
-                })
-              },
-              3500
             )
-          ]);
+          ];
+          if (CLOUD_SYNC_CONFIG.REST_OBJECT_URL) {
+            tasks.push(
+              fetchWithTimeout(
+                CLOUD_SYNC_CONFIG.REST_OBJECT_URL,
+                {
+                  method: 'PUT',
+                  keepalive: true,
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    name: 'spl_930_kinnear_prod_sync_v7',
+                    data: { updatedAt: clearIso, overrides: {}, history: [] }
+                  })
+                },
+                3500
+              )
+            );
+          }
+          await Promise.allSettled(tasks);
         } catch (e) {
           // Ignore network error
         }
@@ -2169,6 +2206,9 @@
     window.addEventListener('focus', () => {
       loadEquipmentData();
     });
+    window.addEventListener('pageshow', () => {
+      loadEquipmentData();
+    });
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         loadEquipmentData();
@@ -2180,13 +2220,23 @@
           const cloudState = await fetchCrossDeviceCloudState({ ntfyOnly: true });
           if (cloudState && cloudState.cloudOverrides) {
             state.assets = getMergedEquipmentData(state.assets, cloudState.cloudOverrides);
+            if (Array.isArray(cloudState.cloudHistory) && cloudState.cloudHistory.length > 0) {
+              const existingIds = new Set(state.history.map((h) => h.id));
+              cloudState.cloudHistory.forEach((ch) => {
+                if (ch && ch.id && !existingIds.has(ch.id)) {
+                  existingIds.add(ch.id);
+                  state.history.unshift(ch);
+                }
+              });
+              state.history.sort((a, b) => (Date.parse(b.timestamp) || 0) - (Date.parse(a.timestamp) || 0));
+            }
             renderDashboard();
           }
         } catch (e) {
           // Non-fatal background poll
         }
       }
-    }, 30000);
+    }, 15000);
   }
 
   /**
